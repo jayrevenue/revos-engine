@@ -100,11 +100,11 @@ const UsersPage = () => {
 
   const getRoleBadgeVariant = (role: string | null) => {
     switch (role) {
-      case 'admin':
+      case 'super_admin':
         return 'destructive' as const;
-      case 'scientist':
+      case 'rev_scientist':
         return 'default' as const;
-      case 'analyst':
+      case 'qa':
         return 'secondary' as const;
       default:
         return 'outline' as const;
@@ -125,7 +125,7 @@ const UsersPage = () => {
     return null;
   }
 
-  if (userRole !== 'admin') {
+  if (userRole !== 'super_admin') {
     return (
       <div className="min-h-screen bg-background">
         <header className="border-b border-border">
