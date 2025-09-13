@@ -328,6 +328,123 @@ export type Database = {
           },
         ]
       }
+      frameworks: {
+        Row: {
+          category: string
+          content: Json | null
+          created_at: string | null
+          created_by: string
+          description: string | null
+          file_url: string | null
+          framework_type: string | null
+          id: string
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          category: string
+          content?: Json | null
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          file_url?: string | null
+          framework_type?: string | null
+          id?: string
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          category?: string
+          content?: Json | null
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          file_url?: string | null
+          framework_type?: string | null
+          id?: string
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          version?: string | null
+        }
+        Relationships: []
+      }
+      interventions: {
+        Row: {
+          actual_impact: string | null
+          assigned_to: string | null
+          created_at: string | null
+          created_by: string
+          description: string | null
+          due_date: string | null
+          engagement_id: string
+          expected_impact: string | null
+          id: string
+          intervention_type: string | null
+          module_id: string | null
+          priority: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          actual_impact?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          engagement_id: string
+          expected_impact?: string | null
+          id?: string
+          intervention_type?: string | null
+          module_id?: string | null
+          priority?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          actual_impact?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          engagement_id?: string
+          expected_impact?: string | null
+          id?: string
+          intervention_type?: string | null
+          module_id?: string | null
+          priority?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interventions_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "revos_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       logs: {
         Row: {
           agent_id: string | null
@@ -391,6 +508,117 @@ export type Database = {
           id?: string
           name?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      outcomes: {
+        Row: {
+          baseline_value: number | null
+          created_at: string | null
+          created_by: string
+          current_value: number | null
+          engagement_id: string
+          id: string
+          measurement_date: string | null
+          metric_name: string
+          module_id: string | null
+          notes: string | null
+          target_value: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          baseline_value?: number | null
+          created_at?: string | null
+          created_by: string
+          current_value?: number | null
+          engagement_id: string
+          id?: string
+          measurement_date?: string | null
+          metric_name: string
+          module_id?: string | null
+          notes?: string | null
+          target_value?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          baseline_value?: number | null
+          created_at?: string | null
+          created_by?: string
+          current_value?: number | null
+          engagement_id?: string
+          id?: string
+          measurement_date?: string | null
+          metric_name?: string
+          module_id?: string | null
+          notes?: string | null
+          target_value?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outcomes_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outcomes_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "revos_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      playbooks: {
+        Row: {
+          category: string
+          content: Json | null
+          created_at: string | null
+          created_by: string
+          description: string | null
+          id: string
+          status: string | null
+          steps: Json | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          usage_count: number | null
+          version: string | null
+          vertical: string | null
+        }
+        Insert: {
+          category: string
+          content?: Json | null
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          id?: string
+          status?: string | null
+          steps?: Json | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          usage_count?: number | null
+          version?: string | null
+          vertical?: string | null
+        }
+        Update: {
+          category?: string
+          content?: Json | null
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          id?: string
+          status?: string | null
+          steps?: Json | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          usage_count?: number | null
+          version?: string | null
+          vertical?: string | null
         }
         Relationships: []
       }
@@ -474,6 +702,54 @@ export type Database = {
           },
         ]
       }
+      prompt_library: {
+        Row: {
+          category: string
+          content: string
+          created_at: string | null
+          created_by: string
+          description: string | null
+          id: string
+          name: string
+          tags: string[] | null
+          updated_at: string | null
+          usage_count: number | null
+          variables: Json | null
+          version: string | null
+          vertical: string | null
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          id?: string
+          name: string
+          tags?: string[] | null
+          updated_at?: string | null
+          usage_count?: number | null
+          variables?: Json | null
+          version?: string | null
+          vertical?: string | null
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          id?: string
+          name?: string
+          tags?: string[] | null
+          updated_at?: string | null
+          usage_count?: number | null
+          variables?: Json | null
+          version?: string | null
+          vertical?: string | null
+        }
+        Relationships: []
+      }
       revenue: {
         Row: {
           amount: number
@@ -520,6 +796,53 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      revos_modules: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          data: Json | null
+          description: string | null
+          engagement_id: string
+          id: string
+          module_type: string
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          data?: Json | null
+          description?: string | null
+          engagement_id: string
+          id?: string
+          module_type: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          data?: Json | null
+          description?: string | null
+          engagement_id?: string
+          id?: string
+          module_type?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revos_modules_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "engagements"
             referencedColumns: ["id"]
           },
         ]

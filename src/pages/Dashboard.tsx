@@ -106,6 +106,13 @@ const Dashboard = () => {
                 <Button 
                   variant="outline" 
                   className="w-full justify-start" 
+                  onClick={() => navigate('/library')}
+                >
+                  IP Library
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start" 
                   onClick={() => navigate('/agents')}
                 >
                   Manage AI Agents
@@ -116,13 +123,6 @@ const Dashboard = () => {
                   onClick={() => navigate('/users')}
                 >
                   Manage Users
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start" 
-                  onClick={() => navigate('/agents/new')}
-                >
-                  Deploy AI Agent
                 </Button>
                 <Button 
                   variant="outline" 

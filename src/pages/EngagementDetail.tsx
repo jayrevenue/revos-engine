@@ -194,10 +194,46 @@ const EngagementDetail = () => {
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="revos">RevOS Modules</TabsTrigger>
             <TabsTrigger value="agents">AI Agents</TabsTrigger>
             <TabsTrigger value="dashboards">Dashboards</TabsTrigger>
             <TabsTrigger value="outcomes">Outcomes</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="revos" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">RevOS Modules</h2>
+              <Button onClick={() => navigate(`/revos/${id}`)}>
+                <Target className="w-4 h-4 mr-2" />
+                Manage Modules
+              </Button>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {[
+                { type: 'outcome_tracker', title: 'Outcome Tracker', icon: Target, description: 'Track before/after metrics' },
+                { type: 'intervention_planner', title: 'Intervention Planner', icon: BarChart3, description: 'Plan revenue interventions' },
+                { type: 'pricing_strategy', title: 'Pricing Strategy', icon: Users, description: 'Build pricing strategies' },
+                { type: 'cac_compression', title: 'CAC Compression', icon: Target, description: 'Optimize acquisition costs' },
+                { type: 'agent_deployment', title: 'Agent Deployment', icon: Bot, description: 'Deploy AI agents systematically' }
+              ].map((module) => (
+                <Card key={module.type} className="cursor-pointer hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <module.icon className="w-5 h-5" />
+                      {module.title}
+                    </CardTitle>
+                    <CardDescription>{module.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button variant="outline" className="w-full" onClick={() => navigate(`/revos/${id}`)}>
+                      Access Module
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
 
           <TabsContent value="overview" className="space-y-6">
             <Card>
