@@ -9,6 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { TrendingUp, DollarSign, Users, Bot, Target, Calendar, Download, Filter, BarChart3, PieChart as PieChartIcon, Activity } from 'lucide-react';
+import GapMapDashboard from '@/components/dashboards/GapMapDashboard';
+import ClarityAuditDashboard from '@/components/dashboards/ClarityAuditDashboard';
+import AgentROIDashboard from '@/components/dashboards/AgentROIDashboard';
 import { useToast } from '@/hooks/use-toast';
 
 interface AnalyticsData {
@@ -301,12 +304,15 @@ const Analytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="engagements">Engagements</TabsTrigger>
             <TabsTrigger value="agents">AI Agents</TabsTrigger>
             <TabsTrigger value="outcomes">Outcomes</TabsTrigger>
             <TabsTrigger value="ip">IP Analytics</TabsTrigger>
+            <TabsTrigger value="gap-map">Gap Map</TabsTrigger>
+            <TabsTrigger value="clarity-audit">Clarity Audit</TabsTrigger>
+            <TabsTrigger value="agent-roi">Agent ROI</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -478,6 +484,19 @@ const Analytics = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Specialized Dashboards */}
+          <TabsContent value="gap-map" className="space-y-6">
+            <GapMapDashboard />
+          </TabsContent>
+
+          <TabsContent value="clarity-audit" className="space-y-6">
+            <ClarityAuditDashboard />
+          </TabsContent>
+
+          <TabsContent value="agent-roi" className="space-y-6">
+            <AgentROIDashboard />
           </TabsContent>
         </Tabs>
       </div>
