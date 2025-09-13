@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from 'next-themes';
@@ -33,7 +33,8 @@ function applyAppearance(prefs: Prefs) {
 
 export default function AppearanceInitializer() {
   const { user } = useAuth();
-  const { setTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
+  const lastPrefs = useRef<Prefs | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -46,16 +47,24 @@ export default function AppearanceInitializer() {
         .single();
       if (!active) return;
       if (data?.theme) setTheme(data.theme);
-      applyAppearance({
+      const prefs = {
         theme: data?.theme || 'system',
         accent_color: data?.accent_color || 'blue',
         layout_density: data?.layout_density || 'comfortable',
-      });
+      } as Prefs;
+      lastPrefs.current = prefs;
+      applyAppearance(prefs);
     };
     load();
     return () => { active = false; };
   }, [user, setTheme]);
 
+  // Reapply accent and density after theme class changes to avoid .dark/.light overrides
+  useEffect(() => {
+    if (lastPrefs.current) {
+      applyAppearance(lastPrefs.current);
+    }
+  }, [resolvedTheme]);
+
   return null;
 }
-

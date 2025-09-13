@@ -631,9 +631,7 @@ const Settings = () => {
                         size="sm"
                         onClick={() => {
                           setTheme(themeOption);
-                          if (preferences) {
-                            savePreferences({ theme: themeOption });
-                          }
+                          savePreferences({ theme: themeOption });
                         }}
                         className="capitalize"
                       >
