@@ -14,6 +14,157 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_conversations: {
+        Row: {
+          agent_id: string
+          created_at: string
+          id: string
+          messages: Json | null
+          outcome_notes: string | null
+          outcome_rating: number | null
+          title: string | null
+          token_count: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          id?: string
+          messages?: Json | null
+          outcome_notes?: string | null
+          outcome_rating?: number | null
+          title?: string | null
+          token_count?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          id?: string
+          messages?: Json | null
+          outcome_notes?: string | null
+          outcome_rating?: number | null
+          title?: string | null
+          token_count?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_conversations_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_prompts: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          name: string
+          tags: string[] | null
+          updated_at: string
+          usage_count: number | null
+          variables: Json | null
+          vertical: string | null
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          name: string
+          tags?: string[] | null
+          updated_at?: string
+          usage_count?: number | null
+          variables?: Json | null
+          vertical?: string | null
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          name?: string
+          tags?: string[] | null
+          updated_at?: string
+          usage_count?: number | null
+          variables?: Json | null
+          vertical?: string | null
+        }
+        Relationships: []
+      }
+      ai_agents: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          memory_config: Json | null
+          model: string
+          name: string
+          project_id: string | null
+          role: string
+          status: string
+          system_prompt: string | null
+          tools: Json | null
+          updated_at: string
+          usage_stats: Json | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          memory_config?: Json | null
+          model?: string
+          name: string
+          project_id?: string | null
+          role: string
+          status?: string
+          system_prompt?: string | null
+          tools?: Json | null
+          updated_at?: string
+          usage_stats?: Json | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          memory_config?: Json | null
+          model?: string
+          name?: string
+          project_id?: string | null
+          role?: string
+          status?: string
+          system_prompt?: string | null
+          tools?: Json | null
+          updated_at?: string
+          usage_stats?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           address: string | null
