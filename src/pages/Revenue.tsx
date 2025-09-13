@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Plus, DollarSign, TrendingUp, Calendar, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import Page from "@/components/layout/Page";
 import { format } from "date-fns";
 
 interface Revenue {
@@ -122,26 +123,25 @@ const Revenue = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-6">
+      <Page title="Revenue Tracking">
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-      </div>
+      </Page>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Revenue Tracking</h1>
-          <p className="text-muted-foreground">Manage invoices and track payments</p>
-        </div>
+    <Page
+      title="Revenue Tracking"
+      description="Manage invoices and track payments"
+      actions={
         <Button onClick={() => navigate("/revenue/new")}>
           <Plus className="h-4 w-4 mr-2" />
           Add Revenue
         </Button>
-      </div>
+      }
+    >
 
       {/* Revenue Summary Cards */}
       <div className="grid gap-4 md:grid-cols-3">
@@ -249,7 +249,7 @@ const Revenue = () => {
           )}
         </CardContent>
       </Card>
-    </div>
+    </Page>
   );
 };
 

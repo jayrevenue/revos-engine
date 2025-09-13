@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { BrandHeader } from "@/components/ui/brand-header";
-import { NotionLayout } from "@/components/layout/NotionLayout";
+import Page from "@/components/layout/Page";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -46,23 +45,22 @@ export default function Empire() {
   ];
 
   return (
-    <NotionLayout>
+    <Page
+      title="Revenue Expert Empire"
+      description="Transform from employee to empire owner through the three‑pillar Revenue Operating System"
+      actions={
+        <Button variant="outline" size="sm">
+          <Brain className="h-4 w-4 mr-2" />
+          AI Assistant
+        </Button>
+      }
+    >
       <div className="space-y-6">
-        <BrandHeader
-          title="Revenue Expert Empire"
-          subtitle="Transform from employee to empire owner through the three-pillar Revenue Operating System"
-          className="bg-gradient-to-r from-primary/5 to-accent/5"
-        >
-          <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
-              Phase {empirePhase}: Foundation
-            </Badge>
-            <Button variant="outline" size="sm">
-              <Brain className="h-4 w-4 mr-2" />
-              AI Assistant
-            </Button>
-          </div>
-        </BrandHeader>
+        <div className="flex items-center gap-3">
+          <Badge variant="secondary" className="bg-primary/10 text-primary">
+            Phase {empirePhase}: Foundation
+          </Badge>
+        </div>
 
         {/* Phase Progress Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -169,6 +167,6 @@ export default function Empire() {
           </TabsContent>
         </Tabs>
       </div>
-    </NotionLayout>
+    </Page>
   );
 }

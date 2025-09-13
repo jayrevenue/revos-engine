@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { TrendingUp, DollarSign, Target, Bot, Calendar, ExternalLink, BarChart3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import Page from "@/components/layout/Page";
 
 interface DashboardMetrics {
   totalRevenue: number;
@@ -190,26 +191,22 @@ const ExecutiveDashboard = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Executive Command Center</h1>
-            <p className="text-muted-foreground mt-2">
-              Real-time insights into your revenue operations performance
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate('/analytics')}>
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Full Analytics
-            </Button>
-            <Button onClick={() => navigate('/engagements/new')}>
-              <Target className="w-4 h-4 mr-2" />
-              New Engagement
-            </Button>
-          </div>
-        </div>
+    <Page
+      title="Executive Command Center"
+      description="Real-time insights into your revenue operations performance"
+      actions={
+        <>
+          <Button variant="outline" onClick={() => navigate('/analytics')}>
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Full Analytics
+          </Button>
+          <Button onClick={() => navigate('/engagements/new')}>
+            <Target className="w-4 h-4 mr-2" />
+            New Engagement
+          </Button>
+        </>
+      }
+    >
 
         {/* Key Performance Indicators */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -382,8 +379,7 @@ const ExecutiveDashboard = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </Page>
   );
 };
 

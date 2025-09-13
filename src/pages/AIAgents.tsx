@@ -17,15 +17,9 @@ interface AIAgent {
   model: string;
   status: string;
   usage_stats: any;
-  project_id: string;
   created_at: string;
-  projects: {
-    name: string;
-    clients: {
-      name: string;
-      company: string;
-    };
-  };
+  orgs?: { name: string } | null;
+  engagements?: { name: string } | null;
 }
 
 const AIAgents = () => {
@@ -47,13 +41,8 @@ const AIAgents = () => {
         .from("ai_agents")
         .select(`
           *,
-          projects (
-            name,
-            clients (
-              name,
-              company
-            )
-          )
+          orgs:org_id ( name ),
+          engagements:engagement_id ( name )
         `)
         .order("created_at", { ascending: false });
 
@@ -266,7 +255,7 @@ const AIAgents = () => {
                         </div>
                         
                         <p className="text-sm text-muted-foreground">
-                          {agent.projects?.clients?.company} - {agent.projects?.name}
+                          {agent.orgs?.name || 'Unassigned Org'}{agent.engagements?.name ? ` – ${agent.engagements.name}` : ''}
                         </p>
                         
                         {agent.description && (
