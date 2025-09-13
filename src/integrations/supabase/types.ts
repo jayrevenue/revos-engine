@@ -320,6 +320,54 @@ export type Database = {
           },
         ]
       }
+      documents: {
+        Row: {
+          category: string
+          content: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          size_bytes: number | null
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          content?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          size_bytes?: number | null
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          content?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          size_bytes?: number | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       engagements: {
         Row: {
           budget: number | null

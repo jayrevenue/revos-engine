@@ -63,6 +63,7 @@ const sidebarItems: NavItem[] = [
   { name: "Executive", href: "/executive", icon: TrendingUp },
   { name: "Scheduling", href: "/scheduling", icon: Calendar },
   { name: "IP Library", href: "/library", icon: BookOpen },
+  { name: "Empire", href: "/empire", icon: Globe },
   { 
     name: "Client Management", 
     href: "/clients", 

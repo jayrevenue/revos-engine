@@ -7,8 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Target, TrendingUp, DollarSign, Zap, Bot, BookOpen, Code, Database } from 'lucide-react';
+import { Plus, Search, Target, TrendingUp, DollarSign, Zap, Bot, BookOpen, Code, Database, FileText, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import DocumentUpload from '@/components/documents/DocumentUpload';
+import DocumentViewer from '@/components/documents/DocumentViewer';
 
 interface PromptLibraryItem {
   id: string;
@@ -42,6 +44,21 @@ interface Framework {
   created_at: string;
 }
 
+interface DocumentType {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  file_url: string;
+  file_type: string;
+  content: string;
+  tags: string[];
+  status: string;
+  created_at: string;
+  updated_at: string;
+  size_bytes: number;
+}
+
 const IPLibrary = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -50,8 +67,11 @@ const IPLibrary = () => {
   const [prompts, setPrompts] = useState<PromptLibraryItem[]>([]);
   const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
   const [frameworks, setFrameworks] = useState<Framework[]>([]);
+  const [documents, setDocuments] = useState<DocumentType[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loadingData, setLoadingData] = useState(true);
+  const [showUpload, setShowUpload] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<DocumentType | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -95,6 +115,15 @@ const IPLibrary = () => {
       if (frameworksError) throw frameworksError;
       setFrameworks(frameworksData || []);
 
+      // Fetch documents
+      const { data: documentsData, error: documentsError } = await supabase
+        .from('documents')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (documentsError) throw documentsError;
+      setDocuments(documentsData || []);
+
     } catch (error: any) {
       toast({
         title: "Error",
@@ -112,6 +141,7 @@ const IPLibrary = () => {
       case 'compliance': return <BookOpen className="w-5 h-5" />;
       case 'retention': return <Target className="w-5 h-5" />;
       case 'automation': return <Bot className="w-5 h-5" />;
+      case 'empire': return <TrendingUp className="w-5 h-5" />;
       default: return <Code className="w-5 h-5" />;
     }
   };
@@ -142,6 +172,12 @@ const IPLibrary = () => {
     framework.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const filteredDocuments = documents.filter(document =>
+    document.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    document.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    document.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   if (loading || loadingData) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -154,6 +190,59 @@ const IPLibrary = () => {
 
   if (!user) return null;
 
+  if (showUpload) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <DocumentUpload 
+          onUploadComplete={() => {
+            setShowUpload(false);
+            fetchIPAssets();
+          }}
+          onCancel={() => setShowUpload(false)}
+        />
+      </div>
+    );
+  }
+
+  if (selectedDocument) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <DocumentViewer 
+          document={selectedDocument}
+          onBack={() => setSelectedDocument(null)}
+          onEdit={(doc) => {
+            // TODO: Implement edit functionality
+            console.log('Edit document:', doc);
+          }}
+          onDelete={async (docId) => {
+            try {
+              const { error } = await supabase
+                .from('documents')
+                .delete()
+                .eq('id', docId);
+              
+              if (error) throw error;
+              
+              toast({
+                title: "Success",
+                description: "Document deleted successfully",
+              });
+              
+              setSelectedDocument(null);
+              fetchIPAssets();
+            } catch (error: any) {
+              toast({
+                title: "Error",
+                description: error.message || "Failed to delete document",
+                variant: "destructive",
+              });
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -161,13 +250,17 @@ const IPLibrary = () => {
           <div>
             <h1 className="text-3xl font-bold">IP Library</h1>
             <p className="text-muted-foreground mt-2">
-              Manage prompts, playbooks, frameworks, and RevOS intellectual property
+              Manage prompts, playbooks, frameworks, documents, and RevOS intellectual property
             </p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => navigate('/library/prompts/new')}>
               <Plus className="w-4 h-4 mr-2" />
               New Prompt
+            </Button>
+            <Button variant="outline" onClick={() => setShowUpload(true)}>
+              <Upload className="w-4 h-4 mr-2" />
+              Upload Document
             </Button>
             <Button onClick={() => navigate('/library/playbooks/new')}>
               <Plus className="w-4 h-4 mr-2" />
@@ -193,6 +286,7 @@ const IPLibrary = () => {
             <TabsTrigger value="prompts">Prompt Library</TabsTrigger>
             <TabsTrigger value="playbooks">Playbooks</TabsTrigger>
             <TabsTrigger value="frameworks">Frameworks</TabsTrigger>
+            <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="overview">Overview</TabsTrigger>
           </TabsList>
 
@@ -373,6 +467,79 @@ const IPLibrary = () => {
             )}
           </TabsContent>
 
+          <TabsContent value="documents" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">Documents</h2>
+              <Button onClick={() => setShowUpload(true)}>
+                <Upload className="w-4 h-4 mr-2" />
+                Upload Document
+              </Button>
+            </div>
+
+            {filteredDocuments.length === 0 ? (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <FileText className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No documents found</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Upload .md files and other documents to build your empire library
+                  </p>
+                  <Button onClick={() => setShowUpload(true)}>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload First Document
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {filteredDocuments.map((document) => (
+                  <Card 
+                    key={document.id} 
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedDocument(document)}
+                  >
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        <span className="truncate">{document.title}</span>
+                        {getCategoryIcon(document.category)}
+                      </CardTitle>
+                      <CardDescription className="line-clamp-2">
+                        {document.description || 'No description available'}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Badge variant="outline">{document.category}</Badge>
+                        <Badge variant="secondary">{document.file_type}</Badge>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-1">
+                        {document.tags.slice(0, 3).map((tag, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {document.tags.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{document.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="text-sm text-muted-foreground">
+                        {document.size_bytes && (
+                          <span>
+                            {(document.size_bytes / 1024).toFixed(1)} KB
+                          </span>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
           <TabsContent value="overview" className="space-y-6">
             <h2 className="text-2xl font-bold">IP Library Overview</h2>
             
@@ -411,14 +578,11 @@ const IPLibrary = () => {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Usage</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium">Documents</CardTitle>
+                  <FileText className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">
-                    {prompts.reduce((sum, p) => sum + p.usage_count, 0) + 
-                     playbooks.reduce((sum, p) => sum + p.usage_count, 0)}
-                  </div>
+                  <div className="text-2xl font-bold">{documents.length}</div>
                 </CardContent>
               </Card>
             </div>
