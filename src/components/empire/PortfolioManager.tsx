@@ -1,0 +1,431 @@
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Building2, 
+  TrendingUp, 
+  DollarSign,
+  Users,
+  Calendar,
+  FileText,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  BarChart3,
+  PieChart,
+  Target,
+  Briefcase,
+  Eye,
+  Edit
+} from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+
+const portfolioCompanies = [
+  {
+    id: 1,
+    name: "TechStack SaaS",
+    type: "Equity Partnership",
+    equity: 2.5,
+    value: 1200000,
+    monthlyRevenue: 85000,
+    status: "active",
+    phase: "Implementation",
+    milestones: {
+      completed: 3,
+      total: 4,
+      current: "Contribution margin optimization"
+    },
+    metrics: {
+      marginImprovement: 18,
+      forecastAccuracy: 92,
+      paybackPeriod: 8.5
+    },
+    nextReview: "2024-01-15"
+  },
+  {
+    id: 2,
+    name: "MedBilling Solutions",
+    type: "Acquisition",
+    ownership: 100,
+    value: 800000,
+    monthlyRevenue: 45000,
+    status: "acquired",
+    phase: "Integration",
+    milestones: {
+      completed: 2,
+      total: 3,
+      current: "TRS implementation"
+    },
+    metrics: {
+      marginImprovement: 12,
+      forecastAccuracy: 88,
+      paybackPeriod: 6.2
+    },
+    nextReview: "2024-01-10"
+  },
+  {
+    id: 3,
+    name: "RevOps Agency Pro",
+    type: "IP License",
+    license: "12-month",
+    value: 240000,
+    monthlyRevenue: 28000,
+    status: "licensed",
+    phase: "Deployment",
+    milestones: {
+      completed: 4,
+      total: 4,
+      current: "Performance monitoring"
+    },
+    metrics: {
+      marginImprovement: 25,
+      forecastAccuracy: 95,
+      paybackPeriod: 4.8
+    },
+    nextReview: "2024-01-20"
+  }
+];
+
+const performanceData = [
+  { month: "Jul", revenue: 125, margin: 32 },
+  { month: "Aug", revenue: 138, margin: 35 },
+  { month: "Sep", revenue: 142, margin: 38 },
+  { month: "Oct", revenue: 156, margin: 41 },
+  { month: "Nov", revenue: 165, margin: 43 },
+  { month: "Dec", revenue: 178, margin: 46 }
+];
+
+const pipelineDeals = [
+  {
+    id: 1,
+    name: "CloudCRM Solutions",
+    type: "Equity",
+    stage: "Due Diligence",
+    value: 1500000,
+    probability: 75,
+    closeDate: "2024-02-15",
+    description: "$6M ARR SaaS, looking for 2% equity for Revenue OS implementation"
+  },
+  {
+    id: 2,
+    name: "FinanceFlow Services",
+    type: "Acquisition",
+    stage: "Negotiation",
+    value: 650000,
+    probability: 60,
+    closeDate: "2024-03-01",
+    description: "Profitable accounting firm with strong cash flow and working GM"
+  },
+  {
+    id: 3,
+    name: "DataOps Consulting",
+    type: "IP License",
+    stage: "Proposal",
+    value: 180000,
+    probability: 80,
+    closeDate: "2024-01-30",
+    description: "Data consulting firm wants to license RevenueOS for clients"
+  }
+];
+
+export function PortfolioManager() {
+  const [selectedCompany, setSelectedCompany] = useState(portfolioCompanies[0]);
+
+  const totalPortfolioValue = portfolioCompanies.reduce((sum, company) => sum + company.value, 0);
+  const totalMonthlyRevenue = portfolioCompanies.reduce((sum, company) => sum + company.monthlyRevenue, 0);
+  const averageMarginImprovement = portfolioCompanies.reduce((sum, company) => sum + company.metrics.marginImprovement, 0) / portfolioCompanies.length;
+
+  return (
+    <div className="space-y-6">
+      {/* Portfolio Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Portfolio Value</p>
+                <p className="text-2xl font-bold text-primary">${(totalPortfolioValue / 1000000).toFixed(1)}M</p>
+                <p className="text-xs text-emerald-600">+15.2% this quarter</p>
+              </div>
+              <PieChart className="h-8 w-8 text-primary" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Monthly Revenue</p>
+                <p className="text-2xl font-bold text-accent">${(totalMonthlyRevenue / 1000).toFixed(0)}K</p>
+                <p className="text-xs text-muted-foreground">Across {portfolioCompanies.length} companies</p>
+              </div>
+              <DollarSign className="h-8 w-8 text-accent" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-secondary/5 to-secondary/10 border-secondary/20">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Avg Margin Boost</p>
+                <p className="text-2xl font-bold text-secondary">{averageMarginImprovement.toFixed(0)}%</p>
+                <p className="text-xs text-muted-foreground">Via TRS implementation</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-secondary" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-muted/5 to-muted/10 border-muted/20">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Active Deals</p>
+                <p className="text-2xl font-bold">{pipelineDeals.length}</p>
+                <p className="text-xs text-muted-foreground">${(pipelineDeals.reduce((sum, deal) => sum + deal.value, 0) / 1000000).toFixed(1)}M pipeline</p>
+              </div>
+              <Briefcase className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="companies" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="companies">Portfolio Companies</TabsTrigger>
+          <TabsTrigger value="performance">Performance Analytics</TabsTrigger>
+          <TabsTrigger value="pipeline">Deal Pipeline</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="companies" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Company List */}
+            <div className="lg:col-span-1">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-primary" />
+                    Companies
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {portfolioCompanies.map((company) => (
+                    <div
+                      key={company.id}
+                      className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                        selectedCompany.id === company.id 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-border hover:border-primary/50'
+                      }`}
+                      onClick={() => setSelectedCompany(company)}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium">{company.name}</h4>
+                          <p className="text-sm text-muted-foreground">{company.type}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Badge variant={
+                              company.status === 'active' ? 'default' :
+                              company.status === 'acquired' ? 'secondary' :
+                              'outline'
+                            }>
+                              {company.status}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">{company.phase}</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">${(company.value / 1000).toFixed(0)}K</p>
+                          <p className="text-xs text-muted-foreground">${(company.monthlyRevenue / 1000).toFixed(0)}K/mo</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Company Details */}
+            <div className="lg:col-span-2">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>{selectedCompany.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{selectedCompany.type}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Details
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Key Metrics */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center p-4 bg-muted/20 rounded-lg">
+                      <p className="text-sm text-muted-foreground">Value</p>
+                      <p className="text-xl font-bold">${(selectedCompany.value / 1000).toFixed(0)}K</p>
+                    </div>
+                    <div className="text-center p-4 bg-muted/20 rounded-lg">
+                      <p className="text-sm text-muted-foreground">Monthly Revenue</p>
+                      <p className="text-xl font-bold">${(selectedCompany.monthlyRevenue / 1000).toFixed(0)}K</p>
+                    </div>
+                    <div className="text-center p-4 bg-muted/20 rounded-lg">
+                      <p className="text-sm text-muted-foreground">Margin Improvement</p>
+                      <p className="text-xl font-bold text-emerald-600">+{selectedCompany.metrics.marginImprovement}%</p>
+                    </div>
+                  </div>
+
+                  {/* Milestones Progress */}
+                  <div>
+                    <h4 className="font-medium mb-3">Implementation Progress</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Phase: {selectedCompany.phase}</span>
+                        <Badge variant="outline">{selectedCompany.milestones.completed}/{selectedCompany.milestones.total} milestones</Badge>
+                      </div>
+                      <Progress value={(selectedCompany.milestones.completed / selectedCompany.milestones.total) * 100} />
+                      <p className="text-sm text-muted-foreground">Current: {selectedCompany.milestones.current}</p>
+                    </div>
+                  </div>
+
+                  {/* Performance Metrics */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-3 border rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingUp className="h-4 w-4 text-emerald-600" />
+                        <span className="text-sm font-medium">Margin Improvement</span>
+                      </div>
+                      <p className="text-lg font-bold text-emerald-600">+{selectedCompany.metrics.marginImprovement}%</p>
+                    </div>
+                    <div className="p-3 border rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Target className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium">Forecast Accuracy</span>
+                      </div>
+                      <p className="text-lg font-bold">{selectedCompany.metrics.forecastAccuracy}%</p>
+                    </div>
+                    <div className="p-3 border rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="h-4 w-4 text-accent" />
+                        <span className="text-sm font-medium">Payback Period</span>
+                      </div>
+                      <p className="text-lg font-bold">{selectedCompany.metrics.paybackPeriod} months</p>
+                    </div>
+                  </div>
+
+                  {/* Next Actions */}
+                  <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      <span className="font-medium">Next Review: {selectedCompany.nextReview}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Quarterly business review to assess performance and plan next phase milestones.
+                    </p>
+                    <Button size="sm" className="mt-3">
+                      Schedule Review
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="performance" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                Portfolio Performance Trends
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart data={performanceData}>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis dataKey="month" />
+                  <YAxis yAxisId="left" label={{ value: 'Revenue ($K)', angle: -90, position: 'insideLeft' }} />
+                  <YAxis yAxisId="right" orientation="right" label={{ value: 'Margin (%)', angle: 90, position: 'insideRight' }} />
+                  <Tooltip />
+                  <Bar yAxisId="left" dataKey="revenue" fill="hsl(var(--primary))" name="Revenue ($K)" />
+                  <Line yAxisId="right" type="monotone" dataKey="margin" stroke="hsl(var(--accent))" strokeWidth={3} name="Margin %" />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="pipeline" className="space-y-6">
+          <div className="space-y-4">
+            {pipelineDeals.map((deal) => (
+              <Card key={deal.id} className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-grow">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="font-semibold text-lg">{deal.name}</h3>
+                        <Badge variant="outline">{deal.type}</Badge>
+                        <Badge variant={
+                          deal.stage === 'Due Diligence' ? 'default' :
+                          deal.stage === 'Negotiation' ? 'secondary' :
+                          'outline'
+                        }>
+                          {deal.stage}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">{deal.description}</p>
+                      <div className="flex items-center gap-4 text-sm">
+                        <div className="flex items-center gap-1">
+                          <DollarSign className="h-4 w-4" />
+                          <span>${(deal.value / 1000).toFixed(0)}K value</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Target className="h-4 w-4" />
+                          <span>{deal.probability}% probability</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          <span>Close: {deal.closeDate}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="text-right">
+                        <p className="text-lg font-bold">${(deal.value / 1000).toFixed(0)}K</p>
+                        <p className="text-xs text-muted-foreground">{deal.probability}% confidence</p>
+                      </div>
+                      <Button size="sm">
+                        View Deal
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                      <span>Deal Progress</span>
+                      <span>{deal.probability}%</span>
+                    </div>
+                    <Progress value={deal.probability} />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
