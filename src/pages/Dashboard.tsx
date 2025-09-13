@@ -34,14 +34,11 @@ const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-<<<<<<< HEAD
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
   const [engagementStats, setEngagementStats] = useState<{active:number; paused:number; complete:number}>({active:0, paused:0, complete:0});
-=======
   const [goals, setGoals] = useState<any[]>([]);
   const [goalsLoading, setGoalsLoading] = useState(false);
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
->>>>>>> origin/main
 
   useEffect(() => {
     if (!loading && !user) {
@@ -49,7 +46,6 @@ const Dashboard = () => {
     }
   }, [user, loading, navigate]);
 
-<<<<<<< HEAD
   useEffect(() => {
     if (user) {
       loadUpcoming();
@@ -88,7 +84,8 @@ const Dashboard = () => {
     } catch (err) {
       console.error('Failed to load engagement stats', err);
     }
-=======
+  };
+
   const loadGoals = async () => {
     if (!user) return;
     try {
@@ -110,7 +107,6 @@ const Dashboard = () => {
 
   const toggleComplete = (id: string) => {
     setCompleted((prev) => ({ ...prev, [id]: !prev[id] }));
->>>>>>> origin/main
   };
 
   const handleSignOut = async () => {
@@ -224,15 +220,18 @@ const Dashboard = () => {
               View Analytics
             </button>
           </div>
-<<<<<<< HEAD
-=======
-          
-          {/* Chart placeholder */}
-          <div className="h-64 bg-muted rounded-lg flex items-center justify-center border border-border">
-            <div className="text-center">
-              <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-              <p className="text-muted-foreground">Revenue analytics will appear here</p>
-            </div>
+          <div className="space-y-4">
+            {recentActivity.map((activity, index) => (
+              <div key={index} className="flex items-start space-x-3 p-3 hover:bg-muted rounded-lg transition-colors cursor-pointer" onClick={() => navigate('/engagements')}>
+                <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2"></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground">{activity.action}</p>
+                  <p className="text-sm text-muted-foreground">{activity.company}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </div>
+            ))}
           </div>
         </div>
 
@@ -298,23 +297,7 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-card rounded-lg border border-border p-6">
-          <h3 className="text-lg font-medium text-foreground mb-6">Recent Activity</h3>
->>>>>>> origin/main
-          <div className="space-y-4">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-start space-x-3 p-3 hover:bg-muted rounded-lg transition-colors cursor-pointer" onClick={() => navigate('/engagements')}>
-                <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2"></div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">{activity.action}</p>
-                  <p className="text-sm text-muted-foreground">{activity.company}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </div>
-            ))}
-          </div>
-        </div>
+        
 
         {/* Revenue Trend (compact) */}
         <div className="bg-card rounded-lg border border-border p-6">
@@ -410,7 +393,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-<<<<<<< HEAD
 
 function exportDashboardCSV() {
   const rows = [
@@ -426,5 +408,3 @@ function exportDashboardCSV() {
   const a = document.createElement('a'); a.href = url; a.download = 'dashboard_summary.csv'; a.click();
   URL.revokeObjectURL(url);
 }
-=======
->>>>>>> origin/main
