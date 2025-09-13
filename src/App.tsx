@@ -11,6 +11,8 @@ import Clients from "./pages/Clients";
 import ClientForm from "./pages/ClientForm";
 import Projects from "./pages/Projects";
 import ProjectForm from "./pages/ProjectForm";
+import Revenue from "./pages/Revenue";
+import RevenueForm from "./pages/RevenueForm";
 import Users from "./pages/Users";
 import UserForm from "./pages/UserForm";
 import NotFound from "./pages/NotFound";
@@ -31,9 +33,12 @@ const App = () => (
             <Route path="/clients" element={<Clients />} />
             <Route path="/clients/new" element={<ClientForm />} />
             <Route path="/clients/:id" element={<ClientForm />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/new" element={<ProjectForm />} />
-            <Route path="/projects/:id" element={<ProjectForm />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/new" element={<ProjectForm />} />
+        <Route path="/projects/:id" element={<ProjectForm />} />
+        <Route path="/revenue" element={<Revenue />} />
+        <Route path="/revenue/new" element={<RevenueForm />} />
+        <Route path="/revenue/:id" element={<RevenueForm />} />
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<UserForm />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

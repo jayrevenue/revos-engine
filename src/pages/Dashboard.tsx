@@ -79,7 +79,7 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground">Client engagements</p>
             </div>
             
-            <div className="p-6 border border-border rounded-lg">
+            <div className="p-6 border border-border rounded-lg hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/revenue')}>
               <h3 className="text-xl font-semibold mb-2">Revenue Impact</h3>
               <p className="text-3xl font-bold text-primary">$0</p>
               <p className="text-sm text-muted-foreground">Total tracked outcomes</p>
@@ -114,7 +114,11 @@ const Dashboard = () => {
                 <Button variant="outline" className="w-full justify-start" disabled>
                   Deploy AI Agent
                 </Button>
-                <Button variant="outline" className="w-full justify-start" disabled>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start" 
+                  onClick={() => navigate('/revenue')}
+                >
                   Track Revenue
                 </Button>
               </div>

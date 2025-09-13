@@ -142,6 +142,56 @@ export type Database = {
           },
         ]
       }
+      revenue: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          invoice_date: string | null
+          invoice_number: string | null
+          payment_date: string | null
+          payment_status: string
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          invoice_date?: string | null
+          invoice_number?: string | null
+          payment_date?: string | null
+          payment_status?: string
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          invoice_date?: string | null
+          invoice_number?: string | null
+          payment_date?: string | null
+          payment_status?: string
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revenue_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
