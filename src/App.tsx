@@ -13,6 +13,8 @@ import Projects from "./pages/Projects";
 import ProjectForm from "./pages/ProjectForm";
 import Revenue from "./pages/Revenue";
 import RevenueForm from "./pages/RevenueForm";
+import AIAgents from "./pages/AIAgents";
+import AgentForm from "./pages/AgentForm";
 import Users from "./pages/Users";
 import UserForm from "./pages/UserForm";
 import NotFound from "./pages/NotFound";
@@ -39,6 +41,9 @@ const App = () => (
         <Route path="/revenue" element={<Revenue />} />
         <Route path="/revenue/new" element={<RevenueForm />} />
         <Route path="/revenue/:id" element={<RevenueForm />} />
+        <Route path="/agents" element={<AIAgents />} />
+        <Route path="/agents/new" element={<AgentForm />} />
+        <Route path="/agents/:id" element={<AgentForm />} />
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<UserForm />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
