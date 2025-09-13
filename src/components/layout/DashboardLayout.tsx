@@ -7,6 +7,8 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import { GlobalSearch } from "@/components/search/GlobalSearch";
 import {
   Bell,
   Search,
@@ -107,10 +109,24 @@ const DashboardLayout = ({ children, className }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [searchOpen, setSearchOpen] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Command palette hotkey
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeydown);
+    return () => document.removeEventListener('keydown', handleKeydown);
+  }, []);
 
   // Auto-expand sidebar item that contains current route
   useEffect(() => {
@@ -292,19 +308,18 @@ const DashboardLayout = ({ children, className }: DashboardLayoutProps) => {
               <div className="relative w-96 hidden md:block">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search engagements, clients, agents..."
+                  placeholder="Search or press ⌘K"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  onClick={() => setSearchOpen(true)}
+                  className="pl-10 cursor-pointer"
+                  readOnly
                 />
               </div>
             </div>
 
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" className="relative">
-                <Bell className="h-4 w-4" />
-                <Badge className="absolute -top-1 -right-1 h-2 w-2 p-0 bg-red-500" />
-              </Button>
+              <NotificationCenter />
 
               <ThemeToggle />
 
@@ -325,6 +340,12 @@ const DashboardLayout = ({ children, className }: DashboardLayoutProps) => {
           {children}
         </main>
       </div>
+
+      {/* Global Search Modal */}
+      <GlobalSearch 
+        isOpen={searchOpen} 
+        onClose={() => setSearchOpen(false)} 
+      />
     </div>
   );
 };
