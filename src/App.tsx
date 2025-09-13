@@ -9,6 +9,8 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import ClientForm from "./pages/ClientForm";
+import Projects from "./pages/Projects";
+import ProjectForm from "./pages/ProjectForm";
 import Users from "./pages/Users";
 import UserForm from "./pages/UserForm";
 import NotFound from "./pages/NotFound";
@@ -29,6 +31,9 @@ const App = () => (
             <Route path="/clients" element={<Clients />} />
             <Route path="/clients/new" element={<ClientForm />} />
             <Route path="/clients/:id" element={<ClientForm />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/new" element={<ProjectForm />} />
+            <Route path="/projects/:id" element={<ProjectForm />} />
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<UserForm />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
