@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import Page from "@/components/layout/Page";
 import { ArrowLeft, Send, Bot, User } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -16,13 +17,8 @@ interface Agent {
   role: string;
   description: string;
   status: string;
-  projects: {
-    name: string;
-    clients: {
-      name: string;
-      company: string;
-    };
-  };
+  orgs?: { name: string } | null;
+  engagements?: { name: string } | null;
 }
 
 interface Message {
@@ -51,13 +47,8 @@ const AgentChat = () => {
         .from("ai_agents")
         .select(`
           *,
-          projects (
-            name,
-            clients (
-              name,
-              company
-            )
-          )
+          orgs:org_id ( name ),
+          engagements:engagement_id ( name )
         `)
         .eq("id", id)
         .single();
@@ -140,36 +131,21 @@ const AgentChat = () => {
 
   if (!agent) {
     return (
-      <div className="container mx-auto p-6">
+      <Page title="Agent Chat">
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-      </div>
+      </Page>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <Page
+      title={`Chat with ${agent.name}`}
+      description={`${agent.role} • ${agent.orgs?.name || 'Unassigned Org'}${agent.engagements?.name ? ` – ${agent.engagements.name}` : ''}`}
+    >
       <div className="mb-6">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/agents")}
-          className="mb-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Agents
-        </Button>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Bot className="h-8 w-8 text-primary" />
-            <div>
-              <h1 className="text-3xl font-bold">{agent.name}</h1>
-              <p className="text-muted-foreground">
-                {agent.role} • {agent.projects.clients.company} - {agent.projects.name}
-              </p>
-            </div>
-          </div>
+        <div className="flex items-center justify-end">
           <Badge className={agent.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
             {agent.status}
           </Badge>
@@ -265,7 +241,7 @@ const AgentChat = () => {
           )}
         </CardContent>
       </Card>
-    </div>
+    </Page>
   );
 };
 

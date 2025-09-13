@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { CalendarDays, Clock, Users, Target, Plus, ArrowLeft } from "lucide-react";
+import { CalendarDays, Clock, Users, Target, Plus } from "lucide-react";
+import Page from "@/components/layout/Page";
 import { format } from "date-fns";
 
 const Scheduling = () => {
@@ -81,35 +82,18 @@ const Scheduling = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/dashboard')}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Dashboard
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold">Scheduling</h1>
-                <p className="text-muted-foreground">Manage engagement sessions, sprints, and deliverables</p>
-              </div>
-            </div>
-            
-            <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  Schedule Event
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
+    <Page
+      title="Scheduling"
+      description="Manage engagement sessions, sprints, and deliverables"
+      actions={
+        <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Schedule Event
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle>Schedule New Event</DialogTitle>
                   <DialogDescription>
@@ -191,15 +175,12 @@ const Scheduling = () => {
                     </Button>
                   </div>
                 </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-      </div>
-
+          </DialogContent>
+        </Dialog>
+      }
+    >
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-6">
-        <Tabs defaultValue="calendar" className="space-y-6">
+      <Tabs defaultValue="calendar" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="calendar" className="flex items-center gap-2">
               <CalendarDays className="h-4 w-4" />
@@ -376,8 +357,7 @@ const Scheduling = () => {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
-    </div>
+    </Page>
   );
 };
 

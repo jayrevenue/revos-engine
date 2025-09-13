@@ -19,16 +19,29 @@ import {
   Bot,
   FileText,
   Briefcase,
-  Building
+  Building,
+  RefreshCcw,
+  CheckCircle2,
+  Clock
 } from 'lucide-react';
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+<<<<<<< HEAD
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
   const [engagementStats, setEngagementStats] = useState<{active:number; paused:number; complete:number}>({active:0, paused:0, complete:0});
+=======
+  const [goals, setGoals] = useState<any[]>([]);
+  const [goalsLoading, setGoalsLoading] = useState(false);
+  const [completed, setCompleted] = useState<Record<string, boolean>>({});
+>>>>>>> origin/main
 
   useEffect(() => {
     if (!loading && !user) {
@@ -36,6 +49,7 @@ const Dashboard = () => {
     }
   }, [user, loading, navigate]);
 
+<<<<<<< HEAD
   useEffect(() => {
     if (user) {
       loadUpcoming();
@@ -74,6 +88,29 @@ const Dashboard = () => {
     } catch (err) {
       console.error('Failed to load engagement stats', err);
     }
+=======
+  const loadGoals = async () => {
+    if (!user) return;
+    try {
+      setGoalsLoading(true);
+      const { data, error } = await supabase.functions.invoke('todays-goals', { body: {} });
+      if (error) throw error;
+      setGoals(data?.tasks || []);
+    } catch (err: any) {
+      console.error('Failed to load goals', err);
+      toast({ title: 'Could not generate goals', description: err.message || 'Try again shortly', variant: 'destructive' });
+    } finally {
+      setGoalsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) loadGoals();
+  }, [user]);
+
+  const toggleComplete = (id: string) => {
+    setCompleted((prev) => ({ ...prev, [id]: !prev[id] }));
+>>>>>>> origin/main
   };
 
   const handleSignOut = async () => {
@@ -187,6 +224,83 @@ const Dashboard = () => {
               View Analytics
             </button>
           </div>
+<<<<<<< HEAD
+=======
+          
+          {/* Chart placeholder */}
+          <div className="h-64 bg-muted rounded-lg flex items-center justify-center border border-border">
+            <div className="text-center">
+              <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
+              <p className="text-muted-foreground">Revenue analytics will appear here</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Today’s Goals (AI-generated) */}
+        <div className="bg-card rounded-lg border border-border p-0 overflow-hidden">
+          <CardHeader className="p-6 pb-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Today’s Goals</CardTitle>
+                <CardDescription>AI-generated priorities to stay on track</CardDescription>
+              </div>
+              <Button variant="outline" size="sm" onClick={loadGoals} disabled={goalsLoading}>
+                <RefreshCcw className={`w-4 h-4 mr-2 ${goalsLoading ? 'animate-spin' : ''}`} />
+                {goalsLoading ? 'Generating' : 'Regenerate'}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ScrollArea className="max-h-80">
+              <div className="divide-y">
+                {goalsLoading && (
+                  <div className="p-4 text-sm text-muted-foreground">Analyzing your data and generating goals…</div>
+                )}
+                {!goalsLoading && goals.length === 0 && (
+                  <div className="p-6 text-sm text-muted-foreground">No goals generated. Try again in a moment.</div>
+                )}
+                {!goalsLoading && goals.map((task, idx) => {
+                  const done = !!completed[task.id || idx];
+                  const priority = String(task.priority || 'medium').toLowerCase();
+                  const priColor = priority === 'critical' ? 'bg-red-500' : priority === 'high' ? 'bg-orange-500' : priority === 'low' ? 'bg-green-500' : 'bg-yellow-500';
+                  const type = String(task.type || 'general');
+                  const due = task.due_date ? new Date(task.due_date) : null;
+                  return (
+                    <div key={task.id || idx} className="p-4 flex items-start gap-3">
+                      <button
+                        onClick={() => toggleComplete(task.id || String(idx))}
+                        className={`mt-1 rounded-full border w-5 h-5 flex items-center justify-center ${done ? 'bg-primary text-primary-foreground' : 'bg-background'}`}
+                        aria-label="Mark complete"
+                      >
+                        {done ? <CheckCircle2 className="w-4 h-4" /> : <div className="w-2 h-2 rounded-full bg-muted-foreground" />}
+                      </button>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className={`inline-block w-2 h-2 rounded-full ${priColor}`}></span>
+                          <p className={`font-medium ${done ? 'line-through text-muted-foreground' : ''}`}>{task.title}</p>
+                        </div>
+                        {task.reason && (
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{task.reason}</p>
+                        )}
+                        <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                          <Badge variant="outline">{type}</Badge>
+                          {due && (
+                            <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> Due {due.toLocaleDateString()}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-card rounded-lg border border-border p-6">
+          <h3 className="text-lg font-medium text-foreground mb-6">Recent Activity</h3>
+>>>>>>> origin/main
           <div className="space-y-4">
             {recentActivity.map((activity, index) => (
               <div key={index} className="flex items-start space-x-3 p-3 hover:bg-muted rounded-lg transition-colors cursor-pointer" onClick={() => navigate('/engagements')}>
@@ -296,6 +410,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+<<<<<<< HEAD
 
 function exportDashboardCSV() {
   const rows = [
@@ -311,3 +426,5 @@ function exportDashboardCSV() {
   const a = document.createElement('a'); a.href = url; a.download = 'dashboard_summary.csv'; a.click();
   URL.revokeObjectURL(url);
 }
+=======
+>>>>>>> origin/main
