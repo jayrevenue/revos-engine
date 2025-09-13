@@ -11,6 +11,7 @@ import { Plus, Search, Target, TrendingUp, DollarSign, Zap, Bot, BookOpen, Code,
 import { useToast } from '@/hooks/use-toast';
 import DocumentUpload from '@/components/documents/DocumentUpload';
 import DocumentViewer from '@/components/documents/DocumentViewer';
+import Page from "@/components/layout/Page";
 
 interface PromptLibraryItem {
   id: string;
@@ -192,7 +193,7 @@ const IPLibrary = () => {
 
   if (showUpload) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <Page title="IP Library">
         <DocumentUpload 
           onUploadComplete={() => {
             setShowUpload(false);
@@ -200,13 +201,13 @@ const IPLibrary = () => {
           }}
           onCancel={() => setShowUpload(false)}
         />
-      </div>
+      </Page>
     );
   }
 
   if (selectedDocument) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <Page title="IP Library">
         <DocumentViewer 
           document={selectedDocument}
           onBack={() => setSelectedDocument(null)}
@@ -239,35 +240,31 @@ const IPLibrary = () => {
             }
           }}
         />
-      </div>
+      </Page>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">IP Library</h1>
-            <p className="text-muted-foreground mt-2">
-              Manage prompts, playbooks, frameworks, documents, and RevOS intellectual property
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate('/library/prompts/new')}>
-              <Plus className="w-4 h-4 mr-2" />
-              New Prompt
-            </Button>
-            <Button variant="outline" onClick={() => setShowUpload(true)}>
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Document
-            </Button>
-            <Button onClick={() => navigate('/library/playbooks/new')}>
-              <Plus className="w-4 h-4 mr-2" />
-              New Playbook
-            </Button>
-          </div>
-        </div>
+    <Page
+      title="IP Library"
+      description="Manage prompts, playbooks, frameworks, documents, and RevOS intellectual property"
+      actions={
+        <>
+          <Button variant="outline" onClick={() => navigate('/library/prompts/new')}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Prompt
+          </Button>
+          <Button variant="outline" onClick={() => setShowUpload(true)}>
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Document
+          </Button>
+          <Button onClick={() => navigate('/library/playbooks/new')}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Playbook
+          </Button>
+        </>
+      }
+    >
 
         <div className="mb-6">
           <div className="relative">
@@ -588,8 +585,7 @@ const IPLibrary = () => {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
-    </div>
+    </Page>
   );
 };
 

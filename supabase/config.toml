@@ -54,3 +54,6 @@ verify_jwt = false
 
 [functions.agent-chat]
 verify_jwt = true
+
+[functions.todays-goals]
+verify_jwt = true
