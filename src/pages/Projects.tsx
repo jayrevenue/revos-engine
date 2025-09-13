@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Plus, FolderOpen, Edit, Trash2 } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 
 type Project = Tables<'projects'>;
 type Client = Tables<'clients'>;
@@ -147,26 +148,19 @@ const Projects = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate('/dashboard')}>
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 className="text-2xl font-bold">Project Management</h1>
-          </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold tracking-tight">Projects</h1>
           <Button onClick={() => navigate('/projects/new')}>
             <Plus className="h-4 w-4 mr-2" />
             New Project
           </Button>
         </div>
-      </header>
-      
-      <main className="p-6">
-        <div className="max-w-7xl mx-auto">
+
+        <div className="space-y-6">
           <div className="mb-6">
-            <div className="flex items-center gap-2 text-muted-foreground mb-2">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <FolderOpen className="h-4 w-4" />
               <span>{projects.length} total projects</span>
             </div>
@@ -258,8 +252,8 @@ const Projects = () => {
             </Card>
           )}
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 

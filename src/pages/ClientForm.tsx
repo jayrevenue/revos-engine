@@ -95,9 +95,39 @@ const ClientForm = () => {
     }
   };
 
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter the client's name.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!formData.company.trim()) {
+      toast({
+        title: "Validation Error", 
+        description: "Please enter the company name.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    if (!validateForm()) return;
 
     try {
       setIsLoading(true);

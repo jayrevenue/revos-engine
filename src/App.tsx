@@ -20,6 +20,9 @@ import AgentForm from "./pages/AgentForm";
 import AgentChat from "./pages/AgentChat";
 import Users from "./pages/Users";
 import UserForm from "./pages/UserForm";
+import PromptForm from "./pages/PromptForm";
+import PlaybookForm from "./pages/PlaybookForm";
+import FrameworkForm from "./pages/FrameworkForm";
 import NotFound from "./pages/NotFound";
 import Engagements from "./pages/Engagements";
 import EngagementDetail from "./pages/EngagementDetail";
@@ -68,6 +71,7 @@ const App = () => (
               <Route path="/clients" element={<DashboardLayout><Clients /></DashboardLayout>} />
               <Route path="/clients/new" element={<DashboardLayout><ClientForm /></DashboardLayout>} />
               <Route path="/clients/:id" element={<DashboardLayout><ClientForm /></DashboardLayout>} />
+              <Route path="/projects" element={<DashboardLayout><Projects /></DashboardLayout>} />
               <Route path="/projects/new" element={<DashboardLayout><ProjectForm /></DashboardLayout>} />
               <Route path="/projects/:id" element={<DashboardLayout><ProjectForm /></DashboardLayout>} />
               <Route path="/revenue" element={<DashboardLayout><Revenue /></DashboardLayout>} />
@@ -78,7 +82,14 @@ const App = () => (
               <Route path="/agents/:id" element={<DashboardLayout><AgentForm /></DashboardLayout>} />
               <Route path="/agents/:id/chat" element={<DashboardLayout><AgentChat /></DashboardLayout>} />
               <Route path="/users" element={<DashboardLayout><Users /></DashboardLayout>} />
+              <Route path="/users/new" element={<DashboardLayout><UserForm /></DashboardLayout>} />
               <Route path="/users/:id" element={<DashboardLayout><UserForm /></DashboardLayout>} />
+              <Route path="/library/prompts/new" element={<DashboardLayout><PromptForm /></DashboardLayout>} />
+              <Route path="/library/prompts/:id" element={<DashboardLayout><PromptForm /></DashboardLayout>} />
+              <Route path="/library/playbooks/new" element={<DashboardLayout><PlaybookForm /></DashboardLayout>} />
+              <Route path="/library/playbooks/:id" element={<DashboardLayout><PlaybookForm /></DashboardLayout>} />
+              <Route path="/library/frameworks/new" element={<DashboardLayout><FrameworkForm /></DashboardLayout>} />
+              <Route path="/library/frameworks/:id" element={<DashboardLayout><FrameworkForm /></DashboardLayout>} />
               
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />

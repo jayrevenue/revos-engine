@@ -104,9 +104,39 @@ const ProjectForm = () => {
     }
   };
 
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter the project name.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!formData.client_id) {
+      toast({
+        title: "Validation Error",
+        description: "Please select a client.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (formData.start_date && formData.end_date && formData.start_date > formData.end_date) {
+      toast({
+        title: "Validation Error",
+        description: "End date must be after start date.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    if (!validateForm()) return;
 
     setIsLoading(true);
     try {
