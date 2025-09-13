@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/hooks/useSettings";
@@ -40,9 +41,12 @@ const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'super_admin' | 'rev_scientist' | 'qa'>('rev_scientist');
+  const [gcConnected, setGcConnected] = useState(false);
+  const [notionConnected, setNotionConnected] = useState(false);
 
   const {
     loading: settingsLoading,
@@ -62,6 +66,27 @@ const Settings = () => {
     updateUserRole,
     inviteUser,
   } = useUserManagement();
+
+  // Determine if current user is super_admin for gating admin-only actions
+  React.useEffect(() => {
+    const checkRole = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
+      setIsSuperAdmin((data?.role || '') === 'super_admin');
+    };
+    checkRole();
+  }, [user]);
+
+  // Apply saved theme on load
+  React.useEffect(() => {
+    if (preferences?.theme) {
+      setTheme(preferences.theme);
+    }
+  }, [preferences?.theme, setTheme]);
 
   // Form for profile
   const profileForm = useForm({
@@ -100,6 +125,20 @@ const Settings = () => {
       orgForm.reset(orgSettings);
     }
   }, [orgSettings, orgForm]);
+
+  // Load integration status for the current user
+  React.useEffect(() => {
+    const loadIntegrations = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from('calendar_integrations')
+        .select('provider,is_active')
+        .eq('user_id', user.id);
+      setGcConnected(!!data?.find(r => r.provider === 'google_calendar' && r.is_active));
+      setNotionConnected(!!data?.find(r => r.provider === 'notion' && r.is_active));
+    };
+    loadIntegrations();
+  }, [user]);
 
   const handleInviteUser = async () => {
     if (!inviteEmail) return;
@@ -172,6 +211,10 @@ const Settings = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <form onSubmit={orgForm.handleSubmit(async (data) => {
+                  if (!isSuperAdmin) {
+                    toast({ title: 'Admin required', description: 'Only super admins can update organization settings.', variant: 'destructive' });
+                    return;
+                  }
                   await saveOrgSettings(data);
                 })}>
                   <div className="grid grid-cols-2 gap-4">
@@ -237,11 +280,11 @@ const Settings = () => {
                   
                   <Button 
                     type="submit" 
-                    disabled={settingsLoading}
+                    disabled={settingsLoading || !isSuperAdmin}
                     className="flex items-center gap-2"
                   >
                     <Save className="h-4 w-4" />
-                    {settingsLoading ? 'Saving...' : 'Save Changes'}
+                    {!isSuperAdmin ? 'Admin only' : (settingsLoading ? 'Saving...' : 'Save Changes')}
                   </Button>
                 </form>
               </CardContent>
@@ -288,13 +331,17 @@ const Settings = () => {
                 
                 <Button 
                   onClick={orgForm.handleSubmit(async (data) => {
+                    if (!isSuperAdmin) {
+                      toast({ title: 'Admin required', description: 'Only super admins can update platform configuration.', variant: 'destructive' });
+                      return;
+                    }
                     await saveOrgSettings(data);
                   })}
-                  disabled={settingsLoading}
+                  disabled={settingsLoading || !isSuperAdmin}
                   className="flex items-center gap-2"
                 >
                   <Save className="h-4 w-4" />
-                  {settingsLoading ? 'Saving...' : 'Save Configuration'}
+                  {!isSuperAdmin ? 'Admin only' : (settingsLoading ? 'Saving...' : 'Save Configuration')}
                 </Button>
               </CardContent>
             </Card>
@@ -647,11 +694,11 @@ const Settings = () => {
               <CardContent className="space-y-4">
                 <div className="space-y-4">
                   {[
-                    { name: 'Google Calendar', status: 'Connected', description: 'Sync scheduling events' },
-                    { name: 'Notion', status: 'Not Connected', description: 'Export reports and documentation' },
-                    { name: 'Slack', status: 'Connected', description: 'Send notifications to team channels' },
-                    { name: 'Microsoft Teams', status: 'Not Connected', description: 'Video conferencing integration' },
-                    { name: 'Salesforce', status: 'Not Connected', description: 'CRM data synchronization' }
+                    { key: 'google_calendar', name: 'Google Calendar', status: gcConnected ? 'Connected' : 'Not Connected', description: 'Sync scheduling events' },
+                    { key: 'notion', name: 'Notion', status: notionConnected ? 'Connected' : 'Not Connected', description: 'Export reports and documentation' },
+                    { key: 'slack', name: 'Slack', status: 'Not Connected', description: 'Send notifications to team channels' },
+                    { key: 'msteams', name: 'Microsoft Teams', status: 'Not Connected', description: 'Video conferencing integration' },
+                    { key: 'salesforce', name: 'Salesforce', status: 'Not Connected', description: 'CRM data synchronization' }
                   ].map((integration) => (
                     <div key={integration.name} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center gap-3">
@@ -665,7 +712,17 @@ const Settings = () => {
                         <Badge className={integration.status === 'Connected' ? 'bg-green-500/10 text-green-600' : 'bg-gray-500/10 text-gray-600'}>
                           {integration.status}
                         </Badge>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            if (integration.key === 'google_calendar' || integration.key === 'notion') {
+                              toast({ title: 'Integration', description: 'OAuth flow not yet implemented in this build.' });
+                            } else {
+                              toast({ title: 'Coming soon', description: `${integration.name} integration is not available yet.` });
+                            }
+                          }}
+                        >
                           {integration.status === 'Connected' ? 'Configure' : 'Connect'}
                         </Button>
                       </div>
