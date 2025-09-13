@@ -357,7 +357,6 @@ const Scheduling = () => {
             </div>
           </TabsContent>
         </Tabs>
-      </Tabs>
     </Page>
   );
 };
