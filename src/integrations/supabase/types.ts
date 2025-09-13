@@ -111,10 +111,12 @@ export type Database = {
           created_at: string
           created_by: string
           description: string | null
+          engagement_id: string | null
           id: string
           memory_config: Json | null
           model: string
           name: string
+          org_id: string | null
           project_id: string | null
           role: string
           status: string
@@ -127,10 +129,12 @@ export type Database = {
           created_at?: string
           created_by: string
           description?: string | null
+          engagement_id?: string | null
           id?: string
           memory_config?: Json | null
           model?: string
           name: string
+          org_id?: string | null
           project_id?: string | null
           role: string
           status?: string
@@ -143,10 +147,12 @@ export type Database = {
           created_at?: string
           created_by?: string
           description?: string | null
+          engagement_id?: string | null
           id?: string
           memory_config?: Json | null
           model?: string
           name?: string
+          org_id?: string | null
           project_id?: string | null
           role?: string
           status?: string
@@ -156,6 +162,20 @@ export type Database = {
           usage_stats?: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: "ai_agents_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agents_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ai_agents_project_id_fkey"
             columns: ["project_id"]
@@ -210,6 +230,167 @@ export type Database = {
           status?: string
           updated_at?: string
           website?: string | null
+        }
+        Relationships: []
+      }
+      dashboards: {
+        Row: {
+          created_at: string | null
+          data: Json | null
+          engagement_id: string | null
+          id: string
+          org_id: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data?: Json | null
+          engagement_id?: string | null
+          id?: string
+          org_id: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json | null
+          engagement_id?: string | null
+          id?: string
+          org_id?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dashboards_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dashboards_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      engagements: {
+        Row: {
+          budget: number | null
+          created_at: string | null
+          created_by: string
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          org_id: string
+          start_date: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          budget?: number | null
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          org_id: string
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          budget?: number | null
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          org_id?: string
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engagements_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      logs: {
+        Row: {
+          agent_id: string | null
+          created_at: string | null
+          direction: string
+          engagement_id: string | null
+          id: string
+          message: string | null
+          metadata: Json | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string | null
+          direction: string
+          engagement_id?: string | null
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string | null
+          direction?: string
+          engagement_id?: string | null
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "logs_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logs_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "engagements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orgs: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -347,19 +528,19 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          role: Database["public"]["Enums"]["user_role"]
+          role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          role: Database["public"]["Enums"]["user_role"]
+          role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          role?: Database["public"]["Enums"]["user_role"]
+          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: []
@@ -370,14 +551,17 @@ export type Database = {
     }
     Functions: {
       has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["user_role"]
-          _user_id: string
-        }
+        Args:
+          | { _role: Database["public"]["Enums"]["app_role"]; _user_id: string }
+          | {
+              _role: Database["public"]["Enums"]["user_role"]
+              _user_id: string
+            }
         Returns: boolean
       }
     }
     Enums: {
+      app_role: "super_admin" | "rev_scientist" | "qa"
       user_role: "admin" | "scientist" | "analyst"
     }
     CompositeTypes: {
@@ -506,6 +690,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["super_admin", "rev_scientist", "qa"],
       user_role: ["admin", "scientist", "analyst"],
     },
   },
