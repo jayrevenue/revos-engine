@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,9 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useSettings } from "@/hooks/useSettings";
+import { useUserManagement } from "@/hooks/useUserManagement";
+import { useForm } from "react-hook-form";
+import { useTheme } from "next-themes";
 import { 
   Settings as SettingsIcon, 
   User, 
@@ -25,27 +30,85 @@ import {
   Save,
   Trash2,
   Plus,
-  X
+  X,
+  Mail,
+  Edit
 } from "lucide-react";
 
 const Settings = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('general');
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState<'super_admin' | 'rev_scientist' | 'qa'>('rev_scientist');
 
-  // Mock user roles for permissions
-  const mockUserRoles = [
-    { id: '1', email: 'admin@trs.com', role: 'Super Admin', status: 'Active' },
-    { id: '2', email: 'analyst@trs.com', role: 'Analyst', status: 'Active' },
-    { id: '3', email: 'manager@trs.com', role: 'Manager', status: 'Pending' },
-  ];
+  const {
+    loading: settingsLoading,
+    profile,
+    notifications,
+    preferences,
+    orgSettings,
+    saveProfile,
+    saveNotifications,
+    savePreferences,
+    saveOrgSettings,
+  } = useSettings();
 
-  const handleSave = (section: string) => {
-    toast({
-      title: "Settings Updated",
-      description: `${section} settings have been saved successfully.`,
-    });
+  const {
+    users,
+    loading: usersLoading,
+    updateUserRole,
+    inviteUser,
+  } = useUserManagement();
+
+  // Form for profile
+  const profileForm = useForm({
+    defaultValues: {
+      full_name: profile?.full_name || '',
+      email: profile?.email || '',
+    },
+  });
+
+  // Form for organization
+  const orgForm = useForm({
+    defaultValues: {
+      name: orgSettings?.name || 'TRS RevOS',
+      domain: orgSettings?.domain || 'trs.com',
+      description: orgSettings?.description || '',
+      timezone: orgSettings?.timezone || 'utc-5',
+      currency: orgSettings?.currency || 'usd',
+      ai_auto_learning: orgSettings?.ai_auto_learning ?? true,
+      real_time_analytics: orgSettings?.real_time_analytics ?? true,
+      external_sharing: orgSettings?.external_sharing || false,
+    },
+  });
+
+  // Update forms when data loads
+  React.useEffect(() => {
+    if (profile) {
+      profileForm.reset({
+        full_name: profile.full_name || '',
+        email: profile.email || '',
+      });
+    }
+  }, [profile, profileForm]);
+
+  React.useEffect(() => {
+    if (orgSettings) {
+      orgForm.reset(orgSettings);
+    }
+  }, [orgSettings, orgForm]);
+
+  const handleInviteUser = async () => {
+    if (!inviteEmail) return;
+    
+    const success = await inviteUser(inviteEmail, inviteRole);
+    if (success) {
+      setInviteEmail('');
+      setInviteRole('rev_scientist');
+    }
   };
 
   if (!user) {
@@ -117,59 +180,79 @@ const Settings = () => {
                 <CardDescription>Configure your organization's basic information</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="org-name">Organization Name</Label>
-                    <Input id="org-name" defaultValue="TRS RevOS" />
+                <form onSubmit={orgForm.handleSubmit(async (data) => {
+                  await saveOrgSettings(data);
+                })}>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="org-name">Organization Name</Label>
+                      <Input 
+                        id="org-name" 
+                        {...orgForm.register('name')}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="org-domain">Domain</Label>
+                      <Input 
+                        id="org-domain" 
+                        {...orgForm.register('domain')}
+                      />
+                    </div>
                   </div>
+                  
                   <div>
-                    <Label htmlFor="org-domain">Domain</Label>
-                    <Input id="org-domain" defaultValue="trs.com" />
+                    <Label htmlFor="org-description">Description</Label>
+                    <Textarea 
+                      id="org-description" 
+                      {...orgForm.register('description')}
+                    />
                   </div>
-                </div>
-                
-                <div>
-                  <Label htmlFor="org-description">Description</Label>
-                  <Textarea 
-                    id="org-description" 
-                    defaultValue="Leading revenue optimization consulting firm specializing in digital transformation and operational excellence."
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="timezone">Default Timezone</Label>
-                    <Select defaultValue="utc-5">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="utc-8">Pacific Time (UTC-8)</SelectItem>
-                        <SelectItem value="utc-6">Central Time (UTC-6)</SelectItem>
-                        <SelectItem value="utc-5">Eastern Time (UTC-5)</SelectItem>
-                        <SelectItem value="utc">UTC</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="timezone">Default Timezone</Label>
+                      <Select 
+                        value={orgForm.watch('timezone')} 
+                        onValueChange={(value) => orgForm.setValue('timezone', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="utc-8">Pacific Time (UTC-8)</SelectItem>
+                          <SelectItem value="utc-6">Central Time (UTC-6)</SelectItem>
+                          <SelectItem value="utc-5">Eastern Time (UTC-5)</SelectItem>
+                          <SelectItem value="utc">UTC</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="currency">Default Currency</Label>
+                      <Select 
+                        value={orgForm.watch('currency')} 
+                        onValueChange={(value) => orgForm.setValue('currency', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="usd">USD ($)</SelectItem>
+                          <SelectItem value="eur">EUR (€)</SelectItem>
+                          <SelectItem value="gbp">GBP (£)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="currency">Default Currency</Label>
-                    <Select defaultValue="usd">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="usd">USD ($)</SelectItem>
-                        <SelectItem value="eur">EUR (€)</SelectItem>
-                        <SelectItem value="gbp">GBP (£)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <Button onClick={() => handleSave('Organization')} className="flex items-center gap-2">
-                  <Save className="h-4 w-4" />
-                  Save Changes
-                </Button>
+                  
+                  <Button 
+                    type="submit" 
+                    disabled={settingsLoading}
+                    className="flex items-center gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    {settingsLoading ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
 
@@ -184,7 +267,10 @@ const Settings = () => {
                     <Label>AI Agent Auto-learning</Label>
                     <p className="text-sm text-muted-foreground">Allow agents to learn from conversations automatically</p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={orgForm.watch('ai_auto_learning')}
+                    onCheckedChange={(checked) => orgForm.setValue('ai_auto_learning', checked)}
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -192,7 +278,10 @@ const Settings = () => {
                     <Label>Real-time Analytics</Label>
                     <p className="text-sm text-muted-foreground">Enable real-time dashboard updates</p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={orgForm.watch('real_time_analytics')}
+                    onCheckedChange={(checked) => orgForm.setValue('real_time_analytics', checked)}
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -200,12 +289,21 @@ const Settings = () => {
                     <Label>External Sharing</Label>
                     <p className="text-sm text-muted-foreground">Allow dashboard sharing with external stakeholders</p>
                   </div>
-                  <Switch />
+                  <Switch 
+                    checked={orgForm.watch('external_sharing')}
+                    onCheckedChange={(checked) => orgForm.setValue('external_sharing', checked)}
+                  />
                 </div>
                 
-                <Button onClick={() => handleSave('Platform')} className="flex items-center gap-2">
+                <Button 
+                  onClick={orgForm.handleSubmit(async (data) => {
+                    await saveOrgSettings(data);
+                  })}
+                  disabled={settingsLoading}
+                  className="flex items-center gap-2"
+                >
                   <Save className="h-4 w-4" />
-                  Save Configuration
+                  {settingsLoading ? 'Saving...' : 'Save Configuration'}
                 </Button>
               </CardContent>
             </Card>
@@ -219,39 +317,37 @@ const Settings = () => {
                 <CardDescription>Update your personal profile information</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="first-name">First Name</Label>
-                    <Input id="first-name" defaultValue="John" />
+                <form onSubmit={profileForm.handleSubmit(async (data) => {
+                  await saveProfile(data);
+                })}>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="full-name">Full Name</Label>
+                      <Input 
+                        id="full-name" 
+                        {...profileForm.register('full_name')}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        {...profileForm.register('email')}
+                        disabled
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="last-name">Last Name</Label>
-                    <Input id="last-name" defaultValue="Doe" />
-                  </div>
-                </div>
-                
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" defaultValue={user.email || ''} />
-                </div>
-                
-                <div>
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" defaultValue="+1 (555) 123-4567" />
-                </div>
-                
-                <div>
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea 
-                    id="bio" 
-                    placeholder="Tell us about yourself and your role at TRS..."
-                  />
-                </div>
-                
-                <Button onClick={() => handleSave('Profile')} className="flex items-center gap-2">
-                  <Save className="h-4 w-4" />
-                  Update Profile
-                </Button>
+                  
+                  <Button 
+                    type="submit" 
+                    disabled={settingsLoading}
+                    className="flex items-center gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    {settingsLoading ? 'Saving...' : 'Update Profile'}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
 
@@ -274,7 +370,12 @@ const Settings = () => {
                   <Switch />
                 </div>
                 
-                <Button onClick={() => handleSave('Security')} className="flex items-center gap-2">
+                <Button onClick={() => {
+                  toast({
+                    title: "Security Updated",
+                    description: "Security settings have been saved successfully.",
+                  });
+                }} className="flex items-center gap-2">
                   <Save className="h-4 w-4" />
                   Save Security Settings
                 </Button>
@@ -290,37 +391,77 @@ const Settings = () => {
                 <CardDescription>Manage user roles and permissions</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-sm font-medium">Team Members</h4>
-                  <Button size="sm" className="flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
-                    Invite User
-                  </Button>
-                </div>
-                
-                <div className="space-y-3">
-                  {mockUserRoles.map((user) => (
-                    <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">{user.email}</p>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline">{user.role}</Badge>
-                            <Badge className={user.status === 'Active' ? 'bg-green-500/10 text-green-600' : 'bg-yellow-500/10 text-yellow-600'}>
-                              {user.status}
-                            </Badge>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-sm font-medium">Team Members</h4>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Email address"
+                        value={inviteEmail}
+                        onChange={(e) => setInviteEmail(e.target.value)}
+                        className="w-48"
+                      />
+                      <Select value={inviteRole} onValueChange={(value: any) => setInviteRole(value)}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="super_admin">Super Admin</SelectItem>
+                          <SelectItem value="rev_scientist">Rev Scientist</SelectItem>
+                          <SelectItem value="qa">QA</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button 
+                        size="sm" 
+                        onClick={handleInviteUser}
+                        disabled={!inviteEmail || usersLoading}
+                        className="flex items-center gap-2"
+                      >
+                        <Mail className="h-4 w-4" />
+                        Invite
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {usersLoading ? (
+                      <div className="text-center py-4">Loading users...</div>
+                    ) : (
+                      users.map((user) => (
+                        <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <div>
+                              <p className="font-medium">{user.email}</p>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="capitalize">
+                                  {user.role.replace('_', ' ')}
+                                </Badge>
+                                {user.full_name && (
+                                  <span className="text-sm text-muted-foreground">{user.full_name}</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Select 
+                              value={user.role} 
+                              onValueChange={(newRole: any) => updateUserRole(user.id, newRole)}
+                            >
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="super_admin">Super Admin</SelectItem>
+                                <SelectItem value="rev_scientist">Rev Scientist</SelectItem>
+                                <SelectItem value="qa">QA</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">Edit</Button>
-                        <Button variant="outline" size="sm">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                      ))
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -357,7 +498,12 @@ const Settings = () => {
                   ))}
                 </div>
                 
-                <Button onClick={() => handleSave('Permissions')} className="flex items-center gap-2">
+                <Button onClick={() => {
+                  toast({
+                    title: "Permissions Updated",
+                    description: "Role permissions have been saved successfully.",
+                  });
+                }} className="flex items-center gap-2">
                   <Save className="h-4 w-4" />
                   Save Permissions
                 </Button>
@@ -373,39 +519,48 @@ const Settings = () => {
                 <CardDescription>Choose what notifications you want to receive</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Email Notifications</Label>
-                      <p className="text-sm text-muted-foreground">Receive email updates for important events</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium">Event Types</h4>
-                    {[
-                      'New engagement created',
-                      'Deliverable deadline approaching',
-                      'AI agent conversation completed',
-                      'Analytics report ready',
-                      'Team member invited',
-                      'System maintenance'
-                    ].map((notification) => (
-                      <div key={notification} className="flex items-center justify-between">
-                        <span className="text-sm">{notification}</span>
-                        <Switch defaultChecked />
+                {notifications ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label>Email Notifications</Label>
+                        <p className="text-sm text-muted-foreground">Receive email updates for important events</p>
                       </div>
-                    ))}
+                      <Switch 
+                        checked={notifications.email_notifications}
+                        onCheckedChange={(checked) => {
+                          saveNotifications({ email_notifications: checked });
+                        }}
+                      />
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium">Event Types</h4>
+                      {[
+                        { key: 'new_engagement', label: 'New engagement created' },
+                        { key: 'deliverable_deadline', label: 'Deliverable deadline approaching' },
+                        { key: 'ai_conversation_completed', label: 'AI agent conversation completed' },
+                        { key: 'analytics_report_ready', label: 'Analytics report ready' },
+                        { key: 'team_member_invited', label: 'Team member invited' },
+                        { key: 'system_maintenance', label: 'System maintenance' }
+                      ].map((notification) => (
+                        <div key={notification.key} className="flex items-center justify-between">
+                          <span className="text-sm">{notification.label}</span>
+                          <Switch 
+                            checked={notifications[notification.key as keyof typeof notifications] as boolean}
+                            onCheckedChange={(checked) => {
+                              saveNotifications({ [notification.key]: checked });
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                
-                <Button onClick={() => handleSave('Notifications')} className="flex items-center gap-2">
-                  <Save className="h-4 w-4" />
-                  Save Preferences
-                </Button>
+                ) : (
+                  <div className="text-center py-4">Loading preferences...</div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -418,54 +573,76 @@ const Settings = () => {
                 <CardDescription>Customize the look and feel of your platform</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Theme Toggle</Label>
+                    <p className="text-sm text-muted-foreground">Switch between light and dark themes</p>
+                  </div>
+                  <ThemeToggle />
+                </div>
+                
+                <Separator />
+                
                 <div>
-                  <Label>Theme</Label>
+                  <Label>Theme Preference</Label>
                   <div className="grid grid-cols-3 gap-3 mt-2">
-                    {['Light', 'Dark', 'System'].map((theme) => (
-                      <div key={theme} className="border rounded-lg p-3 cursor-pointer hover:bg-muted">
-                        <div className="text-center">
-                          <div className={`w-full h-8 rounded mb-2 ${
-                            theme === 'Light' ? 'bg-white border' :
-                            theme === 'Dark' ? 'bg-gray-900' : 'bg-gradient-to-r from-white to-gray-900'
-                          }`}></div>
-                          <span className="text-sm">{theme}</span>
-                        </div>
+                    {['light', 'dark', 'system'].map((themeOption) => (
+                      <Button
+                        key={themeOption}
+                        variant={theme === themeOption ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setTheme(themeOption);
+                          if (preferences) {
+                            savePreferences({ theme: themeOption });
+                          }
+                        }}
+                        className="capitalize"
+                      >
+                        {themeOption}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                
+                {preferences && (
+                  <>
+                    <div>
+                      <Label>Accent Color</Label>
+                      <div className="grid grid-cols-4 gap-3 mt-2">
+                        {['orange', 'blue', 'green', 'purple'].map((color) => (
+                          <Button
+                            key={color}
+                            variant={preferences.accent_color === color ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => savePreferences({ accent_color: color })}
+                            className="capitalize"
+                          >
+                            {color}
+                          </Button>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <Label>Accent Color</Label>
-                  <div className="grid grid-cols-8 gap-2 mt-2">
-                    {['blue', 'green', 'purple', 'red', 'orange', 'yellow', 'pink', 'gray'].map((color) => (
-                      <div 
-                        key={color} 
-                        className={`w-8 h-8 rounded-full cursor-pointer bg-${color}-500`}
-                      ></div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <Label>Layout Density</Label>
-                  <Select defaultValue="comfortable">
-                    <SelectTrigger className="mt-2">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="compact">Compact</SelectItem>
-                      <SelectItem value="comfortable">Comfortable</SelectItem>
-                      <SelectItem value="spacious">Spacious</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <Button onClick={() => handleSave('Appearance')} className="flex items-center gap-2">
-                  <Save className="h-4 w-4" />
-                  Save Appearance
-                </Button>
-              </CardContent>
+                    </div>
+                    
+                    <div>
+                      <Label>Layout Density</Label>
+                      <div className="grid grid-cols-3 gap-3 mt-2">
+                        {['compact', 'comfortable', 'spacious'].map((density) => (
+                          <Button
+                            key={density}
+                            variant={preferences.layout_density === density ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => savePreferences({ layout_density: density })}
+                            className="capitalize"
+                          >
+                            {density}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                 )}
+               </CardContent>
             </Card>
           </TabsContent>
 

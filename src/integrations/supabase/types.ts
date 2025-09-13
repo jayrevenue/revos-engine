@@ -607,6 +607,101 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          ai_conversation_completed: boolean | null
+          analytics_report_ready: boolean | null
+          created_at: string
+          deliverable_deadline: boolean | null
+          email_notifications: boolean | null
+          id: string
+          new_engagement: boolean | null
+          system_maintenance: boolean | null
+          team_member_invited: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_conversation_completed?: boolean | null
+          analytics_report_ready?: boolean | null
+          created_at?: string
+          deliverable_deadline?: boolean | null
+          email_notifications?: boolean | null
+          id?: string
+          new_engagement?: boolean | null
+          system_maintenance?: boolean | null
+          team_member_invited?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_conversation_completed?: boolean | null
+          analytics_report_ready?: boolean | null
+          created_at?: string
+          deliverable_deadline?: boolean | null
+          email_notifications?: boolean | null
+          id?: string
+          new_engagement?: boolean | null
+          system_maintenance?: boolean | null
+          team_member_invited?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      org_settings: {
+        Row: {
+          ai_auto_learning: boolean | null
+          created_at: string
+          currency: string | null
+          description: string | null
+          domain: string | null
+          external_sharing: boolean | null
+          id: string
+          name: string
+          org_id: string
+          real_time_analytics: boolean | null
+          timezone: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_auto_learning?: boolean | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          domain?: string | null
+          external_sharing?: boolean | null
+          id?: string
+          name?: string
+          org_id: string
+          real_time_analytics?: boolean | null
+          timezone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_auto_learning?: boolean | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          domain?: string | null
+          external_sharing?: boolean | null
+          id?: string
+          name?: string
+          org_id?: string
+          real_time_analytics?: boolean | null
+          timezone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_settings_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orgs: {
         Row: {
           created_at: string | null
@@ -963,6 +1058,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_preferences: {
+        Row: {
+          accent_color: string | null
+          created_at: string
+          id: string
+          layout_density: string | null
+          theme: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accent_color?: string | null
+          created_at?: string
+          id?: string
+          layout_density?: string | null
+          theme?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accent_color?: string | null
+          created_at?: string
+          id?: string
+          layout_density?: string | null
+          theme?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
