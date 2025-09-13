@@ -12,6 +12,8 @@ import { TrendingUp, DollarSign, Users, Bot, Target, Calendar, Download, Filter,
 import GapMapDashboard from '@/components/dashboards/GapMapDashboard';
 import ClarityAuditDashboard from '@/components/dashboards/ClarityAuditDashboard';
 import AgentROIDashboard from '@/components/dashboards/AgentROIDashboard';
+import DashboardSharing from '@/components/dashboards/DashboardSharing';
+import AgentQASystem from '@/components/agents/AgentQASystem';
 import { useToast } from '@/hooks/use-toast';
 
 interface AnalyticsData {
@@ -304,7 +306,7 @@ const Analytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-10">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="engagements">Engagements</TabsTrigger>
             <TabsTrigger value="agents">AI Agents</TabsTrigger>
@@ -313,6 +315,8 @@ const Analytics = () => {
             <TabsTrigger value="gap-map">Gap Map</TabsTrigger>
             <TabsTrigger value="clarity-audit">Clarity Audit</TabsTrigger>
             <TabsTrigger value="agent-roi">Agent ROI</TabsTrigger>
+            <TabsTrigger value="sharing">Sharing</TabsTrigger>
+            <TabsTrigger value="qa-system">QA System</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -497,6 +501,14 @@ const Analytics = () => {
 
           <TabsContent value="agent-roi" className="space-y-6">
             <AgentROIDashboard />
+          </TabsContent>
+
+          <TabsContent value="sharing" className="space-y-6">
+            <DashboardSharing />
+          </TabsContent>
+
+          <TabsContent value="qa-system" className="space-y-6">
+            <AgentQASystem />
           </TabsContent>
         </Tabs>
       </div>
