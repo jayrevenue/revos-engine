@@ -31,7 +31,7 @@ const UserForm = () => {
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
-    role: 'analyst' as 'admin' | 'scientist' | 'analyst'
+    role: 'qa' as 'super_admin' | 'rev_scientist' | 'qa'
   });
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const UserForm = () => {
       setFormData({
         full_name: userData.full_name || '',
         email: userData.email || '',
-        role: (userData.role as 'admin' | 'scientist' | 'analyst') || 'analyst'
+        role: (userData.role as 'super_admin' | 'rev_scientist' | 'qa') || 'qa'
       });
     } catch (error: any) {
       toast({
@@ -182,7 +182,7 @@ const UserForm = () => {
     return null;
   }
 
-  if (userRole !== 'admin') {
+  if (userRole !== 'super_admin') {
     return (
       <div className="min-h-screen bg-background">
         <header className="border-b border-border">
@@ -255,7 +255,7 @@ const UserForm = () => {
                   <Label htmlFor="role">Role</Label>
                   <Select
                     value={formData.role}
-                    onValueChange={(value: 'admin' | 'scientist' | 'analyst') => 
+                    onValueChange={(value: 'super_admin' | 'rev_scientist' | 'qa') => 
                       setFormData(prev => ({ ...prev, role: value }))
                     }
                   >
@@ -263,9 +263,9 @@ const UserForm = () => {
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="scientist">Scientist</SelectItem>
-                      <SelectItem value="analyst">Analyst</SelectItem>
+                      <SelectItem value="super_admin">Super Admin</SelectItem>
+                      <SelectItem value="rev_scientist">Revenue Scientist</SelectItem>
+                      <SelectItem value="qa">QA Analyst</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

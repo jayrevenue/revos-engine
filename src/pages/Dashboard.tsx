@@ -67,16 +67,16 @@ const Dashboard = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="p-6 border border-border rounded-lg hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/projects')}>
-              <h3 className="text-xl font-semibold mb-2">Active Projects</h3>
+            <div className="p-6 border border-border rounded-lg hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/engagements')}>
+              <h3 className="text-xl font-semibold mb-2">Active Engagements</h3>
               <p className="text-3xl font-bold text-primary">0</p>
-              <p className="text-sm text-muted-foreground">Projects in progress</p>
+              <p className="text-sm text-muted-foreground">Client engagements in progress</p>
             </div>
             
             <div className="p-6 border border-border rounded-lg hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/clients')}>
-              <h3 className="text-xl font-semibold mb-2">Active Clients</h3>
+              <h3 className="text-xl font-semibold mb-2">Client Organizations</h3>
               <p className="text-3xl font-bold text-primary">0</p>
-              <p className="text-sm text-muted-foreground">Client engagements</p>
+              <p className="text-sm text-muted-foreground">Organizations managed</p>
             </div>
             
             <div className="p-6 border border-border rounded-lg hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/revenue')}>
@@ -99,16 +99,16 @@ const Dashboard = () => {
                 <Button 
                   variant="outline" 
                   className="w-full justify-start" 
-                  onClick={() => navigate('/projects')}
+                  onClick={() => navigate('/engagements')}
                 >
-                  Manage Projects
+                  Manage Engagements
                 </Button>
                 <Button 
                   variant="outline" 
                   className="w-full justify-start" 
-                  onClick={() => navigate('/clients')}
+                  onClick={() => navigate('/agents')}
                 >
-                  Manage Clients
+                  Manage AI Agents
                 </Button>
                 <Button 
                   variant="outline" 
@@ -117,7 +117,11 @@ const Dashboard = () => {
                 >
                   Manage Users
                 </Button>
-                <Button variant="outline" className="w-full justify-start" disabled>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start" 
+                  onClick={() => navigate('/agents/new')}
+                >
                   Deploy AI Agent
                 </Button>
                 <Button 
@@ -126,13 +130,6 @@ const Dashboard = () => {
                   onClick={() => navigate('/revenue')}
                 >
                   Track Revenue
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start" 
-                  onClick={() => navigate('/agents')}
-                >
-                  Manage AI Agents
                 </Button>
               </div>
             </div>

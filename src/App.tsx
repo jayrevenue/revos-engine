@@ -19,6 +19,9 @@ import AgentChat from "./pages/AgentChat";
 import Users from "./pages/Users";
 import UserForm from "./pages/UserForm";
 import NotFound from "./pages/NotFound";
+import Engagements from "./pages/Engagements";
+import EngagementDetail from "./pages/EngagementDetail";
+import EngagementForm from "./pages/EngagementForm";
 
 const queryClient = new QueryClient();
 
@@ -33,19 +36,23 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/engagements" element={<Engagements />} />
+            <Route path="/engagements/new" element={<EngagementForm />} />
+            <Route path="/engagements/:id" element={<EngagementDetail />} />
+            <Route path="/engagements/:id/edit" element={<EngagementForm />} />
             <Route path="/clients" element={<Clients />} />
             <Route path="/clients/new" element={<ClientForm />} />
             <Route path="/clients/:id" element={<ClientForm />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/projects/new" element={<ProjectForm />} />
-        <Route path="/projects/:id" element={<ProjectForm />} />
-        <Route path="/revenue" element={<Revenue />} />
-        <Route path="/revenue/new" element={<RevenueForm />} />
-        <Route path="/revenue/:id" element={<RevenueForm />} />
-        <Route path="/agents" element={<AIAgents />} />
-        <Route path="/agents/new" element={<AgentForm />} />
-        <Route path="/agents/:id" element={<AgentForm />} />
-        <Route path="/agents/:id/chat" element={<AgentChat />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/new" element={<ProjectForm />} />
+            <Route path="/projects/:id" element={<ProjectForm />} />
+            <Route path="/revenue" element={<Revenue />} />
+            <Route path="/revenue/new" element={<RevenueForm />} />
+            <Route path="/revenue/:id" element={<RevenueForm />} />
+            <Route path="/agents" element={<AIAgents />} />
+            <Route path="/agents/new" element={<AgentForm />} />
+            <Route path="/agents/:id" element={<AgentForm />} />
+            <Route path="/agents/:id/chat" element={<AgentChat />} />
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<UserForm />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -28,7 +28,7 @@ const Index = () => {
       <div className="text-center max-w-2xl px-4">
         <h1 className="mb-4 text-4xl font-bold">TRS RevOS</h1>
         <p className="text-xl text-muted-foreground mb-8">
-          Chief Revenue Scientist Platform for managing client engagements and AI agents
+          Revenue Operations Platform for managing client engagements, AI agents, and RevOS IP
         </p>
         <Button onClick={() => navigate('/auth')} size="lg">
           Get Started
