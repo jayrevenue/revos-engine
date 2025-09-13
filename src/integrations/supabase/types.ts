@@ -185,6 +185,48 @@ export type Database = {
           },
         ]
       }
+      calendar_integrations: {
+        Row: {
+          access_token: string
+          calendar_id: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          provider: string
+          refresh_token: string | null
+          updated_at: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          access_token: string
+          calendar_id?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          provider: string
+          refresh_token?: string | null
+          updated_at?: string
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          access_token?: string
+          calendar_id?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          provider?: string
+          refresh_token?: string | null
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           address: string | null
@@ -327,6 +369,81 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      event_sync: {
+        Row: {
+          created_at: string
+          external_event_id: string
+          id: string
+          last_synced_at: string
+          local_event_id: string
+          provider: string
+          sync_status: string
+        }
+        Insert: {
+          created_at?: string
+          external_event_id: string
+          id?: string
+          last_synced_at?: string
+          local_event_id: string
+          provider: string
+          sync_status?: string
+        }
+        Update: {
+          created_at?: string
+          external_event_id?: string
+          id?: string
+          last_synced_at?: string
+          local_event_id?: string
+          provider?: string
+          sync_status?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          attendees: Json | null
+          created_at: string
+          created_by: string
+          description: string | null
+          end_time: string
+          engagement_id: string | null
+          event_type: string
+          id: string
+          location: string | null
+          start_time: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          attendees?: Json | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_time: string
+          engagement_id?: string | null
+          event_type: string
+          id?: string
+          location?: string | null
+          start_time: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          attendees?: Json | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_time?: string
+          engagement_id?: string | null
+          event_type?: string
+          id?: string
+          location?: string | null
+          start_time?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       frameworks: {
         Row: {
