@@ -118,6 +118,17 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  /* Density controls using CSS variables already in use (radius) */
+  :root[data-density="compact"] {
+    --radius: 0.5rem;
+  }
+  :root[data-density="comfortable"] {
+    --radius: 0.75rem;
+  }
+  :root[data-density="spacious"] {
+    --radius: 1rem;
+  }
 }
 
 @layer base {
