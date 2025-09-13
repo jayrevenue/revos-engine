@@ -131,6 +131,20 @@ const Dashboard = () => {
                 >
                   Track Revenue
                 </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start" 
+                  onClick={() => navigate('/scheduling')}
+                >
+                  Scheduling System
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start" 
+                  onClick={() => navigate('/settings')}
+                >
+                  Platform Settings
+                </Button>
               </div>
             </div>
             
