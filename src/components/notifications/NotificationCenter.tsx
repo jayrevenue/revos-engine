@@ -56,10 +56,11 @@ export const NotificationCenter = ({ className }: NotificationCenterProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      fetchNotifications();
-      setupRealtimeSubscription();
-    }
+    if (!user) return;
+    setLoading(true);
+    fetchNotifications();
+    const cleanup = setupRealtimeSubscription();
+    return cleanup;
   }, [user, filter]);
 
   const fetchNotifications = async () => {

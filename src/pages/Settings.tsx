@@ -606,7 +606,16 @@ const Settings = () => {
                             key={color}
                             variant={preferences.accent_color === color ? "default" : "outline"}
                             size="sm"
-                            onClick={() => savePreferences({ accent_color: color })}
+                            onClick={() => {
+                              // Persist and apply immediately
+                              savePreferences({ accent_color: color });
+                              const map: Record<string,string> = { orange: '25 95% 53%', blue: '212 100% 45%', green: '142 71% 45%', purple: '270 83% 60%' };
+                              const accent = map[color] || map.blue;
+                              const root = document.documentElement;
+                              root.style.setProperty('--primary', accent);
+                              root.style.setProperty('--accent', accent);
+                              root.style.setProperty('--ring', accent);
+                            }}
                             className="capitalize"
                           >
                             {color}
@@ -623,7 +632,10 @@ const Settings = () => {
                             key={density}
                             variant={preferences.layout_density === density ? "default" : "outline"}
                             size="sm"
-                            onClick={() => savePreferences({ layout_density: density })}
+                            onClick={() => {
+                              savePreferences({ layout_density: density });
+                              document.documentElement.setAttribute('data-density', density);
+                            }}
                             className="capitalize"
                           >
                             {density}
