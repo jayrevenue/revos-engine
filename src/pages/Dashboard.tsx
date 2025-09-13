@@ -27,12 +27,54 @@ const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
+  const [engagementStats, setEngagementStats] = useState<{active:number; paused:number; complete:number}>({active:0, paused:0, complete:0});
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  useEffect(() => {
+    if (user) {
+      loadUpcoming();
+      loadEngagementStats();
+    }
+  }, [user]);
+
+  const loadUpcoming = async () => {
+    try {
+      const today = new Date();
+      const start = new Date(today); start.setHours(0,0,0,0);
+      const end = new Date(today); end.setDate(end.getDate()+7); end.setHours(23,59,59,999);
+      const { data, error } = await supabase
+        .from('events')
+        .select('id,title,start_time')
+        .gte('start_time', start.toISOString())
+        .lte('start_time', end.toISOString())
+        .order('start_time', { ascending: true })
+        .limit(5);
+      if (error) throw error;
+      setUpcomingEvents(data || []);
+    } catch (err) {
+      console.error('Failed to load upcoming events', err);
+    }
+  };
+
+  const loadEngagementStats = async () => {
+    try {
+      const { data, error } = await supabase.from('engagements').select('status');
+      if (error) throw error;
+      const stats = {active:0, paused:0, complete:0};
+      (data || []).forEach((row: any) => {
+        if (row.status && stats[row.status as keyof typeof stats] !== undefined) (stats as any)[row.status]++;
+      });
+      setEngagementStats(stats);
+    } catch (err) {
+      console.error('Failed to load engagement stats', err);
+    }
+  };
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -137,36 +179,17 @@ const Dashboard = () => {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart Section */}
+        {/* Recent Activity (wide) */}
         <div className="lg:col-span-2 bg-card rounded-lg border border-border p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-medium text-foreground">Revenue Trend</h3>
-            <div className="flex items-center space-x-2">
-              <button className="flex items-center px-3 py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                <Calendar className="w-4 h-4 mr-1" />
-                Last 30 days
-              </button>
-              <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-                <Download className="w-4 h-4 text-muted-foreground" />
-              </button>
-            </div>
+            <h3 className="text-lg font-medium text-foreground">Recent Activity</h3>
+            <button className="px-3 py-1 text-sm border rounded-md hover:bg-muted" onClick={() => navigate('/analytics')}>
+              View Analytics
+            </button>
           </div>
-          
-          {/* Chart placeholder */}
-          <div className="h-64 bg-muted rounded-lg flex items-center justify-center border border-border">
-            <div className="text-center">
-              <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-              <p className="text-muted-foreground">Revenue analytics will appear here</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="bg-card rounded-lg border border-border p-6">
-          <h3 className="text-lg font-medium text-foreground mb-6">Recent Activity</h3>
           <div className="space-y-4">
             {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-start space-x-3 p-3 hover:bg-muted rounded-lg transition-colors">
+              <div key={index} className="flex items-start space-x-3 p-3 hover:bg-muted rounded-lg transition-colors cursor-pointer" onClick={() => navigate('/engagements')}>
                 <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2"></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground">{activity.action}</p>
@@ -176,6 +199,28 @@ const Dashboard = () => {
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Revenue Trend (compact) */}
+        <div className="bg-card rounded-lg border border-border p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-medium text-foreground">Revenue Trend</h3>
+            <div className="flex items-center space-x-2">
+              <button className="flex items-center px-3 py-1 text-sm text-muted-foreground hover:text-foreground transition-colors" onClick={() => navigate('/analytics')}>
+                <Calendar className="w-4 h-4 mr-1" />
+                Last 30 days
+              </button>
+              <button className="p-2 hover:bg-muted rounded-lg transition-colors" onClick={() => exportDashboardCSV()}>
+                <Download className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+          </div>
+          <div className="h-40 bg-muted rounded-lg flex items-center justify-center border border-border cursor-pointer" onClick={() => navigate('/analytics')}>
+            <div className="text-center">
+              <BarChart3 className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
+              <p className="text-muted-foreground text-sm">View detailed analytics</p>
+            </div>
           </div>
         </div>
       </div>
@@ -200,8 +245,69 @@ const Dashboard = () => {
           ))}
         </div>
       </div>
+
+      {/* Extra Insights */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-card rounded-lg border border-border p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-medium">Engagement Status</h3>
+            <Briefcase className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="flex items-center gap-4 text-sm">
+            <span className="px-2 py-1 rounded bg-green-100 text-green-800">Active {engagementStats.active}</span>
+            <span className="px-2 py-1 rounded bg-yellow-100 text-yellow-800">Paused {engagementStats.paused}</span>
+            <span className="px-2 py-1 rounded bg-blue-100 text-blue-800">Complete {engagementStats.complete}</span>
+          </div>
+        </div>
+
+        <div className="bg-card rounded-lg border border-border p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-medium">Upcoming (7 days)</h3>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </div>
+          {upcomingEvents.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No events scheduled</p>
+          ) : (
+            <div className="space-y-2">
+              {upcomingEvents.map((ev:any) => (
+                <div key={ev.id} className="flex items-center justify-between text-sm">
+                  <span className="truncate">{ev.title}</span>
+                  <span className="text-muted-foreground">{new Date(ev.start_time).toLocaleDateString()}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-card rounded-lg border border-border p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-medium">Shortcuts</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <button className="px-3 py-2 border rounded hover:bg-muted" onClick={() => navigate('/engagements/new')}>New Engagement</button>
+            <button className="px-3 py-2 border rounded hover:bg-muted" onClick={() => navigate('/agents/new')}>Deploy Agent</button>
+            <button className="px-3 py-2 border rounded hover:bg-muted" onClick={() => navigate('/library')}>Open Library</button>
+            <button className="px-3 py-2 border rounded hover:bg-muted" onClick={() => navigate('/analytics')}>Open Analytics</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default Dashboard;
+
+function exportDashboardCSV() {
+  const rows = [
+    ['Metric','Value'],
+    ['Total Revenue Pipeline', '2400000'],
+    ['Active Engagements', '23'],
+    ['Client Organizations', '18'],
+    ['AI Agents Deployed', '7']
+  ];
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'dashboard_summary.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
