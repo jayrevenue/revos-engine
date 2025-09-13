@@ -190,6 +190,16 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 space-y-6">
+      {/* Operational Flow CTA */}
+      <div className="bg-card border rounded-lg p-4 flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-medium">Get started with Onboarding</h3>
+          <p className="text-sm text-muted-foreground">Create a new engagement in minutes with our guided wizard.</p>
+        </div>
+        <button className="px-4 py-2 border rounded-md hover:bg-muted" onClick={() => navigate('/onboarding')}>
+          Open Onboarding
+        </button>
+      </div>
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (

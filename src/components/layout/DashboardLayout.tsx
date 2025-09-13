@@ -51,51 +51,42 @@ interface NavItem {
 }
 
 const sidebarItems: NavItem[] = [
+  // Dashboard → Onboarding → Engagements → Agents → Analytics → Scheduling → Library → Revenue → Users → Settings
   { name: "Dashboard", href: "/dashboard", icon: Home },
-  { 
-    name: "Engagements", 
-    href: "/engagements", 
+  { name: "Onboarding", href: "/onboarding", icon: Zap },
+  {
+    name: "Engagements",
+    href: "/engagements",
     icon: Briefcase,
     children: [
       { name: "All Engagements", href: "/engagements", icon: Briefcase },
       { name: "New Engagement", href: "/engagements/new", icon: Target },
     ]
   },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Executive", href: "/executive", icon: TrendingUp },
-  { name: "Scheduling", href: "/scheduling", icon: Calendar },
-  { name: "IP Library", href: "/library", icon: BookOpen },
-  { name: "Empire", href: "/empire", icon: Globe },
-  { 
-    name: "Client Management", 
-    href: "/clients", 
-    icon: Building,
-    children: [
-      { name: "All Clients", href: "/clients", icon: Building },
-      { name: "Add Client", href: "/clients/new", icon: Target },
-    ]
-  },
-  { 
-    name: "Revenue Operations", 
-    href: "/revenue", 
-    icon: DollarSign,
-    children: [
-      { name: "Revenue Dashboard", href: "/revenue", icon: DollarSign },
-      { name: "New Revenue Entry", href: "/revenue/new", icon: Target },
-    ]
-  },
-  { 
-    name: "AI Agents", 
-    href: "/agents", 
+  {
+    name: "AI Agents",
+    href: "/agents",
     icon: Bot,
     children: [
       { name: "Agent Dashboard", href: "/agents", icon: Bot },
       { name: "Deploy New Agent", href: "/agents/new", icon: Zap },
     ]
   },
-  { 
-    name: "User Management", 
-    href: "/users", 
+  { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Scheduling", href: "/scheduling", icon: Calendar },
+  { name: "IP Library", href: "/library", icon: BookOpen },
+  {
+    name: "Revenue Operations",
+    href: "/revenue",
+    icon: DollarSign,
+    children: [
+      { name: "Revenue Dashboard", href: "/revenue", icon: DollarSign },
+      { name: "New Revenue Entry", href: "/revenue/new", icon: Target },
+    ]
+  },
+  {
+    name: "User Management",
+    href: "/users",
     icon: Users,
     children: [
       { name: "All Users", href: "/users", icon: Users },
