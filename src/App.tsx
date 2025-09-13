@@ -28,6 +28,7 @@ import NotFound from "./pages/NotFound";
 import Engagements from "./pages/Engagements";
 import EngagementDetail from "./pages/EngagementDetail";
 import EngagementForm from "./pages/EngagementForm";
+import Onboarding from "./pages/Onboarding";
 import IPLibrary from "./pages/IPLibrary";
 import Empire from "./pages/Empire";
 import RevOSModules from "./pages/RevOSModules";
@@ -65,6 +66,7 @@ const App = () => (
               <Route path="/engagements/:id/edit" element={<DashboardLayout><EngagementForm /></DashboardLayout>} />
               <Route path="/analytics" element={<DashboardLayout><Analytics /></DashboardLayout>} />
               <Route path="/executive" element={<DashboardLayout><ExecutiveDashboard /></DashboardLayout>} />
+              <Route path="/onboarding" element={<DashboardLayout><Onboarding /></DashboardLayout>} />
               <Route path="/scheduling" element={<DashboardLayout><Scheduling /></DashboardLayout>} />
               <Route path="/settings" element={<DashboardLayout><Settings /></DashboardLayout>} />
               <Route path="/library" element={<DashboardLayout><IPLibrary /></DashboardLayout>} />
