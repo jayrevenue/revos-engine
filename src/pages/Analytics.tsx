@@ -12,8 +12,11 @@ import { TrendingUp, DollarSign, Users, Bot, Target, Calendar, Download, Filter,
 import GapMapDashboard from '@/components/dashboards/GapMapDashboard';
 import ClarityAuditDashboard from '@/components/dashboards/ClarityAuditDashboard';
 import AgentROIDashboard from '@/components/dashboards/AgentROIDashboard';
+import EnhancedROIDashboard from '@/components/analytics/EnhancedROIDashboard';
 import DashboardSharing from '@/components/dashboards/DashboardSharing';
 import AgentQASystem from '@/components/agents/AgentQASystem';
+import UserGuide from '@/components/documentation/UserGuide';
+import { BrandHeader } from '@/components/ui/brand-header';
 import { useToast } from '@/hooks/use-toast';
 
 interface AnalyticsData {
@@ -255,37 +258,33 @@ const Analytics = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Advanced Analytics</h1>
-            <p className="text-muted-foreground mt-2">
-              Comprehensive insights into your revenue operations performance
-            </p>
-          </div>
-          <div className="flex gap-4">
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Last 7 days</SelectItem>
-                <SelectItem value="30">Last 30 days</SelectItem>
-                <SelectItem value="90">Last 90 days</SelectItem>
-                <SelectItem value="365">Last year</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline">
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-          </div>
-        </div>
+      <BrandHeader 
+        title="Advanced Analytics" 
+        subtitle="Comprehensive insights into your revenue operations performance with AI-powered analytics and TRS methodologies"
+      >
+        <Select value={dateRange} onValueChange={setDateRange}>
+          <SelectTrigger className="w-32">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="7">Last 7 days</SelectItem>
+            <SelectItem value="30">Last 30 days</SelectItem>
+            <SelectItem value="90">Last 90 days</SelectItem>
+            <SelectItem value="365">Last year</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button variant="outline" className="trs-transition-smooth hover:trs-shadow-soft">
+          <Download className="w-4 h-4 mr-2" />
+          Export
+        </Button>
+      </BrandHeader>
+
+      <div className="notion-container">
 
         {/* Key Metrics */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
           {metrics.map((metric, index) => (
-            <Card key={index} className="animate-fade-in">
+            <Card key={index} className="notion-card animate-fade-in hover-scale">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
                 {metric.icon}
@@ -306,7 +305,7 @@ const Analytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-10">
+          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12 trs-shadow-soft">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="engagements">Engagements</TabsTrigger>
             <TabsTrigger value="agents">AI Agents</TabsTrigger>
@@ -315,8 +314,10 @@ const Analytics = () => {
             <TabsTrigger value="gap-map">Gap Map</TabsTrigger>
             <TabsTrigger value="clarity-audit">Clarity Audit</TabsTrigger>
             <TabsTrigger value="agent-roi">Agent ROI</TabsTrigger>
+            <TabsTrigger value="enhanced-roi">Enhanced ROI</TabsTrigger>
             <TabsTrigger value="sharing">Sharing</TabsTrigger>
             <TabsTrigger value="qa-system">QA System</TabsTrigger>
+            <TabsTrigger value="user-guide">User Guide</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -503,12 +504,20 @@ const Analytics = () => {
             <AgentROIDashboard />
           </TabsContent>
 
+          <TabsContent value="enhanced-roi" className="space-y-6">
+            <EnhancedROIDashboard />
+          </TabsContent>
+
           <TabsContent value="sharing" className="space-y-6">
             <DashboardSharing />
           </TabsContent>
 
           <TabsContent value="qa-system" className="space-y-6">
             <AgentQASystem />
+          </TabsContent>
+
+          <TabsContent value="user-guide" className="space-y-6">
+            <UserGuide />
           </TabsContent>
         </Tabs>
       </div>

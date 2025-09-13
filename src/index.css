@@ -17,8 +17,11 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    /* TRS Brand Colors */
+    --primary: 212 100% 45%;
     --primary-foreground: 210 40% 98%;
+    --primary-glow: 212 100% 65%;
+    --primary-variant: 220 100% 55%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -26,32 +29,39 @@ All colors MUST be HSL.
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 212 95% 50%;
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 212 100% 45%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* TRS Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    --gradient-accent: linear-gradient(45deg, hsl(var(--accent)), hsl(var(--primary-variant)));
+
+    /* TRS Shadows */
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.4);
+    --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.1);
+
+    /* Animation Variables */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -65,8 +75,11 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    /* TRS Brand Colors - Dark Mode */
+    --primary: 212 100% 65%;
     --primary-foreground: 222.2 47.4% 11.2%;
+    --primary-glow: 212 100% 75%;
+    --primary-variant: 220 100% 65%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -74,15 +87,26 @@ All colors MUST be HSL.
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 212 95% 60%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 212 100% 65%;
+
+    /* TRS Gradients - Dark Mode */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    --gradient-accent: linear-gradient(45deg, hsl(var(--accent)), hsl(var(--primary-variant)));
+
+    /* TRS Shadows - Dark Mode */
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.4);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.6);
+    --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.2);
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -100,6 +124,69 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* TRS Custom Utility Classes */
+  .trs-gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .trs-gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+
+  .trs-gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .trs-shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .trs-shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .trs-shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .trs-transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .trs-transition-bounce {
+    transition: var(--transition-bounce);
+  }
+
+  /* Notion-style Layout Classes */
+  .notion-container {
+    @apply max-w-5xl mx-auto px-6 py-8;
+  }
+
+  .notion-card {
+    @apply bg-card border rounded-xl p-6 trs-shadow-soft trs-transition-smooth hover:trs-shadow-elegant;
+  }
+
+  .notion-header {
+    @apply text-2xl font-bold tracking-tight mb-2;
+  }
+
+  .notion-subheader {
+    @apply text-lg text-muted-foreground mb-6;
+  }
+
+  /* Enhanced Interactive Elements */
+  .story-link {
+    @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+
+  .hover-scale {
+    @apply trs-transition-smooth hover:scale-105;
+  }
+
+  .pulse-glow {
+    @apply animate-pulse trs-shadow-glow;
   }
 }
