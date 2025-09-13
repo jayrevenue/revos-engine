@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "next-themes";
+import DashboardLayout from "./components/layout/DashboardLayout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -45,38 +46,42 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/engagements" element={<Engagements />} />
-            <Route path="/engagements/new" element={<EngagementForm />} />
-            <Route path="/engagements/:id" element={<EngagementDetail />} />
-            <Route path="/engagements/:id/edit" element={<EngagementForm />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/executive" element={<ExecutiveDashboard />} />
-            <Route path="/scheduling" element={<Scheduling />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/library" element={<IPLibrary />} />
-            <Route path="/revos/:engagementId" element={<RevOSModules />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/clients/new" element={<ClientForm />} />
-            <Route path="/clients/:id" element={<ClientForm />} />
-            <Route path="/projects/new" element={<ProjectForm />} />
-            <Route path="/projects/:id" element={<ProjectForm />} />
-            <Route path="/revenue" element={<Revenue />} />
-            <Route path="/revenue/new" element={<RevenueForm />} />
-            <Route path="/revenue/:id" element={<RevenueForm />} />
-            <Route path="/agents" element={<AIAgents />} />
-            <Route path="/agents/new" element={<AgentForm />} />
-            <Route path="/agents/:id" element={<AgentForm />} />
-            <Route path="/agents/:id/chat" element={<AgentChat />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/users/:id" element={<UserForm />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              
+              {/* Protected routes with dashboard layout */}
+              <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
+              <Route path="/engagements" element={<DashboardLayout><Engagements /></DashboardLayout>} />
+              <Route path="/engagements/new" element={<DashboardLayout><EngagementForm /></DashboardLayout>} />
+              <Route path="/engagements/:id" element={<DashboardLayout><EngagementDetail /></DashboardLayout>} />
+              <Route path="/engagements/:id/edit" element={<DashboardLayout><EngagementForm /></DashboardLayout>} />
+              <Route path="/analytics" element={<DashboardLayout><Analytics /></DashboardLayout>} />
+              <Route path="/executive" element={<DashboardLayout><ExecutiveDashboard /></DashboardLayout>} />
+              <Route path="/scheduling" element={<DashboardLayout><Scheduling /></DashboardLayout>} />
+              <Route path="/settings" element={<DashboardLayout><Settings /></DashboardLayout>} />
+              <Route path="/library" element={<DashboardLayout><IPLibrary /></DashboardLayout>} />
+              <Route path="/revos/:engagementId" element={<DashboardLayout><RevOSModules /></DashboardLayout>} />
+              <Route path="/clients" element={<DashboardLayout><Clients /></DashboardLayout>} />
+              <Route path="/clients/new" element={<DashboardLayout><ClientForm /></DashboardLayout>} />
+              <Route path="/clients/:id" element={<DashboardLayout><ClientForm /></DashboardLayout>} />
+              <Route path="/projects/new" element={<DashboardLayout><ProjectForm /></DashboardLayout>} />
+              <Route path="/projects/:id" element={<DashboardLayout><ProjectForm /></DashboardLayout>} />
+              <Route path="/revenue" element={<DashboardLayout><Revenue /></DashboardLayout>} />
+              <Route path="/revenue/new" element={<DashboardLayout><RevenueForm /></DashboardLayout>} />
+              <Route path="/revenue/:id" element={<DashboardLayout><RevenueForm /></DashboardLayout>} />
+              <Route path="/agents" element={<DashboardLayout><AIAgents /></DashboardLayout>} />
+              <Route path="/agents/new" element={<DashboardLayout><AgentForm /></DashboardLayout>} />
+              <Route path="/agents/:id" element={<DashboardLayout><AgentForm /></DashboardLayout>} />
+              <Route path="/agents/:id/chat" element={<DashboardLayout><AgentChat /></DashboardLayout>} />
+              <Route path="/users" element={<DashboardLayout><Users /></DashboardLayout>} />
+              <Route path="/users/:id" element={<DashboardLayout><UserForm /></DashboardLayout>} />
+              
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
     </ThemeProvider>

@@ -117,20 +117,11 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* Header */}
       <div className="border-b bg-card">
-        <div className="container mx-auto px-6 py-4">
+        <div className="p-6">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
-            </Button>
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <SettingsIcon className="h-6 w-6" />
@@ -143,7 +134,7 @@ const Settings = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-6">
+      <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="general" className="flex items-center gap-2">

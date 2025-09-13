@@ -104,21 +104,19 @@ const Engagements = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Engagements</h1>
-            <p className="text-muted-foreground mt-2">
-              Manage your client engagements and revenue operations
-            </p>
-          </div>
-          <Button onClick={() => navigate('/engagements/new')}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Engagement
-          </Button>
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Client Engagements</h1>
+          <p className="text-muted-foreground">Track and manage all client engagements</p>
         </div>
+        <Button onClick={() => navigate("/engagements/new")}>
+          <Plus className="h-4 w-4 mr-2" />
+          New Engagement
+        </Button>
+      </div>
 
+      <div>
         {engagements.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>

@@ -257,29 +257,34 @@ const Analytics = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <BrandHeader 
-        title="Advanced Analytics" 
-        subtitle="Comprehensive insights into your revenue operations performance with AI-powered analytics and TRS methodologies"
-      >
-        <Select value={dateRange} onValueChange={setDateRange}>
-          <SelectTrigger className="w-32">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7">Last 7 days</SelectItem>
-            <SelectItem value="30">Last 30 days</SelectItem>
-            <SelectItem value="90">Last 90 days</SelectItem>
-            <SelectItem value="365">Last year</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button variant="outline" className="trs-transition-smooth hover:trs-shadow-soft">
-          <Download className="w-4 h-4 mr-2" />
-          Export
-        </Button>
-      </BrandHeader>
+    <div className="bg-background">
+      <div className="p-6 border-b">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Advanced Analytics</h1>
+            <p className="text-muted-foreground">Comprehensive insights into your revenue operations performance with AI-powered analytics and TRS methodologies</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <Select value={dateRange} onValueChange={setDateRange}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7">Last 7 days</SelectItem>
+                <SelectItem value="30">Last 30 days</SelectItem>
+                <SelectItem value="90">Last 90 days</SelectItem>
+                <SelectItem value="365">Last year</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline" className="trs-transition-smooth hover:trs-shadow-soft">
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+          </div>
+        </div>
+      </div>
 
-      <div className="notion-container">
+      <div className="p-6">
 
         {/* Key Metrics */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
