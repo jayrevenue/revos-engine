@@ -97,6 +97,13 @@ const Dashboard = () => {
                 >
                   Manage Clients
                 </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start" 
+                  onClick={() => navigate('/users')}
+                >
+                  Manage Users
+                </Button>
                 <Button variant="outline" className="w-full justify-start" disabled>
                   Deploy AI Agent
                 </Button>
