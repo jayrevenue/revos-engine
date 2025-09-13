@@ -99,6 +99,20 @@ const Dashboard = () => {
                 <Button 
                   variant="outline" 
                   className="w-full justify-start" 
+                  onClick={() => navigate('/executive')}
+                >
+                  Executive Command Center
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start" 
+                  onClick={() => navigate('/analytics')}
+                >
+                  Advanced Analytics
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start" 
                   onClick={() => navigate('/engagements')}
                 >
                   Manage Engagements
@@ -109,20 +123,6 @@ const Dashboard = () => {
                   onClick={() => navigate('/library')}
                 >
                   IP Library
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start" 
-                  onClick={() => navigate('/agents')}
-                >
-                  Manage AI Agents
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start" 
-                  onClick={() => navigate('/users')}
-                >
-                  Manage Users
                 </Button>
                 <Button 
                   variant="outline" 

@@ -24,6 +24,8 @@ import EngagementDetail from "./pages/EngagementDetail";
 import EngagementForm from "./pages/EngagementForm";
 import IPLibrary from "./pages/IPLibrary";
 import RevOSModules from "./pages/RevOSModules";
+import Analytics from "./pages/Analytics";
+import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,8 @@ const App = () => (
             <Route path="/engagements/new" element={<EngagementForm />} />
             <Route path="/engagements/:id" element={<EngagementDetail />} />
             <Route path="/engagements/:id/edit" element={<EngagementForm />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/executive" element={<ExecutiveDashboard />} />
             <Route path="/library" element={<IPLibrary />} />
             <Route path="/revos/:engagementId" element={<RevOSModules />} />
             <Route path="/clients" element={<Clients />} />
