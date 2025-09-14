@@ -22,15 +22,10 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 
-// Start empty; populate from Supabase below.
-const initialCompanies: any[] = [];
-const initialPerformance: any[] = [];
-const initialPipeline: any[] = [];
-
 export function PortfolioManager() {
-  const [portfolioCompanies, setPortfolioCompanies] = useState<any[]>(initialCompanies);
-  const [performanceData, setPerformanceData] = useState<any[]>(initialPerformance);
-  const [pipelineDeals, setPipelineDeals] = useState<any[]>(initialPipeline);
+  const [portfolioCompanies, setPortfolioCompanies] = useState<any[]>([]);
+  const [performanceData, setPerformanceData] = useState<any[]>([]);
+  const [pipelineDeals, setPipelineDeals] = useState<any[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
