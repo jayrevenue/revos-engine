@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -20,6 +20,7 @@ import {
   Sparkles,
   Info
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const suggestions: Array<{ id: number; title: string; description: string; category: string; icon: any; prompt: string; }> = [];
 
@@ -29,6 +30,26 @@ export function AIAssistant() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversation, setConversation] = useState<{ role: 'user'|'assistant'; content: string }[]>([]);
+<<<<<<< HEAD
+  const [agentId, setAgentId] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const pickAgent = async () => {
+      const { data, error } = await supabase
+        .from('ai_agents')
+        .select('id,status')
+        .order('created_at', { ascending: true })
+        .limit(10);
+      if (!error && data && data.length) {
+        const active = data.find((a: any) => a.status === 'active');
+        setAgentId((active || data[0]).id);
+      }
+    };
+    pickAgent();
+  }, []);
+=======
+>>>>>>> origin/main
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -38,8 +59,25 @@ export function AIAssistant() {
     setConversation(prev => [...prev, newMessage]);
     setMessage("");
 
+<<<<<<< HEAD
+    try {
+      const { data, error } = await supabase.functions.invoke('agent-chat', {
+        body: { agentId, message, conversationId },
+      });
+      if (error) throw error;
+      if (data?.response) {
+        setConversation(prev => [...prev, { role: 'assistant', content: data.response }]);
+      }
+      if (data?.conversationId) setConversationId(data.conversationId);
+    } catch (err: any) {
+      setConversation(prev => [...prev, { role: 'assistant', content: `Error: ${err.message || 'Failed to get response.'}` }]);
+    } finally {
+      setIsLoading(false);
+    }
+=======
     // No dummy responses. Integrate your AI provider to enable replies.
     setIsLoading(false);
+>>>>>>> origin/main
   };
 
   const handleSuggestionClick = (suggestion) => {

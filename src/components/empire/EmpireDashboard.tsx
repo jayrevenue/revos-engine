@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -17,11 +18,98 @@ import {
   Info
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+<<<<<<< HEAD
+import { supabase } from "@/integrations/supabase/client";
+
+type RevenuePoint = { month: string; total: number };
+=======
 // No dummy data. Charts render an empty state until real data is connected.
 const revenueData: Array<{ month: string; pillar1: number; pillar2: number; pillar3: number }> = [];
 const portfolioData: Array<{ name: string; value: number; color: string }> = [];
+>>>>>>> origin/main
 
 export function EmpireDashboard() {
+  const [monthly, setMonthly] = useState<RevenuePoint[]>([]);
+  const [statusBreakdown, setStatusBreakdown] = useState<{ name: string; value: number; color: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [engCount, setEngCount] = useState<number | null>(null);
+  const [projCount, setProjCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Fetch revenue rows
+        const { data, error } = await supabase
+          .from('revenue')
+          .select('amount, invoice_date, created_at, payment_status')
+          .order('invoice_date', { ascending: true });
+        if (error) throw error;
+        const rows = data || [];
+
+        // Aggregate monthly totals (last 6 months)
+        const byMonth = new Map<string, number>();
+        for (const r of rows) {
+          const d = r.invoice_date || r.created_at;
+          if (!d) continue;
+          const dt = new Date(d);
+          const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+          byMonth.set(key, (byMonth.get(key) || 0) + (r.amount || 0));
+        }
+        const keys = Array.from(byMonth.keys()).sort();
+        const lastSix = keys.slice(-6);
+        const monthlyPoints: RevenuePoint[] = lastSix.map((k) => {
+          const [y, m] = k.split('-');
+          const monthLabel = new Date(parseInt(y), parseInt(m) - 1, 1).toLocaleString(undefined, { month: 'short' });
+          return { month: monthLabel, total: Math.round((byMonth.get(k) || 0) / 1000) };
+        });
+        setMonthly(monthlyPoints);
+
+        // Breakdown by payment_status (percentage share)
+        const statusSums = new Map<string, number>();
+        let total = 0;
+        for (const r of rows) {
+          const s = (r.payment_status || 'unknown').toLowerCase();
+          const amt = r.amount || 0;
+          total += amt;
+          statusSums.set(s, (statusSums.get(s) || 0) + amt);
+        }
+        const colors: Record<string, string> = {
+          paid: 'hsl(var(--primary))',
+          pending: 'hsl(var(--accent))',
+          overdue: 'hsl(var(--secondary))',
+          unknown: 'hsl(var(--muted-foreground))',
+        };
+        const breakdown = Array.from(statusSums.entries()).map(([name, sum]) => ({
+          name: name.charAt(0).toUpperCase() + name.slice(1),
+          value: total ? Math.round((sum / total) * 100) : 0,
+          color: colors[name] || colors.unknown,
+        }));
+        setStatusBreakdown(breakdown);
+        // counts for engagements and projects
+        const [eC, pC] = await Promise.all([
+          supabase.from('engagements').select('id'),
+          supabase.from('projects').select('id'),
+        ]);
+        if (eC.error) throw eC.error;
+        if (pC.error) throw pC.error;
+        setEngCount(eC.data?.length || 0);
+        setProjCount(pC.data?.length || 0);
+      } catch (err: any) {
+        setError(err.message || 'Failed to load revenue');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const thisMonthK = useMemo(() => (monthly.length ? monthly[monthly.length - 1].total : 0), [monthly]);
+  const lastMonthK = useMemo(() => (monthly.length > 1 ? monthly[monthly.length - 2].total : 0), [monthly]);
+  const mom = useMemo(() => (lastMonthK > 0 ? Math.round(((thisMonthK - lastMonthK) / lastMonthK) * 100) : 0), [thisMonthK, lastMonthK]);
+
   return (
     <TooltipProvider delayDuration={100}>
       <div className="space-y-6">
@@ -31,6 +119,16 @@ export function EmpireDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
+<<<<<<< HEAD
+                <p className="text-sm font-medium text-muted-foreground">Monthly Revenue</p>
+                <p className="text-2xl font-bold text-primary">{thisMonthK ? `$${thisMonthK.toFixed(1)}K` : '—'}</p>
+                {thisMonthK && (
+                  <p className={`text-xs flex items-center mt-1 ${mom >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                    <ArrowUpRight className="h-3 w-3 mr-1" />
+                    {mom >= 0 ? `+${mom}%` : `${mom}%`} from last month
+                  </p>
+                )}
+=======
                 <div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                   <span>Monthly Revenue</span>
                   <Tooltip>
@@ -50,6 +148,7 @@ export function EmpireDashboard() {
                 </div>
                 <p className="text-2xl font-bold text-primary">—</p>
                 <p className="text-xs text-muted-foreground mt-1">Connect data to see revenue</p>
+>>>>>>> origin/main
               </div>
               <DollarSign className="h-8 w-8 text-primary" />
             </div>
@@ -60,6 +159,11 @@ export function EmpireDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
+<<<<<<< HEAD
+                <p className="text-sm font-medium text-muted-foreground">Active Engagements</p>
+                <p className="text-2xl font-bold text-accent">{engCount ?? '—'}</p>
+                <p className="text-xs text-muted-foreground">Count of engagements</p>
+=======
                 <div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                   <span>Active IP Licenses</span>
                   <Tooltip>
@@ -79,6 +183,7 @@ export function EmpireDashboard() {
                 </div>
                 <p className="text-2xl font-bold text-accent">—</p>
                 <p className="text-xs text-muted-foreground">Add licenses to track renewals</p>
+>>>>>>> origin/main
               </div>
               <Briefcase className="h-8 w-8 text-accent" />
             </div>
@@ -89,6 +194,11 @@ export function EmpireDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
+<<<<<<< HEAD
+                <p className="text-sm font-medium text-muted-foreground">Projects</p>
+                <p className="text-2xl font-bold text-secondary">{projCount ?? '—'}</p>
+                <p className="text-xs text-muted-foreground">Count of projects</p>
+=======
                 <div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                   <span>Equity Positions</span>
                   <Tooltip>
@@ -108,6 +218,7 @@ export function EmpireDashboard() {
                 </div>
                 <p className="text-2xl font-bold text-secondary">—</p>
                 <p className="text-xs text-muted-foreground">Track equity positions here</p>
+>>>>>>> origin/main
               </div>
               <TrendingUp className="h-8 w-8 text-secondary" />
             </div>
@@ -118,6 +229,11 @@ export function EmpireDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
+<<<<<<< HEAD
+                <p className="text-sm font-medium text-muted-foreground">Portfolio Companies</p>
+                <p className="text-2xl font-bold">—</p>
+                <p className="text-xs text-muted-foreground">Add companies to track</p>
+=======
                 <div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                   <span>Portfolio Companies</span>
                   <Tooltip>
@@ -137,6 +253,7 @@ export function EmpireDashboard() {
                 </div>
                 <p className="text-2xl font-bold">—</p>
                 <p className="text-xs text-muted-foreground">Add companies or acquisitions</p>
+>>>>>>> origin/main
               </div>
               <Building2 className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -169,10 +286,14 @@ export function EmpireDashboard() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={revenueData}>
+              <BarChart data={monthly}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="month" />
                 <YAxis />
+<<<<<<< HEAD
+                <RechartsTooltip formatter={(v: any) => [`$${v}K`, 'Total Revenue']} />
+                <Bar dataKey="total" fill="hsl(var(--primary))" name="Total Revenue" />
+=======
                 <RechartsTooltip />
                 {revenueData.length === 0 ? (
                   <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-muted-foreground">No revenue data yet</text>
@@ -183,6 +304,7 @@ export function EmpireDashboard() {
                     <Bar dataKey="pillar3" fill="hsl(var(--secondary))" name="pillar3" />
                   </>
                 )}
+>>>>>>> origin/main
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -193,6 +315,9 @@ export function EmpireDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Crown className="h-5 w-5 text-primary" />
+<<<<<<< HEAD
+              Revenue Status Distribution
+=======
               <span>Revenue Portfolio Distribution</span>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -208,11 +333,33 @@ export function EmpireDashboard() {
                   Shows the share of total revenue by pillar for the selected period. Use this to balance IP, equity, and acquisition efforts.
                 </TooltipContent>
               </Tooltip>
+>>>>>>> origin/main
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
+<<<<<<< HEAD
+                {statusBreakdown.length ? (
+                  <>
+                    <Pie data={statusBreakdown} cx="50%" cy="50%" innerRadius={60} outerRadius={120} paddingAngle={5} dataKey="value">
+                      {statusBreakdown.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <RechartsTooltip formatter={(v: any) => [`${v}%`, 'Share']} />
+                  </>
+                ) : (
+                  <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-muted-foreground">No revenue data yet</text>
+                )}
+              </PieChart>
+            </ResponsiveContainer>
+            {statusBreakdown.length ? (
+              <div className="grid grid-cols-3 gap-4 mt-4">
+                {statusBreakdown.map((item, index) => (
+                  <div key={index} className="text-center">
+                    <div className="w-4 h-4 rounded-full mx-auto mb-1" style={{ backgroundColor: item.color }} />
+=======
                 {portfolioData.length === 0 ? (
                   <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-muted-foreground">No portfolio distribution</text>
                 ) : (
@@ -243,12 +390,17 @@ export function EmpireDashboard() {
                       className="w-4 h-4 rounded-full mx-auto mb-1"
                       style={{ backgroundColor: item.color }}
                     />
+>>>>>>> origin/main
                     <p className="text-xs font-medium">{item.name}</p>
                     <p className="text-lg font-bold">{item.value}%</p>
                   </div>
                 ))}
               </div>
+<<<<<<< HEAD
+            ) : null}
+=======
             )}
+>>>>>>> origin/main
           </CardContent>
         </Card>
       </div>

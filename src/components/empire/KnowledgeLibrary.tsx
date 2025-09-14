@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   BookOpen, 
   FileText, 
@@ -22,27 +23,106 @@ import {
   Info
 } from "lucide-react";
 
+<<<<<<< HEAD
+// Loaded dynamically from Supabase
+const templates: any[] = [];
+
+const tutorials: any[] = [];
+
+const experts: any[] = [];
+=======
 const templates: Array<any> = [];
 
 const tutorials: Array<any> = [];
 
 const experts: Array<any> = [];
+>>>>>>> origin/main
 
 export function KnowledgeLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [docs, setDocs] = useState<any[]>([]);
+  const [plays, setPlays] = useState<any[]>([]);
+  const [prompts, setPrompts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [previewItem, setPreviewItem] = useState<any | null>(null);
 
-  const filteredTemplates = templates.filter(template => 
-    (selectedCategory === "all" || template.category.toLowerCase() === selectedCategory) &&
-    (template.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     template.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [docsR, playsR, promptsR] = await Promise.all([
+          supabase.from('documents').select('*').order('created_at', { ascending: false }),
+          supabase.from('playbooks').select('*').order('created_at', { ascending: false }),
+          supabase.from('prompt_library').select('*').order('created_at', { ascending: false }),
+        ]);
+        if (docsR.error) throw docsR.error;
+        if (playsR.error) throw playsR.error;
+        if (promptsR.error) throw promptsR.error;
+        setDocs(docsR.data || []);
+        setPlays(playsR.data || []);
+        setPrompts(promptsR.data || []);
+      } catch (err: any) {
+        setError(err.message || 'Failed to load library');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const allTemplates = useMemo(() => {
+    const docItems = docs.map((d) => ({
+      id: d.id,
+      title: d.title,
+      description: d.description || '',
+      category: (d.category || 'document').toLowerCase(),
+      status: d.status || 'ready',
+      tags: d.tags || [],
+      kind: 'document' as const,
+      file_url: d.file_url || null,
+      content: d.content || null,
+    }));
+    const playItems = plays.map((p) => ({
+      id: p.id,
+      title: p.title,
+      description: p.description || '',
+      category: (p.category || 'playbook').toLowerCase(),
+      status: p.status || 'ready',
+      tags: p.tags || [],
+      kind: 'playbook' as const,
+      file_url: null,
+      content: p.content || null,
+    }));
+    const promptItems = prompts.map((pl) => ({
+      id: pl.id,
+      title: pl.name,
+      description: pl.description || '',
+      category: (pl.category || 'prompt').toLowerCase(),
+      status: 'ready',
+      tags: pl.tags || [],
+      kind: 'prompt' as const,
+      file_url: null,
+      content: pl.content || null,
+    }));
+    return [...docItems, ...playItems, ...promptItems];
+  }, [docs, plays, prompts]);
+
+  const filteredTemplates = allTemplates.filter(template => 
+    (selectedCategory === "all" || (template.category || '').toLowerCase() === selectedCategory) &&
+    (template.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+     template.description?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const filteredTutorials = tutorials.filter(tutorial => 
-    (selectedCategory === "all" || tutorial.category.toLowerCase() === selectedCategory) &&
-    (tutorial.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     tutorial.description.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredTutorials = docs
+    .filter((d) => d.file_type === 'video' || d.type === 'video')
+    .filter(tutorial => 
+      (selectedCategory === "all" || (tutorial.category || '').toLowerCase() === selectedCategory) &&
+      (tutorial.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       tutorial.description?.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
 
   return (
     <TooltipProvider delayDuration={100}>
@@ -105,8 +185,13 @@ export function KnowledgeLibrary() {
           {filteredTemplates.length === 0 ? (
             <p className="text-sm text-muted-foreground">No templates or documents yet.</p>
           ) : (
+<<<<<<< HEAD
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredTemplates.map((template: any) => (
+=======
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredTemplates.map((template) => (
+>>>>>>> origin/main
               <Card key={template.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -131,29 +216,66 @@ export function KnowledgeLibrary() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2">
-                      {template.tags.map((tag) => (
-                        <Badge key={tag} variant="outline">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
+                    {template.tags?.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {template.tags.map((tag: string) => (
+                          <Badge key={tag} variant="outline">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : null}
                     
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1">
-                          <Download className="h-4 w-4" />
-                          {template.downloads}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          {template.rating}
-                        </div>
-                      </div>
+                      <div />
                       <Badge variant="outline">{template.category}</Badge>
                     </div>
 
                     <div className="flex gap-2">
+<<<<<<< HEAD
+                      <Button size="sm" className="flex-grow" onClick={() => setPreviewItem(template)}>
+                        <Eye className="h-4 w-4 mr-2" />
+                        Preview
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => {
+                        if (template.file_url) {
+                          window.open(template.file_url, '_blank');
+                        } else if (template.content) {
+                          const text = typeof template.content === 'string' ? template.content : JSON.stringify(template.content, null, 2);
+                          const blob = new Blob([text], { type: 'text/plain' });
+                          const a = document.createElement('a');
+                          a.href = URL.createObjectURL(blob);
+                          a.download = `${template.title.replace(/\s+/g, '_').toLowerCase()}.txt`;
+                          a.click();
+                          URL.revokeObjectURL(a.href);
+                        }
+                      }}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={async () => {
+                        try {
+                          const tagList: string[] = Array.isArray(template.tags) ? [...template.tags] : [];
+                          const has = tagList.includes('bookmarked');
+                          const next = has ? tagList.filter(t => t !== 'bookmarked') : [...tagList, 'bookmarked'];
+                          if (template.kind === 'document') {
+                            const { error } = await supabase.from('documents').update({ tags: next }).eq('id', template.id);
+                            if (error) throw error;
+                          } else if (template.kind === 'playbook') {
+                            const { error } = await supabase.from('playbooks').update({ tags: next }).eq('id', template.id);
+                            if (error) throw error;
+                          } else if (template.kind === 'prompt') {
+                            const { error } = await supabase.from('prompt_library').update({ tags: next }).eq('id', template.id);
+                            if (error) throw error;
+                          }
+                          template.tags = next;
+                        } catch (err) {
+                          console.error('Bookmark toggle failed', err);
+                        }
+                      }}>
+                        <BookmarkPlus className="h-4 w-4" />
+                      </Button>
+=======
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button size="sm" className="flex-grow">
@@ -180,6 +302,7 @@ export function KnowledgeLibrary() {
                         </TooltipTrigger>
                         <TooltipContent side="top" align="start">Bookmark to find it quickly later.</TooltipContent>
                       </Tooltip>
+>>>>>>> origin/main
                     </div>
                   </div>
                 </CardContent>
@@ -193,8 +316,13 @@ export function KnowledgeLibrary() {
           {filteredTutorials.length === 0 ? (
             <p className="text-sm text-muted-foreground">No tutorials yet.</p>
           ) : (
+<<<<<<< HEAD
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredTutorials.map((tutorial: any) => (
+=======
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredTutorials.map((tutorial) => (
+>>>>>>> origin/main
               <Card key={tutorial.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -264,7 +392,11 @@ export function KnowledgeLibrary() {
           {experts.length === 0 ? (
             <p className="text-sm text-muted-foreground">No experts listed yet.</p>
           ) : (
+<<<<<<< HEAD
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+=======
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+>>>>>>> origin/main
             {experts.map((expert) => (
               <Card key={expert.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
@@ -317,7 +449,31 @@ export function KnowledgeLibrary() {
           )}
         </TabsContent>
       </Tabs>
+<<<<<<< HEAD
+      {previewItem && (
+        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center" onClick={() => setPreviewItem(null)}>
+          <div className="bg-background border rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto p-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold">{previewItem.title}</h3>
+              <button className="text-sm text-muted-foreground" onClick={() => setPreviewItem(null)}>Close</button>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">{previewItem.description}</p>
+            {previewItem.file_url ? (
+              <div className="text-sm">
+                <a className="text-primary underline" href={previewItem.file_url} target="_blank" rel="noreferrer">Open file</a>
+              </div>
+            ) : previewItem.content ? (
+              <pre className="text-xs whitespace-pre-wrap bg-muted/30 p-3 rounded-md">{typeof previewItem.content === 'string' ? previewItem.content : JSON.stringify(previewItem.content, null, 2)}</pre>
+            ) : (
+              <div className="text-sm text-muted-foreground">No preview available.</div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+=======
       </div>
     </TooltipProvider>
+>>>>>>> origin/main
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -24,6 +24,135 @@ import {
   Info
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+<<<<<<< HEAD
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { supabase } from "@/integrations/supabase/client";
+
+// Start empty; populate from Supabase below.
+const initialCompanies: any[] = [];
+const initialPerformance: any[] = [];
+const initialPipeline: any[] = [];
+
+export function PortfolioManager() {
+  const [portfolioCompanies, setPortfolioCompanies] = useState<any[]>(initialCompanies);
+  const [performanceData, setPerformanceData] = useState<any[]>(initialPerformance);
+  const [pipelineDeals, setPipelineDeals] = useState<any[]>(initialPipeline);
+  const [selectedCompany, setSelectedCompany] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const totalPortfolioValue = portfolioCompanies.reduce((sum, company) => sum + (company.value || 0), 0);
+  const totalMonthlyRevenue = portfolioCompanies.reduce((sum, company) => sum + (company.monthlyRevenue || 0), 0);
+  const averageMarginImprovement = portfolioCompanies.length ? (portfolioCompanies.reduce((sum, company) => sum + (company.metrics?.marginImprovement || 0), 0) / portfolioCompanies.length) : 0;
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [engR, projR, outR] = await Promise.all([
+          supabase.from('engagements').select('*').order('created_at', { ascending: false }),
+          supabase.from('projects').select('*').order('created_at', { ascending: false }),
+          supabase.from('outcomes').select('measurement_date, metric_name, current_value').order('measurement_date', { ascending: true }),
+        ]);
+        if (engR.error) throw engR.error;
+        if (projR.error) throw projR.error;
+        if (outR.error) throw outR.error;
+        const engagements = engR.data || [];
+        const projects = projR.data || [];
+
+        const companies = [
+          ...engagements.map((e: any) => ({
+            id: e.id,
+            name: e.name,
+            type: 'Engagement',
+            value: e.budget || 0,
+            monthlyRevenue: 0,
+            status: e.status || 'active',
+            phase: e.status || 'active',
+            milestones: { completed: 0, total: 0, current: '—' },
+            metrics: { marginImprovement: 0 },
+          })),
+          ...projects.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            type: 'Project',
+            value: p.budget || 0,
+            monthlyRevenue: 0,
+            status: p.status || 'active',
+            phase: p.status || 'active',
+            milestones: { completed: 0, total: 0, current: '—' },
+            metrics: { marginImprovement: 0 },
+          })),
+        ];
+        setPortfolioCompanies(companies);
+        setSelectedCompany(companies[0] || null);
+
+        const pipeline = [
+          ...engagements.map((e: any) => ({
+            id: e.id,
+            name: e.name,
+            type: 'Engagement',
+            stage: e.status || 'Planning',
+            value: e.budget || 0,
+            probability: 0,
+            closeDate: e.end_date,
+            description: e.description || '',
+          })),
+          ...projects.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            type: 'Project',
+            stage: p.status || 'Planning',
+            value: p.budget || 0,
+            probability: 0,
+            closeDate: p.end_date,
+            description: p.description || '',
+          })),
+        ];
+        setPipelineDeals(pipeline);
+
+        // Build performance series from outcomes: revenue ($K) and margin (%) by month
+        const outcomes = outR.data || [];
+        const byMonth: Record<string, { revenue: number; marginSum: number; marginCount: number }> = {};
+        for (const o of outcomes) {
+          if (!o.measurement_date) continue;
+          const dt = new Date(o.measurement_date);
+          const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+          if (!byMonth[key]) byMonth[key] = { revenue: 0, marginSum: 0, marginCount: 0 };
+          const name = (o.metric_name || '').toLowerCase();
+          const val = Number(o.current_value || 0);
+          if (name.includes('revenue')) {
+            byMonth[key].revenue += val;
+          } else if (name.includes('margin')) {
+            byMonth[key].marginSum += val;
+            byMonth[key].marginCount += 1;
+          }
+        }
+        const keys = Object.keys(byMonth).sort();
+        const last = keys.slice(-6);
+        const perf = last.map((k) => {
+          const [y, m] = k.split('-');
+          const month = new Date(parseInt(y), parseInt(m) - 1, 1).toLocaleString(undefined, { month: 'short' });
+          const bucket = byMonth[k];
+          const revenueK = Math.round((bucket.revenue || 0) / 1000);
+          const margin = bucket.marginCount ? Math.round(bucket.marginSum / bucket.marginCount) : 0;
+          return { month, revenue: revenueK, margin };
+        });
+        setPerformanceData(perf);
+      } catch (err: any) {
+        setError(err.message || 'Failed to load portfolio');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      {error && <div className="text-sm text-red-600">{error}</div>}
+=======
 
 const portfolioCompanies: Array<any> = [];
 
@@ -41,6 +170,7 @@ export function PortfolioManager() {
   return (
     <TooltipProvider delayDuration={100}>
       <div className="space-y-6">
+>>>>>>> origin/main
       {/* Portfolio Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
@@ -192,8 +322,8 @@ export function PortfolioManager() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-medium">${(company.value / 1000).toFixed(0)}K</p>
-                          <p className="text-xs text-muted-foreground">${(company.monthlyRevenue / 1000).toFixed(0)}K/mo</p>
+                          <p className="text-sm font-medium">{company.value ? `$${(company.value / 1000).toFixed(0)}K` : '—'}</p>
+                          <p className="text-xs text-muted-foreground">{company.monthlyRevenue ? `$${(company.monthlyRevenue / 1000).toFixed(0)}K/mo` : '—'}</p>
                         </div>
                       </div>
                     </div>
@@ -210,6 +340,9 @@ export function PortfolioManager() {
                     <div>
                       {selectedCompany ? (
                         <>
+<<<<<<< HEAD
+                          <CardTitle>{selectedCompany.name}</CardTitle>
+=======
                           <div className="flex items-center gap-2">
                             <CardTitle>{selectedCompany.name}</CardTitle>
                             <Tooltip>
@@ -221,6 +354,7 @@ export function PortfolioManager() {
                               <TooltipContent side="top" align="start" className="max-w-sm">Key metrics, milestones, and performance for the selected company.</TooltipContent>
                             </Tooltip>
                           </div>
+>>>>>>> origin/main
                           <p className="text-sm text-muted-foreground">{selectedCompany.type}</p>
                         </>
                       ) : (
@@ -386,7 +520,11 @@ export function PortfolioManager() {
                     <XAxis dataKey="month" />
                     <YAxis yAxisId="left" label={{ value: 'Revenue ($K)', angle: -90, position: 'insideLeft' }} />
                     <YAxis yAxisId="right" orientation="right" label={{ value: 'Margin (%)', angle: 90, position: 'insideRight' }} />
+<<<<<<< HEAD
+                  <RechartsTooltip />
+=======
                     <RechartsTooltip />
+>>>>>>> origin/main
                     <Bar yAxisId="left" dataKey="revenue" fill="hsl(var(--primary))" name="Revenue ($K)" />
                     <Line yAxisId="right" type="monotone" dataKey="margin" stroke="hsl(var(--accent))" strokeWidth={3} name="Margin %" />
                   </LineChart>
