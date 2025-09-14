@@ -34,7 +34,12 @@ import {
   Database,
   TrendingUp,
   Globe,
-  User
+  User,
+  Calculator,
+  Crown,
+  Map,
+  Brain,
+  PieChart
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -51,46 +56,25 @@ interface NavItem {
 }
 
 const sidebarItems: NavItem[] = [
-  // Dashboard → Onboarding → Engagements → Agents → Analytics → Scheduling → Library → Revenue → Users → Settings
-  { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Onboarding", href: "/onboarding", icon: Zap },
+  // Empire Building Navigation - Simple & Focused
+  { name: "Empire Dashboard", href: "/dashboard", icon: Crown },
+  { name: "Revenue Calculator", href: "/calculator", icon: Calculator },
+  { name: "Empire Roadmap", href: "/roadmap", icon: Map },
+  { name: "Portfolio Manager", href: "/portfolio", icon: PieChart },
+  { name: "AI Assistant", href: "/assistant", icon: Brain },
+  { name: "Knowledge Library", href: "/library", icon: BookOpen },
+  
+  // Advanced Tools (Progressive Disclosure)
   {
-    name: "Engagements",
-    href: "/engagements",
-    icon: Briefcase,
+    name: "Advanced Tools",
+    href: "/advanced",
+    icon: Zap,
     children: [
-      { name: "All Engagements", href: "/engagements", icon: Briefcase },
-      { name: "New Engagement", href: "/engagements/new", icon: Target },
-    ]
-  },
-  {
-    name: "AI Agents",
-    href: "/agents",
-    icon: Bot,
-    children: [
-      { name: "Agent Dashboard", href: "/agents", icon: Bot },
-      { name: "Deploy New Agent", href: "/agents/new", icon: Zap },
-    ]
-  },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Scheduling", href: "/scheduling", icon: Calendar },
-  { name: "IP Library", href: "/library", icon: BookOpen },
-  {
-    name: "Revenue Operations",
-    href: "/revenue",
-    icon: DollarSign,
-    children: [
-      { name: "Revenue Dashboard", href: "/revenue", icon: DollarSign },
-      { name: "New Revenue Entry", href: "/revenue/new", icon: Target },
-    ]
-  },
-  {
-    name: "User Management",
-    href: "/users",
-    icon: Users,
-    children: [
-      { name: "All Users", href: "/users", icon: Users },
-      { name: "Invite User", href: "/users/new", icon: UserIcon },
+      { name: "Analytics", href: "/analytics", icon: BarChart3 },
+      { name: "Client Engagements", href: "/engagements", icon: Briefcase },
+      { name: "AI Agents", href: "/agents", icon: Bot },
+      { name: "Scheduling", href: "/scheduling", icon: Calendar },
+      { name: "User Management", href: "/users", icon: Users },
     ]
   },
   { name: "Settings", href: "/settings", icon: Settings },
@@ -243,7 +227,7 @@ const DashboardLayout = ({ children, className }: DashboardLayoutProps) => {
                 <span className="text-white font-bold text-sm">T</span>
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                TRS RevOS
+                Revenue Empire
               </span>
             </Link>
             <Button
