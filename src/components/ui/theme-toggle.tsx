@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -19,8 +19,13 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="sm"
+<<<<<<< HEAD
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+      className="trs-transition-smooth"
+=======
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       className="transition-all duration-200 hover:bg-accent"
+>>>>>>> origin/main
     >
       <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />

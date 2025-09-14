@@ -37,7 +37,6 @@ import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import Scheduling from "./pages/Scheduling";
 import Settings from "./pages/Settings";
 import RevenueCalculatorPage from "./pages/RevenueCalculatorPage";
-import EmpireRoadmapPage from "./pages/EmpireRoadmapPage";
 import PortfolioManagerPage from "./pages/PortfolioManagerPage";
 import AIAssistantPage from "./pages/AIAssistantPage";
 import EmpireShowcase from "./pages/EmpireShowcase";
@@ -102,7 +101,7 @@ const App = () => (
               
               {/* Empire routes */}
               <Route path="/calculator" element={<DashboardLayout><RevenueCalculatorPage /></DashboardLayout>} />
-              <Route path="/roadmap" element={<DashboardLayout><EmpireRoadmapPage /></DashboardLayout>} />
+              {/* Roadmap page removed; access roadmap via Empire tabs */}
               <Route path="/portfolio" element={<DashboardLayout><PortfolioManagerPage /></DashboardLayout>} />
               <Route path="/assistant" element={<DashboardLayout><AIAssistantPage /></DashboardLayout>} />
               <Route path="/empire-showcase" element={<DashboardLayout><EmpireShowcase /></DashboardLayout>} />
