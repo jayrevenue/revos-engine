@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -73,13 +74,14 @@ const quickInsights = [
 
 const quickActions = [
   { title: "Calculate Revenue Scenario", icon: Calculator, href: "/calculator", color: "primary" },
-  { title: "Review Empire Roadmap", icon: Map, href: "/roadmap", color: "accent" },
+  { title: "Review Empire Roadmap", icon: Map, href: "/empire", color: "accent" },
   { title: "Manage Portfolio", icon: PieChart, href: "/portfolio", color: "secondary" },
   { title: "AI Strategy Session", icon: Brain, href: "/assistant", color: "muted" }
 ];
 
 export function UnifiedEmpireDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState("monthly");
+  const navigate = useNavigate();
   
   const totalRevenue = threePillarData.reduce((sum, pillar) => sum + pillar.current, 0);
   const totalTarget = threePillarData.reduce((sum, pillar) => sum + pillar.target, 0);
@@ -163,7 +165,7 @@ export function UnifiedEmpireDashboard() {
                   </div>
                 </div>
                 <Progress value={(pillar.current / pillar.target) * 100} />
-                <Button variant="outline" className="w-full" size="sm">
+                <Button variant="outline" className="w-full" size="sm" onClick={() => navigate('/portfolio')}>
                   <Target className="h-4 w-4 mr-2" />
                   Manage Pipeline
                 </Button>
