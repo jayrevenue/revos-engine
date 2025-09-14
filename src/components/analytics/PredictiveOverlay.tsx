@@ -354,7 +354,7 @@ export const PredictiveOverlay = ({
                     </SelectItem>
                   ))}
                 </SelectContent>
-              </SelectContent>
+              </Select>
             )}
           </div>
         </div>

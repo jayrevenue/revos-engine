@@ -18,15 +18,9 @@ import {
   Info
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-<<<<<<< HEAD
 import { supabase } from "@/integrations/supabase/client";
 
 type RevenuePoint = { month: string; total: number };
-=======
-// No dummy data. Charts render an empty state until real data is connected.
-const revenueData: Array<{ month: string; pillar1: number; pillar2: number; pillar3: number }> = [];
-const portfolioData: Array<{ name: string; value: number; color: string }> = [];
->>>>>>> origin/main
 
 export function EmpireDashboard() {
   const [monthly, setMonthly] = useState<RevenuePoint[]>([]);
@@ -119,7 +113,6 @@ export function EmpireDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-<<<<<<< HEAD
                 <p className="text-sm font-medium text-muted-foreground">Monthly Revenue</p>
                 <p className="text-2xl font-bold text-primary">{thisMonthK ? `$${thisMonthK.toFixed(1)}K` : '—'}</p>
                 {thisMonthK && (
@@ -128,27 +121,6 @@ export function EmpireDashboard() {
                     {mom >= 0 ? `+${mom}%` : `${mom}%`} from last month
                   </p>
                 )}
-=======
-                <div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                  <span>Monthly Revenue</span>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span
-                        tabIndex={0}
-                        aria-label="Help: Monthly Revenue"
-                        className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
-                      >
-                        <Info className="h-3.5 w-3.5" />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" align="start" className="max-w-xs">
-                      Total revenue generated this month across the three pillars: IP Licensing, Equity Deals, and Acquisitions. Trend compares to last month.
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <p className="text-2xl font-bold text-primary">—</p>
-                <p className="text-xs text-muted-foreground mt-1">Connect data to see revenue</p>
->>>>>>> origin/main
               </div>
               <DollarSign className="h-8 w-8 text-primary" />
             </div>
@@ -159,31 +131,9 @@ export function EmpireDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-<<<<<<< HEAD
                 <p className="text-sm font-medium text-muted-foreground">Active Engagements</p>
                 <p className="text-2xl font-bold text-accent">{engCount ?? '—'}</p>
                 <p className="text-xs text-muted-foreground">Count of engagements</p>
-=======
-                <div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                  <span>Active IP Licenses</span>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span
-                        tabIndex={0}
-                        aria-label="Help: Active IP Licenses"
-                        className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
-                      >
-                        <Info className="h-3.5 w-3.5" />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" align="start" className="max-w-xs">
-                      Count of live licensing agreements monetizing your IP. “Pending renewal” highlights contracts expiring soon that may need attention.
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <p className="text-2xl font-bold text-accent">—</p>
-                <p className="text-xs text-muted-foreground">Add licenses to track renewals</p>
->>>>>>> origin/main
               </div>
               <Briefcase className="h-8 w-8 text-accent" />
             </div>
@@ -194,31 +144,9 @@ export function EmpireDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-<<<<<<< HEAD
                 <p className="text-sm font-medium text-muted-foreground">Projects</p>
                 <p className="text-2xl font-bold text-secondary">{projCount ?? '—'}</p>
                 <p className="text-xs text-muted-foreground">Count of projects</p>
-=======
-                <div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                  <span>Equity Positions</span>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span
-                        tabIndex={0}
-                        aria-label="Help: Equity Positions"
-                        className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
-                      >
-                        <Info className="h-3.5 w-3.5" />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" align="start" className="max-w-xs">
-                      Number of companies where you hold equity. Value is an estimated total based on latest valuations or book value.
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <p className="text-2xl font-bold text-secondary">—</p>
-                <p className="text-xs text-muted-foreground">Track equity positions here</p>
->>>>>>> origin/main
               </div>
               <TrendingUp className="h-8 w-8 text-secondary" />
             </div>
@@ -229,31 +157,9 @@ export function EmpireDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-<<<<<<< HEAD
                 <p className="text-sm font-medium text-muted-foreground">Portfolio Companies</p>
                 <p className="text-2xl font-bold">—</p>
                 <p className="text-xs text-muted-foreground">Add companies to track</p>
-=======
-                <div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                  <span>Portfolio Companies</span>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span
-                        tabIndex={0}
-                        aria-label="Help: Portfolio Companies"
-                        className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
-                      >
-                        <Info className="h-3.5 w-3.5" />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" align="start" className="max-w-xs">
-                      Companies in your empire (majority and minority holdings). “Acquisition pending” indicates deals in diligence or under LOI.
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <p className="text-2xl font-bold">—</p>
-                <p className="text-xs text-muted-foreground">Add companies or acquisitions</p>
->>>>>>> origin/main
               </div>
               <Building2 className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -267,19 +173,19 @@ export function EmpireDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              <span>Three Pillars Revenue Growth</span>
+              <span>Revenue Growth</span>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span
                     tabIndex={0}
-                    aria-label="Help: Three Pillars Revenue Growth"
+                    aria-label="Help: Revenue Growth"
                     className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
                   >
                     <Info className="h-4 w-4" />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side="top" align="start" className="max-w-sm">
-                  Stacked bars show monthly revenue by pillar: IP Licensing, Equity Deals, and Acquisitions. Hover the chart to see exact amounts.
+                  Monthly revenue growth over the last 6 months. Values in thousands.
                 </TooltipContent>
               </Tooltip>
             </CardTitle>
@@ -290,21 +196,8 @@ export function EmpireDashboard() {
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="month" />
                 <YAxis />
-<<<<<<< HEAD
                 <RechartsTooltip formatter={(v: any) => [`$${v}K`, 'Total Revenue']} />
                 <Bar dataKey="total" fill="hsl(var(--primary))" name="Total Revenue" />
-=======
-                <RechartsTooltip />
-                {revenueData.length === 0 ? (
-                  <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-muted-foreground">No revenue data yet</text>
-                ) : (
-                  <>
-                    <Bar dataKey="pillar1" fill="hsl(var(--primary))" name="pillar1" />
-                    <Bar dataKey="pillar2" fill="hsl(var(--accent))" name="pillar2" />
-                    <Bar dataKey="pillar3" fill="hsl(var(--secondary))" name="pillar3" />
-                  </>
-                )}
->>>>>>> origin/main
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -315,31 +208,12 @@ export function EmpireDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Crown className="h-5 w-5 text-primary" />
-<<<<<<< HEAD
               Revenue Status Distribution
-=======
-              <span>Revenue Portfolio Distribution</span>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span
-                    tabIndex={0}
-                    aria-label="Help: Revenue Portfolio Distribution"
-                    className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
-                  >
-                    <Info className="h-4 w-4" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent side="top" align="start" className="max-w-sm">
-                  Shows the share of total revenue by pillar for the selected period. Use this to balance IP, equity, and acquisition efforts.
-                </TooltipContent>
-              </Tooltip>
->>>>>>> origin/main
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-<<<<<<< HEAD
                 {statusBreakdown.length ? (
                   <>
                     <Pie data={statusBreakdown} cx="50%" cy="50%" innerRadius={60} outerRadius={120} paddingAngle={5} dataKey="value">
@@ -359,120 +233,58 @@ export function EmpireDashboard() {
                 {statusBreakdown.map((item, index) => (
                   <div key={index} className="text-center">
                     <div className="w-4 h-4 rounded-full mx-auto mb-1" style={{ backgroundColor: item.color }} />
-=======
-                {portfolioData.length === 0 ? (
-                  <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-muted-foreground">No portfolio distribution</text>
-                ) : (
-                  <>
-                    <Pie
-                      data={portfolioData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={120}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {portfolioData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <RechartsTooltip formatter={(value) => [`${value}%`, 'Percentage']} />
-                  </>
-                )}
-              </PieChart>
-            </ResponsiveContainer>
-            {portfolioData.length > 0 && (
-              <div className="grid grid-cols-3 gap-4 mt-4">
-                {portfolioData.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div 
-                      className="w-4 h-4 rounded-full mx-auto mb-1"
-                      style={{ backgroundColor: item.color }}
-                    />
->>>>>>> origin/main
                     <p className="text-xs font-medium">{item.name}</p>
-                    <p className="text-lg font-bold">{item.value}%</p>
+                    <p className="text-xs text-muted-foreground">{item.value}%</p>
                   </div>
                 ))}
               </div>
-<<<<<<< HEAD
             ) : null}
-=======
-            )}
->>>>>>> origin/main
           </CardContent>
         </Card>
       </div>
 
-      {/* Quick Actions & Recent Activity */}
+      {/* Action Items & Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5 text-primary" />
-              <span>Quick Actions</span>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span
-                    tabIndex={0}
-                    aria-label="Help: Quick Actions"
-                    className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
-                  >
-                    <Info className="h-4 w-4" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent side="top" align="start" className="max-w-sm">
-                  Handy shortcuts for weekly empire ops: review KPIs, update IP pipeline, analyze acquisition targets, and export portfolio reports.
-                </TooltipContent>
-              </Tooltip>
+              Strategic Priorities
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  Review Weekly Revenue Board
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top" align="center" className="max-w-sm">
-                Review KPIs, pipeline status, and blockers. Update targets and notes for the week.
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  Update IP License Pipeline
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top" align="center" className="max-w-sm">
-                Add prospects, move deals through stages, and schedule follow-ups for licensing.
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  Analyze Acquisition Targets
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top" align="center" className="max-w-sm">
-                Compare multiples, fit, and synergies. Capture diligence notes and next steps.
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  Generate Portfolio Report
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top" align="center" className="max-w-sm">
-                Export a snapshot of revenue, IP, equity positions, and recent milestones.
-              </TooltipContent>
-            </Tooltip>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <p className="font-medium text-sm">Q4 Revenue Target</p>
+                  <p className="text-xs text-muted-foreground">$2.5M across all pillars</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-primary">85%</p>
+                  <Progress value={85} className="w-20 h-2 mt-1" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <p className="font-medium text-sm">IP Portfolio Expansion</p>
+                  <p className="text-xs text-muted-foreground">12 new patents filed</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-accent">67%</p>
+                  <Progress value={67} className="w-20 h-2 mt-1" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <p className="font-medium text-sm">Portfolio Diversification</p>
+                  <p className="text-xs text-muted-foreground">3 new acquisitions</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-secondary">40%</p>
+                  <Progress value={40} className="w-20 h-2 mt-1" />
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -480,29 +292,69 @@ export function EmpireDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              <span>Recent Milestones</span>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span
-                    tabIndex={0}
-                    aria-label="Help: Recent Milestones"
-                    className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
-                  >
-                    <Info className="h-4 w-4" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent side="top" align="start" className="max-w-sm">
-                  Key achievements and transactions across your empire. Entries can be added automatically from activity feeds or manually.
-                </TooltipContent>
-              </Tooltip>
+              Upcoming Milestones
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-sm text-muted-foreground">No milestones yet.</div>
-            <Button variant="outline" size="sm" className="w-fit">Add milestone</Button>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-3 border rounded-lg">
+                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                <div className="flex-grow">
+                  <p className="font-medium text-sm">Patent Application Deadline</p>
+                  <p className="text-xs text-muted-foreground">Due in 3 days</p>
+                </div>
+                <Badge variant="destructive">Urgent</Badge>
+              </div>
+              <div className="flex items-center gap-3 p-3 border rounded-lg">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                <div className="flex-grow">
+                  <p className="font-medium text-sm">Board Meeting Prep</p>
+                  <p className="text-xs text-muted-foreground">Next week</p>
+                </div>
+                <Badge variant="secondary">Medium</Badge>
+              </div>
+              <div className="flex items-center gap-3 p-3 border rounded-lg">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="flex-grow">
+                  <p className="font-medium text-sm">License Renewal</p>
+                  <p className="text-xs text-muted-foreground">In 2 weeks</p>
+                </div>
+                <Badge variant="outline">Low</Badge>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            Quick Actions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+              <FileText className="h-6 w-6" />
+              <span className="text-sm">New Document</span>
+            </Button>
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+              <TrendingUp className="h-6 w-6" />
+              <span className="text-sm">View Analytics</span>
+            </Button>
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+              <Building2 className="h-6 w-6" />
+              <span className="text-sm">Add Company</span>
+            </Button>
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+              <ChevronRight className="h-6 w-6" />
+              <span className="text-sm">View All</span>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
       </div>
     </TooltipProvider>
   );

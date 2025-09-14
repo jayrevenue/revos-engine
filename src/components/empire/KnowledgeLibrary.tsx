@@ -23,20 +23,12 @@ import {
   Info
 } from "lucide-react";
 
-<<<<<<< HEAD
 // Loaded dynamically from Supabase
 const templates: any[] = [];
 
 const tutorials: any[] = [];
 
 const experts: any[] = [];
-=======
-const templates: Array<any> = [];
-
-const tutorials: Array<any> = [];
-
-const experts: Array<any> = [];
->>>>>>> origin/main
 
 export function KnowledgeLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -185,13 +177,8 @@ export function KnowledgeLibrary() {
           {filteredTemplates.length === 0 ? (
             <p className="text-sm text-muted-foreground">No templates or documents yet.</p>
           ) : (
-<<<<<<< HEAD
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredTemplates.map((template: any) => (
-=======
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredTemplates.map((template) => (
->>>>>>> origin/main
               <Card key={template.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -232,7 +219,6 @@ export function KnowledgeLibrary() {
                     </div>
 
                     <div className="flex gap-2">
-<<<<<<< HEAD
                       <Button size="sm" className="flex-grow" onClick={() => setPreviewItem(template)}>
                         <Eye className="h-4 w-4 mr-2" />
                         Preview
@@ -275,34 +261,6 @@ export function KnowledgeLibrary() {
                       }}>
                         <BookmarkPlus className="h-4 w-4" />
                       </Button>
-=======
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button size="sm" className="flex-grow">
-                            <Eye className="h-4 w-4 mr-2" />
-                            Preview
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" align="start">Open a read-only view of the template.</TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button size="sm" variant="outline">
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" align="start">Save a copy to your device.</TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button size="sm" variant="ghost">
-                            <BookmarkPlus className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" align="start">Bookmark to find it quickly later.</TooltipContent>
-                      </Tooltip>
->>>>>>> origin/main
                     </div>
                   </div>
                 </CardContent>
@@ -316,13 +274,8 @@ export function KnowledgeLibrary() {
           {filteredTutorials.length === 0 ? (
             <p className="text-sm text-muted-foreground">No tutorials yet.</p>
           ) : (
-<<<<<<< HEAD
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredTutorials.map((tutorial: any) => (
-=======
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredTutorials.map((tutorial) => (
->>>>>>> origin/main
               <Card key={tutorial.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -392,11 +345,7 @@ export function KnowledgeLibrary() {
           {experts.length === 0 ? (
             <p className="text-sm text-muted-foreground">No experts listed yet.</p>
           ) : (
-<<<<<<< HEAD
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-=======
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
->>>>>>> origin/main
             {experts.map((expert) => (
               <Card key={expert.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
@@ -406,41 +355,48 @@ export function KnowledgeLibrary() {
                     </div>
                     <CardTitle className="text-lg">{expert.name}</CardTitle>
                     <p className="text-sm text-muted-foreground">{expert.title}</p>
-                    <Badge variant="outline" className="mt-2">
-                      {expert.specialty}
-                    </Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground text-center">{expert.bio}</p>
-                    
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        {expert.rating}
-                      </div>
-                      <span className="text-muted-foreground">{expert.consultations} consultations</span>
-                    </div>
-
                     <div className="text-center">
-                      <p className="text-sm text-muted-foreground">Starting at</p>
-                      <p className="text-lg font-bold">${expert.hourlyRate}/hour</p>
+                      <div className="flex justify-center gap-2 mb-2">
+                        {expert.specialties?.map((specialty) => (
+                          <Badge key={specialty} variant="outline" className="text-xs">
+                            {specialty}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        {expert.rating} ({expert.reviews} reviews)
+                      </div>
+                    </div>
+                    
+                    <div className="text-center text-sm text-muted-foreground">
+                      <p>${expert.hourlyRate}/hour</p>
                     </div>
 
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button 
-                          size="sm" 
-                          className="w-full"
-                          disabled={expert.availability === 'Booked'}
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          {expert.availability === 'Booked' ? 'Fully Booked' : 'Book Consultation'}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" align="center">Request time with this expert to review deals or docs.</TooltipContent>
-                    </Tooltip>
+                    <div className="space-y-2">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button size="sm" className="w-full">
+                            <MessageSquare className="h-4 w-4 mr-2" />
+                            Contact Expert
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="center">Send a message to discuss your needs.</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button size="sm" variant="outline" className="w-full">
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            View Profile
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="center">See full expertise and background.</TooltipContent>
+                      </Tooltip>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -449,31 +405,7 @@ export function KnowledgeLibrary() {
           )}
         </TabsContent>
       </Tabs>
-<<<<<<< HEAD
-      {previewItem && (
-        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center" onClick={() => setPreviewItem(null)}>
-          <div className="bg-background border rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto p-4" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-semibold">{previewItem.title}</h3>
-              <button className="text-sm text-muted-foreground" onClick={() => setPreviewItem(null)}>Close</button>
-            </div>
-            <p className="text-sm text-muted-foreground mb-4">{previewItem.description}</p>
-            {previewItem.file_url ? (
-              <div className="text-sm">
-                <a className="text-primary underline" href={previewItem.file_url} target="_blank" rel="noreferrer">Open file</a>
-              </div>
-            ) : previewItem.content ? (
-              <pre className="text-xs whitespace-pre-wrap bg-muted/30 p-3 rounded-md">{typeof previewItem.content === 'string' ? previewItem.content : JSON.stringify(previewItem.content, null, 2)}</pre>
-            ) : (
-              <div className="text-sm text-muted-foreground">No preview available.</div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-=======
       </div>
     </TooltipProvider>
->>>>>>> origin/main
   );
 }

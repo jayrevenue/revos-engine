@@ -30,7 +30,6 @@ export function AIAssistant() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversation, setConversation] = useState<{ role: 'user'|'assistant'; content: string }[]>([]);
-<<<<<<< HEAD
   const [agentId, setAgentId] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);
 
@@ -48,8 +47,6 @@ export function AIAssistant() {
     };
     pickAgent();
   }, []);
-=======
->>>>>>> origin/main
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -59,7 +56,6 @@ export function AIAssistant() {
     setConversation(prev => [...prev, newMessage]);
     setMessage("");
 
-<<<<<<< HEAD
     try {
       const { data, error } = await supabase.functions.invoke('agent-chat', {
         body: { agentId, message, conversationId },
@@ -74,10 +70,6 @@ export function AIAssistant() {
     } finally {
       setIsLoading(false);
     }
-=======
-    // No dummy responses. Integrate your AI provider to enable replies.
-    setIsLoading(false);
->>>>>>> origin/main
   };
 
   const handleSuggestionClick = (suggestion) => {
