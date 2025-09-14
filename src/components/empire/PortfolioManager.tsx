@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,9 +20,11 @@ import {
   Target,
   Briefcase,
   Eye,
-  Edit
+  Edit,
+  Info
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+<<<<<<< HEAD
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -149,15 +152,44 @@ export function PortfolioManager() {
   return (
     <div className="space-y-6">
       {error && <div className="text-sm text-red-600">{error}</div>}
+=======
+
+const portfolioCompanies: Array<any> = [];
+
+const performanceData: Array<any> = [];
+
+const pipelineDeals: Array<any> = [];
+
+export function PortfolioManager() {
+  const [selectedCompany, setSelectedCompany] = useState<any | null>(portfolioCompanies[0] || null);
+
+  const totalPortfolioValue = portfolioCompanies.reduce((sum, company) => sum + (company.value || 0), 0);
+  const totalMonthlyRevenue = portfolioCompanies.reduce((sum, company) => sum + (company.monthlyRevenue || 0), 0);
+  const averageMarginImprovement = portfolioCompanies.length === 0 ? 0 : (portfolioCompanies.reduce((sum, company) => sum + (company.metrics?.marginImprovement || 0), 0) / portfolioCompanies.length);
+
+  return (
+    <TooltipProvider delayDuration={100}>
+      <div className="space-y-6">
+>>>>>>> origin/main
       {/* Portfolio Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Portfolio Value</p>
-                <p className="text-2xl font-bold text-primary">${(totalPortfolioValue / 1000000).toFixed(1)}M</p>
-                <p className="text-xs text-emerald-600">+15.2% this quarter</p>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <span>Portfolio Value</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} aria-label="Help: Portfolio Value" className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start">Sum of estimated values across all holdings.</TooltipContent>
+                  </Tooltip>
+                </p>
+                <p className="text-2xl font-bold text-primary">{totalPortfolioValue > 0 ? `$${(totalPortfolioValue / 1000000).toFixed(1)}M` : '—'}</p>
+                <p className="text-xs text-muted-foreground">Connect valuations to populate</p>
               </div>
               <PieChart className="h-8 w-8 text-primary" />
             </div>
@@ -168,8 +200,18 @@ export function PortfolioManager() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Monthly Revenue</p>
-                <p className="text-2xl font-bold text-accent">${(totalMonthlyRevenue / 1000).toFixed(0)}K</p>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <span>Monthly Revenue</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} aria-label="Help: Monthly Revenue" className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start">Aggregate monthly revenue across portfolio companies.</TooltipContent>
+                  </Tooltip>
+                </p>
+                <p className="text-2xl font-bold text-accent">{totalMonthlyRevenue > 0 ? `$${(totalMonthlyRevenue / 1000).toFixed(0)}K` : '—'}</p>
                 <p className="text-xs text-muted-foreground">Across {portfolioCompanies.length} companies</p>
               </div>
               <DollarSign className="h-8 w-8 text-accent" />
@@ -181,8 +223,18 @@ export function PortfolioManager() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Avg Margin Boost</p>
-                <p className="text-2xl font-bold text-secondary">{averageMarginImprovement.toFixed(0)}%</p>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <span>Avg Margin Boost</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} aria-label="Help: Avg Margin Boost" className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start">Average margin improvement attributed to TRS implementation.</TooltipContent>
+                  </Tooltip>
+                </p>
+                <p className="text-2xl font-bold text-secondary">{averageMarginImprovement > 0 ? `${averageMarginImprovement.toFixed(0)}%` : '—'}</p>
                 <p className="text-xs text-muted-foreground">Via TRS implementation</p>
               </div>
               <TrendingUp className="h-8 w-8 text-secondary" />
@@ -194,9 +246,19 @@ export function PortfolioManager() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Deals</p>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <span>Active Deals</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} aria-label="Help: Active Deals" className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start">Open opportunities in pipeline (equity, acquisitions, licenses).</TooltipContent>
+                  </Tooltip>
+                </p>
                 <p className="text-2xl font-bold">{pipelineDeals.length}</p>
-                <p className="text-xs text-muted-foreground">${(pipelineDeals.reduce((sum, deal) => sum + deal.value, 0) / 1000000).toFixed(1)}M pipeline</p>
+                <p className="text-xs text-muted-foreground">{pipelineDeals.length ? `$${(pipelineDeals.reduce((sum, deal) => sum + (deal.value || 0), 0) / 1000000).toFixed(1)}M pipeline` : 'No pipeline yet'}</p>
               </div>
               <Briefcase className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -219,7 +281,15 @@ export function PortfolioManager() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Building2 className="h-5 w-5 text-primary" />
-                    Companies
+                    <span>Companies</span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span tabIndex={0} aria-label="Help: Companies list" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                          <Info className="h-4 w-4" />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" align="start" className="max-w-sm">Select a company to view details. Status and phase indicate where each engagement stands.</TooltipContent>
+                    </Tooltip>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -270,7 +340,21 @@ export function PortfolioManager() {
                     <div>
                       {selectedCompany ? (
                         <>
+<<<<<<< HEAD
                           <CardTitle>{selectedCompany.name}</CardTitle>
+=======
+                          <div className="flex items-center gap-2">
+                            <CardTitle>{selectedCompany.name}</CardTitle>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span tabIndex={0} aria-label="Help: Company details" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                                  <Info className="h-4 w-4" />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" align="start" className="max-w-sm">Key metrics, milestones, and performance for the selected company.</TooltipContent>
+                            </Tooltip>
+                          </div>
+>>>>>>> origin/main
                           <p className="text-sm text-muted-foreground">{selectedCompany.type}</p>
                         </>
                       ) : (
@@ -278,14 +362,24 @@ export function PortfolioManager() {
                       )}
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4 mr-2" />
-                        View Details
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="end">Open the full profile and history.</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="end">Update company info and milestones.</TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                 </CardHeader>
@@ -293,22 +387,59 @@ export function PortfolioManager() {
                   {/* Key Metrics */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="text-center p-4 bg-muted/20 rounded-lg">
-                      <p className="text-sm text-muted-foreground">Value</p>
-                      <p className="text-xl font-bold">${(selectedCompany.value / 1000).toFixed(0)}K</p>
+                      <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">Value
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0} aria-label="Help: Value" className="inline-flex h-4 w-4 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                              <Info className="h-3.5 w-3.5" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="center">Estimated enterprise value or stake value.</TooltipContent>
+                        </Tooltip>
+                      </p>
+                      <p className="text-xl font-bold">{selectedCompany?.value ? `$${(selectedCompany.value / 1000).toFixed(0)}K` : '—'}</p>
                     </div>
                     <div className="text-center p-4 bg-muted/20 rounded-lg">
-                      <p className="text-sm text-muted-foreground">Monthly Revenue</p>
-                      <p className="text-xl font-bold">${(selectedCompany.monthlyRevenue / 1000).toFixed(0)}K</p>
+                      <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">Monthly Revenue
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0} aria-label="Help: Monthly Revenue metric" className="inline-flex h-4 w-4 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                              <Info className="h-3.5 w-3.5" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="center">Average monthly revenue currently reported.</TooltipContent>
+                        </Tooltip>
+                      </p>
+                      <p className="text-xl font-bold">{selectedCompany?.monthlyRevenue ? `$${(selectedCompany.monthlyRevenue / 1000).toFixed(0)}K` : '—'}</p>
                     </div>
                     <div className="text-center p-4 bg-muted/20 rounded-lg">
-                      <p className="text-sm text-muted-foreground">Margin Improvement</p>
-                      <p className="text-xl font-bold text-emerald-600">+{selectedCompany.metrics.marginImprovement}%</p>
+                      <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">Margin Improvement
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0} aria-label="Help: Margin Improvement" className="inline-flex h-4 w-4 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                              <Info className="h-3.5 w-3.5" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="center">Improvement since implementation, percentage points.</TooltipContent>
+                        </Tooltip>
+                      </p>
+                      <p className="text-xl font-bold text-emerald-600">{selectedCompany?.metrics?.marginImprovement ? `+${selectedCompany.metrics.marginImprovement}%` : '—'}</p>
                     </div>
                   </div>
 
                   {/* Milestones Progress */}
                   <div>
-                    <h4 className="font-medium mb-3">Implementation Progress</h4>
+                    <div className="flex items-center gap-2 mb-3">
+                      <h4 className="font-medium">Implementation Progress</h4>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span tabIndex={0} aria-label="Help: Implementation Progress" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                            <Info className="h-4 w-4" />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="start">Phase, milestones completed, and current focus item.</TooltipContent>
+                      </Tooltip>
+                    </div>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-sm">Phase: {selectedCompany.phase}</span>
@@ -368,7 +499,15 @@ export function PortfolioManager() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-primary" />
-                Portfolio Performance Trends
+                <span>Portfolio Performance Trends</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} aria-label="Help: Portfolio Performance Trends" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                      <Info className="h-4 w-4" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start" className="max-w-sm">Revenue bars (left axis, $K) and margin line (right axis, %) over time. Hover to see values.</TooltipContent>
+                </Tooltip>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -381,7 +520,11 @@ export function PortfolioManager() {
                     <XAxis dataKey="month" />
                     <YAxis yAxisId="left" label={{ value: 'Revenue ($K)', angle: -90, position: 'insideLeft' }} />
                     <YAxis yAxisId="right" orientation="right" label={{ value: 'Margin (%)', angle: 90, position: 'insideRight' }} />
+<<<<<<< HEAD
                   <RechartsTooltip />
+=======
+                    <RechartsTooltip />
+>>>>>>> origin/main
                     <Bar yAxisId="left" dataKey="revenue" fill="hsl(var(--primary))" name="Revenue ($K)" />
                     <Line yAxisId="right" type="monotone" dataKey="margin" stroke="hsl(var(--accent))" strokeWidth={3} name="Margin %" />
                   </LineChart>
@@ -413,44 +556,66 @@ export function PortfolioManager() {
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-3">{deal.description}</p>
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-1">
-                          <DollarSign className="h-4 w-4" />
-                          <span>${(deal.value / 1000).toFixed(0)}K value</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Target className="h-4 w-4" />
-                          <span>{deal.probability}% probability</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          <span>Close: {deal.closeDate}</span>
-                        </div>
+                    <div className="flex items-center gap-4 text-sm">
+                      <div className="flex items-center gap-1">
+                        <DollarSign className="h-4 w-4" />
+                        <span>${(deal.value / 1000).toFixed(0)}K value</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Target className="h-4 w-4" />
+                        <span>{deal.probability}% probability</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0} aria-label="Help: Probability" className="inline-flex h-4 w-4 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                              <Info className="h-3.5 w-3.5" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="center">Close likelihood based on stage and signals.</TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4" />
+                        <span>Close: {deal.closeDate}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0} aria-label="Help: Close date" className="inline-flex h-4 w-4 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                              <Info className="h-3.5 w-3.5" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="center">Estimated close date; adjust as deal progresses.</TooltipContent>
+                        </Tooltip>
                       </div>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="text-right">
-                        <p className="text-lg font-bold">${(deal.value / 1000).toFixed(0)}K</p>
-                        <p className="text-xs text-muted-foreground">{deal.probability}% confidence</p>
-                      </div>
-                      <Button size="sm">
-                        View Deal
-                      </Button>
-                    </div>
                   </div>
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                      <span>Deal Progress</span>
-                      <span>{deal.probability}%</span>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="text-right">
+                      <p className="text-lg font-bold">${(deal.value / 1000).toFixed(0)}K</p>
+                      <p className="text-xs text-muted-foreground">{deal.probability}% confidence</p>
                     </div>
-                    <Progress value={deal.probability} />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button size="sm">
+                          View Deal
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" align="end">Open deal details and next steps.</TooltipContent>
+                    </Tooltip>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
+                </div>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                    <span>Deal Progress</span>
+                    <span>{deal.probability}%</span>
+                  </div>
+                  <Progress value={deal.probability} />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }

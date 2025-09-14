@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,15 +19,24 @@ import {
   Play,
   ExternalLink,
   Eye,
-  BookmarkPlus
+  BookmarkPlus,
+  Info
 } from "lucide-react";
 
+<<<<<<< HEAD
 // Loaded dynamically from Supabase
 const templates: any[] = [];
 
 const tutorials: any[] = [];
 
 const experts: any[] = [];
+=======
+const templates: Array<any> = [];
+
+const tutorials: Array<any> = [];
+
+const experts: Array<any> = [];
+>>>>>>> origin/main
 
 export function KnowledgeLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -115,7 +125,8 @@ export function KnowledgeLibrary() {
     );
 
   return (
-    <div className="space-y-6">
+    <TooltipProvider delayDuration={100}>
+      <div className="space-y-6">
       {/* Search and Filter */}
       <Card>
         <CardContent className="p-6">
@@ -129,7 +140,7 @@ export function KnowledgeLibrary() {
                 className="pl-10"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               {["all", "legal", "equity", "m&a", "operations"].map((category) => (
                 <Button
                   key={category}
@@ -141,6 +152,14 @@ export function KnowledgeLibrary() {
                   {category === "m&a" ? "M&A" : category}
                 </Button>
               ))}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} aria-label="Help: Category filter" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                    <Info className="h-4 w-4" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top" align="end">Filter results by category. Use Search to narrow further.</TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </CardContent>
@@ -166,8 +185,13 @@ export function KnowledgeLibrary() {
           {filteredTemplates.length === 0 ? (
             <p className="text-sm text-muted-foreground">No templates or documents yet.</p>
           ) : (
+<<<<<<< HEAD
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredTemplates.map((template: any) => (
+=======
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredTemplates.map((template) => (
+>>>>>>> origin/main
               <Card key={template.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -175,9 +199,19 @@ export function KnowledgeLibrary() {
                       <CardTitle className="text-lg">{template.title}</CardTitle>
                       <p className="text-sm text-muted-foreground mt-1">{template.description}</p>
                     </div>
-                    <Badge variant={template.status === 'ready' ? 'default' : 'secondary'}>
-                      {template.status}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={template.status === 'ready' ? 'default' : 'secondary'}>
+                        {template.status}
+                      </Badge>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span tabIndex={0} aria-label="Help: Template status" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                            <Info className="h-4 w-4" />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="end">Ready = downloadable. Draft = in progress; contents may change.</TooltipContent>
+                      </Tooltip>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -198,6 +232,7 @@ export function KnowledgeLibrary() {
                     </div>
 
                     <div className="flex gap-2">
+<<<<<<< HEAD
                       <Button size="sm" className="flex-grow" onClick={() => setPreviewItem(template)}>
                         <Eye className="h-4 w-4 mr-2" />
                         Preview
@@ -240,6 +275,34 @@ export function KnowledgeLibrary() {
                       }}>
                         <BookmarkPlus className="h-4 w-4" />
                       </Button>
+=======
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button size="sm" className="flex-grow">
+                            <Eye className="h-4 w-4 mr-2" />
+                            Preview
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="start">Open a read-only view of the template.</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button size="sm" variant="outline">
+                            <Download className="h-4 w-4 mr-2" />
+                            Download
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="start">Save a copy to your device.</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button size="sm" variant="ghost">
+                            <BookmarkPlus className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="start">Bookmark to find it quickly later.</TooltipContent>
+                      </Tooltip>
+>>>>>>> origin/main
                     </div>
                   </div>
                 </CardContent>
@@ -253,8 +316,13 @@ export function KnowledgeLibrary() {
           {filteredTutorials.length === 0 ? (
             <p className="text-sm text-muted-foreground">No tutorials yet.</p>
           ) : (
+<<<<<<< HEAD
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredTutorials.map((tutorial: any) => (
+=======
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredTutorials.map((tutorial) => (
+>>>>>>> origin/main
               <Card key={tutorial.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -262,9 +330,19 @@ export function KnowledgeLibrary() {
                       <CardTitle className="text-lg">{tutorial.title}</CardTitle>
                       <p className="text-sm text-muted-foreground mt-1">{tutorial.description}</p>
                     </div>
-                    <Badge variant={tutorial.status === 'published' ? 'default' : 'secondary'}>
-                      {tutorial.status === 'coming-soon' ? 'Coming Soon' : 'Published'}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={tutorial.status === 'published' ? 'default' : 'secondary'}>
+                        {tutorial.status === 'coming-soon' ? 'Coming Soon' : 'Published'}
+                      </Badge>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span tabIndex={0} aria-label="Help: Tutorial status" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                            <Info className="h-4 w-4" />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="end">Published videos can be watched now. Coming Soon items are in production.</TooltipContent>
+                      </Tooltip>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -289,14 +367,19 @@ export function KnowledgeLibrary() {
                       <Badge variant="outline">{tutorial.category}</Badge>
                     </div>
 
-                    <Button 
-                      size="sm" 
-                      className="w-full"
-                      disabled={tutorial.status === 'coming-soon'}
-                    >
-                      <Play className="h-4 w-4 mr-2" />
-                      {tutorial.status === 'coming-soon' ? 'Coming Soon' : 'Watch Tutorial'}
-                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          className="w-full"
+                          disabled={tutorial.status === 'coming-soon'}
+                        >
+                          <Play className="h-4 w-4 mr-2" />
+                          {tutorial.status === 'coming-soon' ? 'Coming Soon' : 'Watch Tutorial'}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" align="center">Play tutorial when available.</TooltipContent>
+                    </Tooltip>
                   </div>
                 </CardContent>
               </Card>
@@ -309,7 +392,11 @@ export function KnowledgeLibrary() {
           {experts.length === 0 ? (
             <p className="text-sm text-muted-foreground">No experts listed yet.</p>
           ) : (
+<<<<<<< HEAD
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+=======
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+>>>>>>> origin/main
             {experts.map((expert) => (
               <Card key={expert.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
@@ -341,14 +428,19 @@ export function KnowledgeLibrary() {
                       <p className="text-lg font-bold">${expert.hourlyRate}/hour</p>
                     </div>
 
-                    <Button 
-                      size="sm" 
-                      className="w-full"
-                      disabled={expert.availability === 'Booked'}
-                    >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      {expert.availability === 'Booked' ? 'Fully Booked' : 'Book Consultation'}
-                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          className="w-full"
+                          disabled={expert.availability === 'Booked'}
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          {expert.availability === 'Booked' ? 'Fully Booked' : 'Book Consultation'}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" align="center">Request time with this expert to review deals or docs.</TooltipContent>
+                    </Tooltip>
                   </div>
                 </CardContent>
               </Card>
@@ -357,6 +449,7 @@ export function KnowledgeLibrary() {
           )}
         </TabsContent>
       </Tabs>
+<<<<<<< HEAD
       {previewItem && (
         <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center" onClick={() => setPreviewItem(null)}>
           <div className="bg-background border rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto p-4" onClick={(e) => e.stopPropagation()}>
@@ -378,5 +471,9 @@ export function KnowledgeLibrary() {
         </div>
       )}
     </div>
+=======
+      </div>
+    </TooltipProvider>
+>>>>>>> origin/main
   );
 }

@@ -28,21 +28,7 @@ import { PortfolioManager } from "@/components/empire/PortfolioManager";
 
 export default function Empire() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [empirePhase] = useState(1); // Mock data - would come from user progress
-
-  const phases = [
-    { id: 1, name: "Foundation", progress: 75, status: "active" },
-    { id: 2, name: "IP Development", progress: 30, status: "pending" },
-    { id: 3, name: "Scale & Acquire", progress: 0, status: "locked" },
-    { id: 4, name: "Empire Operations", progress: 0, status: "locked" }
-  ];
-
-  const achievements = [
-    { name: "Legal Structure", icon: Building2, completed: true },
-    { name: "First IP License", icon: FileText, completed: false },
-    { name: "Equity Deal", icon: TrendingUp, completed: false },
-    { name: "Business Acquisition", icon: Crown, completed: false }
-  ];
+  const [empirePhase] = useState<number | null>(null);
 
   return (
     <Page
@@ -58,28 +44,52 @@ export default function Empire() {
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <Badge variant="secondary" className="bg-primary/10 text-primary">
-            Phase {empirePhase}: Foundation
+            {empirePhase ? `Phase ${empirePhase}` : 'No phase set'}
           </Badge>
         </div>
 
         {/* Phase Progress Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {phases.map((phase) => (
-            <Card key={phase.id} className={`transition-all hover:shadow-lg ${
-              phase.status === 'active' ? 'ring-2 ring-primary' : 
-              phase.status === 'locked' ? 'opacity-60' : ''
-            }`}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-sm">{phase.name}</h3>
-                  {phase.status === 'active' && <Zap className="h-4 w-4 text-primary animate-pulse" />}
-                  {phase.status === 'locked' && <ShieldCheck className="h-4 w-4 text-muted-foreground" />}
-                </div>
-                <Progress value={phase.progress} className="mb-2" />
-                <p className="text-xs text-muted-foreground">{phase.progress}% Complete</p>
-              </CardContent>
-            </Card>
-          ))}
+          <Card className="transition-all hover:shadow-lg">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-sm">Phases</h3>
+                <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <Progress value={0} className="mb-2" />
+              <p className="text-xs text-muted-foreground">No phases yet — add them in Roadmap</p>
+            </CardContent>
+          </Card>
+          <Card className="transition-all hover:shadow-lg">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-sm">IP Development</h3>
+                <Zap className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <Progress value={0} className="mb-2" />
+              <p className="text-xs text-muted-foreground">Track progress as you add data</p>
+            </CardContent>
+          </Card>
+          <Card className="transition-all hover:shadow-lg">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-sm">Scale & Acquire</h3>
+                <Rocket className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <Progress value={0} className="mb-2" />
+              <p className="text-xs text-muted-foreground">Add equity deals and acquisitions</p>
+            </CardContent>
+          </Card>
+          <Card className="transition-all hover:shadow-lg">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-sm">Operations</h3>
+                <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <Progress value={0} className="mb-2" />
+              <p className="text-xs text-muted-foreground">Set targets and track metrics</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Achievement Badges */}
@@ -91,25 +101,7 @@ export default function Empire() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {achievements.map((achievement, index) => (
-                <div key={index} className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all ${
-                  achievement.completed 
-                    ? 'border-primary bg-primary/5 text-primary' 
-                    : 'border-dashed border-muted-foreground/30 text-muted-foreground'
-                }`}>
-                  <achievement.icon className={`h-8 w-8 mb-2 ${
-                    achievement.completed ? 'animate-pulse' : ''
-                  }`} />
-                  <span className="text-sm font-medium text-center">{achievement.name}</span>
-                  {achievement.completed && (
-                    <Badge variant="secondary" className="mt-2 bg-primary/20 text-primary">
-                      Unlocked
-                    </Badge>
-                  )}
-                </div>
-              ))}
-            </div>
+            <div className="text-sm text-muted-foreground">No achievements yet. Complete milestones to unlock achievements.</div>
           </CardContent>
         </Card>
 

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -13,30 +14,31 @@ import {
   Target,
   PieChart,
   BarChart3,
-  Briefcase
+  Briefcase,
+  Info
 } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 
 export function RevenueCalculator() {
   // Pillar 1: IP Licensing
   const [licensees, setLicensees] = useState({
-    agencies: { count: 5, avgRevenue: 50000, royalty: 4 },
-    rcmVendors: { count: 3, avgRevenue: 80000, royalty: 3 },
-    msps: { count: 8, avgRevenue: 30000, royalty: 5 }
+    agencies: { count: 0, avgRevenue: 0, royalty: 0 },
+    rcmVendors: { count: 0, avgRevenue: 0, royalty: 0 },
+    msps: { count: 0, avgRevenue: 0, royalty: 0 }
   });
 
   // Pillar 2: Outcomes-as-Product
   const [equityDeals, setEquityDeals] = useState({
-    small: { count: 2, arr: 2000000, equity: 2.0, multiple: 6 },
-    medium: { count: 1, arr: 5000000, equity: 1.5, multiple: 8 },
-    large: { count: 1, arr: 10000000, equity: 1.0, multiple: 10 }
+    small: { count: 0, arr: 0, equity: 0, multiple: 0 },
+    medium: { count: 0, arr: 0, equity: 0, multiple: 0 },
+    large: { count: 0, arr: 0, equity: 0, multiple: 0 }
   });
 
   // Pillar 3: Business Ownership
   const [businesses, setBusinesses] = useState({
-    rcmVendors: { count: 1, cashFlow: 15000, mgmtFee: 10 },
-    compliance: { count: 1, cashFlow: 12000, mgmtFee: 10 },
-    microSaas: { count: 1, cashFlow: 8000, mgmtFee: 10 }
+    rcmVendors: { count: 0, cashFlow: 0, mgmtFee: 0 },
+    compliance: { count: 0, cashFlow: 0, mgmtFee: 0 },
+    microSaas: { count: 0, cashFlow: 0, mgmtFee: 0 }
   });
 
   const [timeHorizon, setTimeHorizon] = useState(24); // months
@@ -74,14 +76,31 @@ export function RevenueCalculator() {
   });
 
   return (
-    <div className="space-y-6">
+    <TooltipProvider delayDuration={100}>
+      <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Monthly</p>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <span>Total Monthly</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        tabIndex={0}
+                        aria-label="Help: Total Monthly"
+                        className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
+                      >
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start" className="max-w-xs">
+                      Sum of projected monthly revenue across all three pillars. Annual estimate is Total Monthly × 12.
+                    </TooltipContent>
+                  </Tooltip>
+                </p>
                 <p className="text-2xl font-bold text-primary">${(totalMonthly / 1000).toFixed(1)}K</p>
                 <p className="text-xs text-muted-foreground">${(totalAnnual / 1000).toFixed(0)}K annually</p>
               </div>
@@ -94,7 +113,23 @@ export function RevenueCalculator() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">IP Licensing</p>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <span>IP Licensing</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        tabIndex={0}
+                        aria-label="Help: IP Licensing"
+                        className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
+                      >
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start" className="max-w-xs">
+                      Royalty income from licensed IP. Calculated as Count × Avg monthly revenue × Royalty%.
+                    </TooltipContent>
+                  </Tooltip>
+                </p>
                 <p className="text-2xl font-bold text-accent">${(pillar1Monthly / 1000).toFixed(1)}K</p>
                 <p className="text-xs text-muted-foreground">{Math.round((pillar1Monthly / totalMonthly) * 100)}% of total</p>
               </div>
@@ -107,7 +142,23 @@ export function RevenueCalculator() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Equity Deals</p>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <span>Equity Deals</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        tabIndex={0}
+                        aria-label="Help: Equity Deals"
+                        className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
+                      >
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start" className="max-w-xs">
+                      Estimated value from outcomes-as-product equity. Uses ARR × Equity% × Multiple, then divided by 12 to show monthly.
+                    </TooltipContent>
+                  </Tooltip>
+                </p>
                 <p className="text-2xl font-bold text-secondary">${(pillar2Monthly / 1000).toFixed(1)}K</p>
                 <p className="text-xs text-muted-foreground">{Math.round((pillar2Monthly / totalMonthly) * 100)}% of total</p>
               </div>
@@ -120,7 +171,23 @@ export function RevenueCalculator() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Acquisitions</p>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <span>Acquisitions</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        tabIndex={0}
+                        aria-label="Help: Acquisitions"
+                        className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
+                      >
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start" className="max-w-xs">
+                      Net cash flow from owned companies after management fees. Calculated as Count × Cash Flow × (1 − Mgmt fee%).
+                    </TooltipContent>
+                  </Tooltip>
+                </p>
                 <p className="text-2xl font-bold">${(pillar3Monthly / 1000).toFixed(1)}K</p>
                 <p className="text-xs text-muted-foreground">{Math.round((pillar3Monthly / totalMonthly) * 100)}% of total</p>
               </div>
@@ -144,16 +211,52 @@ export function RevenueCalculator() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Briefcase className="h-5 w-5 text-accent" />
-                  Pillar 1: IP Licensing
+                  <span>Pillar 1: IP Licensing</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} aria-label="Help: IP Licensing model" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                        <Info className="h-4 w-4" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start" className="max-w-sm">
+                      Estimates royalty income based on licensee count, their average monthly revenue, and negotiated royalty rate.
+                    </TooltipContent>
+                  </Tooltip>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {Object.entries(licensees).map(([key, data]) => (
                   <div key={key} className="space-y-2">
-                    <Label className="capitalize">{key.replace(/([A-Z])/g, ' $1')}</Label>
+                    <div className="flex items-center gap-1">
+                      <Label className="capitalize">{key.replace(/([A-Z])/g, ' $1')}</Label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span
+                            tabIndex={0}
+                            aria-label={`Help: ${key}`}
+                            className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help"
+                          >
+                            <Info className="h-3.5 w-3.5" />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="start" className="max-w-xs">
+                          Define the number of licensees in this category and their average monthly revenue to estimate royalties.
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                     <div className="grid grid-cols-3 gap-2">
                       <div>
-                        <Label className="text-xs">Count</Label>
+                        <div className="flex items-center gap-1">
+                          <Label className="text-xs">Count</Label>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span tabIndex={0} aria-label="Help: Count" className="inline-flex h-3.5 w-3.5 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                                <Info className="h-3 w-3" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" align="start">Number of active licensees.</TooltipContent>
+                          </Tooltip>
+                        </div>
                         <Input 
                           type="number"
                           value={data.count}
@@ -164,7 +267,17 @@ export function RevenueCalculator() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Avg Revenue</Label>
+                        <div className="flex items-center gap-1">
+                          <Label className="text-xs">Avg Revenue</Label>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span tabIndex={0} aria-label="Help: Avg Revenue" className="inline-flex h-3.5 w-3.5 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                                <Info className="h-3 w-3" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" align="start">Average monthly revenue per licensee (before royalty).</TooltipContent>
+                          </Tooltip>
+                        </div>
                         <Input 
                           type="number"
                           value={data.avgRevenue}
@@ -175,7 +288,17 @@ export function RevenueCalculator() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Royalty %</Label>
+                        <div className="flex items-center gap-1">
+                          <Label className="text-xs">Royalty %</Label>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span tabIndex={0} aria-label="Help: Royalty %" className="inline-flex h-3.5 w-3.5 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                                <Info className="h-3 w-3" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" align="start">Percentage of licensee revenue paid to you.</TooltipContent>
+                          </Tooltip>
+                        </div>
                         <Input 
                           type="number"
                           value={data.royalty}
@@ -204,7 +327,17 @@ export function RevenueCalculator() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-secondary" />
-                  Pillar 2: Equity Deals
+                  <span>Pillar 2: Equity Deals</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} aria-label="Help: Equity Deals model" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                        <Info className="h-4 w-4" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start" className="max-w-sm">
+                      Estimates value of equity positions using ARR × Equity% × Multiple, displayed as monthly for comparability. Not a cash flow forecast.
+                    </TooltipContent>
+                  </Tooltip>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -224,7 +357,17 @@ export function RevenueCalculator() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">ARR</Label>
+                        <div className="flex items-center gap-1">
+                          <Label className="text-xs">ARR</Label>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span tabIndex={0} aria-label="Help: ARR" className="inline-flex h-3.5 w-3.5 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                                <Info className="h-3 w-3" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" align="start">Annual Recurring Revenue per company.</TooltipContent>
+                          </Tooltip>
+                        </div>
                         <Input 
                           type="number"
                           value={data.arr}
@@ -235,7 +378,17 @@ export function RevenueCalculator() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Equity %</Label>
+                        <div className="flex items-center gap-1">
+                          <Label className="text-xs">Equity %</Label>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span tabIndex={0} aria-label="Help: Equity %" className="inline-flex h-3.5 w-3.5 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                                <Info className="h-3 w-3" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" align="start">Ownership percentage from outcomes-as-product deals.</TooltipContent>
+                          </Tooltip>
+                        </div>
                         <Input 
                           type="number"
                           step="0.1"
@@ -247,7 +400,17 @@ export function RevenueCalculator() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Multiple</Label>
+                        <div className="flex items-center gap-1">
+                          <Label className="text-xs">Multiple</Label>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span tabIndex={0} aria-label="Help: Multiple" className="inline-flex h-3.5 w-3.5 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                                <Info className="h-3 w-3" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" align="start">Valuation multiple applied to ARR (e.g., 6×, 8×, 10×).</TooltipContent>
+                          </Tooltip>
+                        </div>
                         <Input 
                           type="number"
                           value={data.multiple}
@@ -276,7 +439,17 @@ export function RevenueCalculator() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Building2 className="h-5 w-5 text-muted-foreground" />
-                  Pillar 3: Acquisitions
+                  <span>Pillar 3: Acquisitions</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} aria-label="Help: Acquisitions model" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                        <Info className="h-4 w-4" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start" className="max-w-sm">
+                      Estimates net cash flow from owned companies: Count × Cash Flow × (1 − Management fee%).
+                    </TooltipContent>
+                  </Tooltip>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -296,7 +469,17 @@ export function RevenueCalculator() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Cash Flow</Label>
+                        <div className="flex items-center gap-1">
+                          <Label className="text-xs">Cash Flow</Label>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span tabIndex={0} aria-label="Help: Cash Flow" className="inline-flex h-3.5 w-3.5 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                                <Info className="h-3 w-3" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" align="start">Average monthly cash flow per business (before fee).</TooltipContent>
+                          </Tooltip>
+                        </div>
                         <Input 
                           type="number"
                           value={data.cashFlow}
@@ -307,7 +490,17 @@ export function RevenueCalculator() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Mgmt Fee %</Label>
+                        <div className="flex items-center gap-1">
+                          <Label className="text-xs">Mgmt Fee %</Label>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span tabIndex={0} aria-label="Help: Mgmt Fee %" className="inline-flex h-3.5 w-3.5 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                                <Info className="h-3 w-3" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" align="start">Percentage kept in the operating business for management.</TooltipContent>
+                          </Tooltip>
+                        </div>
                         <Input 
                           type="number"
                           value={data.mgmtFee}
@@ -338,12 +531,32 @@ export function RevenueCalculator() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-primary" />
-                Revenue Growth Projections
+                <span>Revenue Growth Projections</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} aria-label="Help: Revenue Growth Projections" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                      <Info className="h-4 w-4" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start" className="max-w-sm">
+                    Projects each pillar’s revenue and the total using a default 2% month-over-month growth assumption. Y-axis is shown in $K.
+                  </TooltipContent>
+                </Tooltip>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <Label>Time Horizon (months)</Label>
+                <div className="flex items-center gap-1">
+                  <Label>Time Horizon (months)</Label>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} aria-label="Help: Time Horizon" className="inline-flex h-4 w-4 items-center justify-center cursor-help text-muted-foreground hover:text-foreground">
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="start">Number of months to project forward.</TooltipContent>
+                  </Tooltip>
+                </div>
                 <Input 
                   type="number"
                   value={timeHorizon}
@@ -356,7 +569,7 @@ export function RevenueCalculator() {
                   <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                   <XAxis dataKey="month" />
                   <YAxis label={{ value: 'Revenue ($K)', angle: -90, position: 'insideLeft' }} />
-                  <Tooltip formatter={(value) => [`$${value}K`, 'Revenue']} />
+                  <RechartsTooltip formatter={(value) => [`$${value}K`, 'Revenue']} />
                   <Line type="monotone" dataKey="pillar1" stroke="hsl(var(--accent))" name="IP Licensing" />
                   <Line type="monotone" dataKey="pillar2" stroke="hsl(var(--secondary))" name="Equity Deals" />
                   <Line type="monotone" dataKey="pillar3" stroke="hsl(var(--muted-foreground))" name="Acquisitions" />
@@ -410,6 +623,7 @@ export function RevenueCalculator() {
           </div>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }
