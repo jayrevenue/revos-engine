@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,77 +17,18 @@ import {
   Clock,
   Zap,
   Send,
-  Sparkles
+  Sparkles,
+  Info
 } from "lucide-react";
 
-const suggestions = [
-  {
-    id: 1,
-    title: "Draft IP License Agreement",
-    description: "Generate a custom licensing agreement for a RevOps agency",
-    category: "Legal",
-    icon: FileText,
-    prompt: "Help me draft an IP licensing agreement for a RevOps agency that wants to license our RevenueOS for their clients."
-  },
-  {
-    id: 2,
-    title: "Analyze Acquisition Target",
-    description: "Evaluate potential business acquisition opportunities",
-    category: "M&A",
-    icon: TrendingUp,
-    prompt: "I found a potential RCM vendor acquisition. Help me analyze if it fits our empire strategy."
-  },
-  {
-    id: 3,
-    title: "Structure Equity Deal",
-    description: "Design milestone-based equity partnership terms",
-    category: "Equity",
-    icon: Target,
-    prompt: "How should I structure an equity deal for implementing RevenueOS at a $5M ARR SaaS company?"
-  },
-  {
-    id: 4,
-    title: "Risk Assessment",
-    description: "Identify potential risks in current empire phase",
-    category: "Risk",
-    icon: AlertCircle,
-    prompt: "What are the key risks I should watch for in Phase 2 of empire building?"
-  }
-];
+const suggestions: Array<{ id: number; title: string; description: string; category: string; icon: any; prompt: string; }> = [];
 
-const insights = [
-  {
-    type: "opportunity",
-    title: "IP License Opportunity",
-    description: "3 RevOps agencies in your network match your ideal licensee profile",
-    action: "Review prospects",
-    urgency: "high"
-  },
-  {
-    type: "warning",
-    title: "Cash Flow Alert",
-    description: "Empire construction costs may exceed budget in Q2",
-    action: "Adjust timeline",
-    urgency: "medium"
-  },
-  {
-    type: "success",
-    title: "Milestone Achievement",
-    description: "Legal structure phase is 75% complete - ahead of schedule",
-    action: "Plan next phase",
-    urgency: "low"
-  }
-];
+const insights: Array<{ type: 'opportunity'|'warning'|'success'; title: string; description: string; action: string; urgency: 'low'|'medium'|'high'; }> = [];
 
 export function AIAssistant() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [conversation, setConversation] = useState([
-    {
-      role: "assistant",
-      content: "Welcome to your Empire AI Assistant! I'm here to help you build your Revenue Expert Empire. I can help with legal structures, deal analysis, risk assessment, and strategic planning. How can I assist you today?"
-    }
-  ]);
+  const [conversation, setConversation] = useState<{ role: 'user'|'assistant'; content: string }[]>([]);
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -96,15 +38,8 @@ export function AIAssistant() {
     setConversation(prev => [...prev, newMessage]);
     setMessage("");
 
-    // Simulate AI response
-    setTimeout(() => {
-      const response = {
-        role: "assistant",
-        content: "I understand you want help with that. Let me analyze your empire structure and provide specific recommendations based on your current phase and goals. This is a simulated response - in the full implementation, I would connect to OpenAI's API for real AI assistance."
-      };
-      setConversation(prev => [...prev, response]);
-      setIsLoading(false);
-    }, 1500);
+    // No dummy responses. Integrate your AI provider to enable replies.
+    setIsLoading(false);
   };
 
   const handleSuggestionClick = (suggestion) => {
@@ -112,39 +47,33 @@ export function AIAssistant() {
   };
 
   return (
-    <div className="space-y-6">
+    <TooltipProvider delayDuration={100}>
+      <div className="space-y-6">
       {/* AI Insights */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            AI-Powered Insights
+            <span>AI-Powered Insights</span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span tabIndex={0} aria-label="Help: AI-Powered Insights" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                  <Info className="h-4 w-4" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top" align="start" className="max-w-sm">
+                Recommendations synthesized from your roadmap and portfolio context. Connect your data and AI provider to enable insights.
+              </TooltipContent>
+            </Tooltip>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {insights.map((insight, index) => (
-              <div key={index} className={`p-4 rounded-lg border-l-4 ${
-                insight.urgency === 'high' ? 'border-l-red-500 bg-red-50 dark:bg-red-950/20' :
-                insight.urgency === 'medium' ? 'border-l-yellow-500 bg-yellow-50 dark:bg-yellow-950/20' :
-                'border-l-green-500 bg-green-50 dark:bg-green-950/20'
-              }`}>
-                <div className="flex items-start gap-3">
-                  {insight.type === 'opportunity' && <Lightbulb className="h-5 w-5 text-yellow-600 mt-0.5" />}
-                  {insight.type === 'warning' && <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />}
-                  {insight.type === 'success' && <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />}
-                  <div className="flex-grow">
-                    <h4 className="font-medium text-sm">{insight.title}</h4>
-                    <p className="text-xs text-muted-foreground mt-1">{insight.description}</p>
-                    <Button variant="ghost" size="sm" className="mt-2 h-7 text-xs">
-                      {insight.action}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
+          <CardContent>
+            {insights.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No insights yet. Connect your data to see AI suggestions here.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4" />
+            )}
+          </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -153,7 +82,17 @@ export function AIAssistant() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-primary" />
-              Empire Strategy Assistant
+              <span>Empire Strategy Assistant</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} aria-label="Help: Empire Strategy Assistant" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                    <Info className="h-4 w-4" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top" align="start" className="max-w-sm">
+                  Ask natural questions about legal structures, licensing, deals, and acquisitions. Press Enter to send or Shift+Enter for a new line. Connect your AI provider to enable responses.
+                </TooltipContent>
+              </Tooltip>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -197,13 +136,18 @@ export function AIAssistant() {
                     }
                   }}
                 />
-                <Button 
-                  onClick={handleSendMessage}
-                  disabled={!message.trim() || isLoading}
-                  className="self-end"
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      onClick={handleSendMessage}
+                      disabled={!message.trim() || isLoading}
+                      className="self-end"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="end">Send (Enter). Use Shift+Enter for new line.</TooltipContent>
+                </Tooltip>
               </div>
             </div>
           </CardContent>
@@ -214,64 +158,113 @@ export function AIAssistant() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5 text-primary" />
-              Quick Actions
+              <span>Quick Actions</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} aria-label="Help: Quick Actions" className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                    <Info className="h-4 w-4" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top" align="start" className="max-w-sm">
+                  Click a suggestion to prefill the chat with a structured prompt.
+                </TooltipContent>
+              </Tooltip>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {suggestions.map((suggestion) => (
-              <div key={suggestion.id} className="p-3 border rounded-lg cursor-pointer hover:bg-muted/20 transition-colors"
-                onClick={() => handleSuggestionClick(suggestion)}>
-                <div className="flex items-start gap-3">
-                  <suggestion.icon className="h-5 w-5 text-primary mt-0.5" />
-                  <div className="flex-grow">
-                    <h4 className="font-medium text-sm">{suggestion.title}</h4>
-                    <p className="text-xs text-muted-foreground mt-1">{suggestion.description}</p>
-                    <Badge variant="outline" className="mt-2">
-                      {suggestion.category}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            ))}
+            {suggestions.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No quick actions yet.</p>
+            ) : null}
 
             <div className="pt-4 border-t">
-              <h4 className="font-medium text-sm mb-3">Document Generator</h4>
+              <div className="flex items-center gap-2 mb-3">
+                <h4 className="font-medium text-sm">Document Generator</h4>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} aria-label="Help: Document Generator" className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                      <Info className="h-3.5 w-3.5" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start">Create common legal documents using your empire templates.</TooltipContent>
+                </Tooltip>
+              </div>
               <div className="space-y-2">
-                <Button variant="outline" size="sm" className="w-full justify-start">
-                  <FileText className="h-4 w-4 mr-2" />
-                  IP License Template
-                </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Equity Agreement
-                </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Management Services
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full justify-start">
+                      <FileText className="h-4 w-4 mr-2" />
+                      IP License Template
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start">Open a pre-filled licensing template for customization.</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full justify-start">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Equity Agreement
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start">Draft a milestone-based equity agreement.</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full justify-start">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Management Services
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start">Generate a management services agreement for portfolio ops.</TooltipContent>
+                </Tooltip>
               </div>
             </div>
 
             <div className="pt-4 border-t">
-              <h4 className="font-medium text-sm mb-3">Analysis Tools</h4>
+              <div className="flex items-center gap-2 mb-3">
+                <h4 className="font-medium text-sm">Analysis Tools</h4>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} aria-label="Help: Analysis Tools" className="inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground cursor-help">
+                      <Info className="h-3.5 w-3.5" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start">Open calculators and evaluators for deals, risks, and timing.</TooltipContent>
+                </Tooltip>
+              </div>
               <div className="space-y-2">
-                <Button variant="outline" size="sm" className="w-full justify-start">
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Deal Analyzer
-                </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start">
-                  <Target className="h-4 w-4 mr-2" />
-                  Risk Assessment
-                </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start">
-                  <Clock className="h-4 w-4 mr-2" />
-                  Timeline Optimizer
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full justify-start">
+                      <TrendingUp className="h-4 w-4 mr-2" />
+                      Deal Analyzer
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start">Model outcomes and returns for potential deals.</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full justify-start">
+                      <Target className="h-4 w-4 mr-2" />
+                      Risk Assessment
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start">Identify and score risks by likelihood and impact.</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full justify-start">
+                      <Clock className="h-4 w-4 mr-2" />
+                      Timeline Optimizer
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="start">Align milestones to budget and capacity constraints.</TooltipContent>
+                </Tooltip>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }
