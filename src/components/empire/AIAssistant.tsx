@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ import {
   Send,
   Sparkles
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const suggestions = [
   {
@@ -81,12 +82,24 @@ const insights = [
 export function AIAssistant() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [conversation, setConversation] = useState([
-    {
-      role: "assistant",
-      content: "Welcome to your Empire AI Assistant! I'm here to help you build your Revenue Expert Empire. I can help with legal structures, deal analysis, risk assessment, and strategic planning. How can I assist you today?"
-    }
-  ]);
+  const [conversation, setConversation] = useState<{ role: 'user'|'assistant'; content: string }[]>([]);
+  const [agentId, setAgentId] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const pickAgent = async () => {
+      const { data, error } = await supabase
+        .from('ai_agents')
+        .select('id,status')
+        .order('created_at', { ascending: true })
+        .limit(10);
+      if (!error && data && data.length) {
+        const active = data.find((a: any) => a.status === 'active');
+        setAgentId((active || data[0]).id);
+      }
+    };
+    pickAgent();
+  }, []);
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -96,15 +109,20 @@ export function AIAssistant() {
     setConversation(prev => [...prev, newMessage]);
     setMessage("");
 
-    // Simulate AI response
-    setTimeout(() => {
-      const response = {
-        role: "assistant",
-        content: "I understand you want help with that. Let me analyze your empire structure and provide specific recommendations based on your current phase and goals. This is a simulated response - in the full implementation, I would connect to OpenAI's API for real AI assistance."
-      };
-      setConversation(prev => [...prev, response]);
+    try {
+      const { data, error } = await supabase.functions.invoke('agent-chat', {
+        body: { agentId, message, conversationId },
+      });
+      if (error) throw error;
+      if (data?.response) {
+        setConversation(prev => [...prev, { role: 'assistant', content: data.response }]);
+      }
+      if (data?.conversationId) setConversationId(data.conversationId);
+    } catch (err: any) {
+      setConversation(prev => [...prev, { role: 'assistant', content: `Error: ${err.message || 'Failed to get response.'}` }]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleSuggestionClick = (suggestion) => {
