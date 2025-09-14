@@ -5,19 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  DollarSign, 
-  TrendingUp, 
-  Building2, 
+import {
+  DollarSign,
+  TrendingUp,
+  Building2,
   Target,
   Crown,
   Briefcase,
   Users,
   Calendar,
-  ChevronRight,
   ArrowUpRight,
-  Calculator,
-  Map,
   Brain,
   BookOpen,
   PieChart,
@@ -25,7 +22,7 @@ import {
   CheckCircle,
   Lightbulb
 } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 // Three Pillar Performance Data
 const threePillarData = [
@@ -41,13 +38,6 @@ const monthlyTrend = [
   { month: "Apr", pillar1: 12500, pillar2: 8750, pillar3: 5250 },
 ];
 
-const empirePhases = [
-  { phase: "Foundation", progress: 85, status: "active" },
-  { phase: "First Revenue", progress: 45, status: "active" },
-  { phase: "Scale & Acquisitions", progress: 0, status: "pending" },
-  { phase: "Empire Operations", progress: 0, status: "pending" }
-];
-
 const quickInsights = [
   {
     type: "opportunity",
@@ -57,7 +47,7 @@ const quickInsights = [
     urgency: "high"
   },
   {
-    type: "success", 
+    type: "success",
     title: "IP License Milestone",
     description: "Just closed your 5th licensing deal - exceeding Q1 targets!",
     action: "Celebrate",
@@ -72,20 +62,11 @@ const quickInsights = [
   }
 ];
 
-const quickActions = [
-  { title: "Calculate Revenue Scenario", icon: Calculator, href: "/calculator", color: "primary" },
-  { title: "Review Empire Roadmap", icon: Map, href: "/empire", color: "accent" },
-  { title: "Manage Portfolio", icon: PieChart, href: "/portfolio", color: "secondary" },
-  { title: "AI Strategy Session", icon: Brain, href: "/assistant", color: "muted" }
-];
-
 export function UnifiedEmpireDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState("monthly");
   const navigate = useNavigate();
   
   const totalRevenue = threePillarData.reduce((sum, pillar) => sum + pillar.current, 0);
-  const totalTarget = threePillarData.reduce((sum, pillar) => sum + pillar.target, 0);
-  const progressToTarget = (totalRevenue / totalTarget) * 100;
   
   return (
     <div className="space-y-6 p-6">
@@ -256,58 +237,201 @@ export function UnifiedEmpireDashboard() {
         </Card>
       </div>
 
-      {/* Empire Phases Progress */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Map className="h-5 w-5 text-primary" />
-            Empire Building Progress
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {empirePhases.map((phase, index) => (
-              <div key={phase.phase} className="text-center p-4 rounded-lg bg-muted/20">
-                <h4 className="font-medium mb-2">{phase.phase}</h4>
-                <div className="mb-3">
-                  <Progress value={phase.progress} className="h-2" />
-                </div>
-                <p className="text-sm font-semibold">{phase.progress}%</p>
-                <Badge 
-                  variant={phase.status === 'active' ? 'default' : 'outline'}
-                  className="mt-2"
-                >
-                  {phase.status}
-                </Badge>
+      {/* Revenue & Business Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Revenue Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">This Month</span>
+                <span className="text-2xl font-bold text-primary">$26.5K</span>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Growth Rate</span>
+                <span className="text-sm font-semibold text-emerald-600">+22.5%</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            Quick Actions
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {quickActions.map((action) => (
-              <Button
-                key={action.title}
-                variant="outline"
-                className="h-auto p-4 flex flex-col items-center gap-3 hover:shadow-md transition-shadow"
-              >
-                <action.icon className="h-6 w-6 text-primary" />
-                <span className="text-sm font-medium text-center">{action.title}</span>
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <ArrowUpRight className="h-5 w-5 text-accent" />
+              Margin Improvement
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Current Margin</span>
+                <span className="text-2xl font-bold text-accent">68%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Improvement</span>
+                <span className="text-sm font-semibold text-emerald-600">+12%</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <PieChart className="h-5 w-5 text-secondary" />
+              Portfolio Value
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total Value</span>
+                <span className="text-2xl font-bold text-secondary">$485K</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">YTD Growth</span>
+                <span className="text-sm font-semibold text-emerald-600">+34%</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Calendar className="h-5 w-5 text-primary" />
+              Monthly Revenue
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Recurring</span>
+                <span className="text-xl font-bold text-primary">$18.2K</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">One-time</span>
+                <span className="text-xl font-bold text-muted-foreground">$8.3K</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <TrendingUp className="h-5 w-5 text-accent" />
+              Avg Margin Boosts
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Per Deal</span>
+                <span className="text-2xl font-bold text-accent">+15%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Best This Month</span>
+                <span className="text-sm font-semibold text-emerald-600">+28%</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Briefcase className="h-5 w-5 text-secondary" />
+              Active Deals
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">In Pipeline</span>
+                <span className="text-2xl font-bold text-secondary">12</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Closing Soon</span>
+                <span className="text-sm font-semibold text-primary">4</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <BookOpen className="h-5 w-5 text-primary" />
+              Total IP
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Frameworks</span>
+                <span className="text-2xl font-bold text-primary">23</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Licensed</span>
+                <span className="text-sm font-semibold text-emerald-600">18</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Users className="h-5 w-5 text-accent" />
+              Equity Deals
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Active</span>
+                <span className="text-2xl font-bold text-accent">7</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Value</span>
+                <span className="text-sm font-semibold text-primary">$142K</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Building2 className="h-5 w-5 text-secondary" />
+              Acquisitions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Completed</span>
+                <span className="text-2xl font-bold text-secondary">3</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">In Progress</span>
+                <span className="text-sm font-semibold text-yellow-600">2</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
