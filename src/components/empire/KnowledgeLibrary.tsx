@@ -6,14 +6,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  BookOpen, 
-  FileText, 
-  Video, 
+import {
+  FileText,
+  Video,
   Users,
   Download,
   Search,
-  Filter,
   Star,
   Clock,
   Play,
@@ -23,12 +21,7 @@ import {
   Info
 } from "lucide-react";
 
-// Loaded dynamically from Supabase
-const templates: any[] = [];
-
-const tutorials: any[] = [];
-
-const experts: any[] = [];
+// Data loaded dynamically from Supabase
 
 export function KnowledgeLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
