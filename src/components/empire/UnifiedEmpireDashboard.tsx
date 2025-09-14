@@ -25,7 +25,7 @@ import {
   CheckCircle,
   Lightbulb
 } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 // Three Pillar Performance Data
 const threePillarData = [
@@ -84,8 +84,6 @@ export function UnifiedEmpireDashboard() {
   const navigate = useNavigate();
   
   const totalRevenue = threePillarData.reduce((sum, pillar) => sum + pillar.current, 0);
-  const totalTarget = threePillarData.reduce((sum, pillar) => sum + pillar.target, 0);
-  const progressToTarget = (totalRevenue / totalTarget) * 100;
   
   return (
     <div className="space-y-6 p-6">

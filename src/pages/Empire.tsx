@@ -19,7 +19,7 @@ import {
   ShieldCheck,
   Zap
 } from "lucide-react";
-import { EmpireDashboard } from "@/components/empire/EmpireDashboard";
+import { UnifiedEmpireDashboard } from "@/components/empire/UnifiedEmpireDashboard";
 import { EmpireRoadmap } from "@/components/empire/EmpireRoadmap";
 import { RevenueCalculator } from "@/components/empire/RevenueCalculator";
 import { AIAssistant } from "@/components/empire/AIAssistant";
@@ -135,7 +135,7 @@ export default function Empire() {
           </TabsList>
 
           <TabsContent value="dashboard" className="mt-6">
-            <EmpireDashboard />
+            <UnifiedEmpireDashboard />
           </TabsContent>
 
           <TabsContent value="roadmap" className="mt-6">

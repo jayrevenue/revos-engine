@@ -6,18 +6,12 @@ import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { 
-  Calendar,
+import {
   CheckCircle,
   Clock,
   Target,
-  Trophy,
-  Star,
   PlayCircle,
   Users,
-  Building,
-  Briefcase,
-  DollarSign,
   Info
 } from "lucide-react";
 
@@ -26,11 +20,6 @@ type Phase = { id: string | number; title: string; subtitle?: string; milestones
 
 // Note: No dummy data. Phases start empty and can be created by the user.
 // Data persists locally so you can start using it immediately.
-
- 
- 
- 
- 
 
 export function EmpireRoadmap() {
   const [phases, setPhases] = useState<Phase[]>([]);

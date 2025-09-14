@@ -22,7 +22,6 @@ import {
 
 // Import all the new empire components
 import { UnifiedEmpireDashboard } from "@/components/empire/UnifiedEmpireDashboard";
-import { EmpireDashboard } from "@/components/empire/EmpireDashboard";
 import { RevenueCalculator } from "@/components/empire/RevenueCalculator";
 import { EmpireRoadmap } from "@/components/empire/EmpireRoadmap";
 import { PortfolioManager } from "@/components/empire/PortfolioManager";
@@ -196,7 +195,7 @@ export default function EmpireShowcase() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <EmpireDashboard />
+              <UnifiedEmpireDashboard />
               <div className="flex justify-center mt-6">
                 <Button onClick={() => setSelectedComponent("unified-dashboard")}>
                   <ArrowRight className="h-4 w-4 mr-2" />

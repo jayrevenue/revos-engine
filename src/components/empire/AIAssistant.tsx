@@ -5,15 +5,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Brain, 
-  MessageSquare, 
-  Lightbulb, 
+import {
+  Brain,
+  MessageSquare,
   Target,
   FileText,
   TrendingUp,
-  AlertCircle,
-  CheckCircle,
   Clock,
   Zap,
   Send,
