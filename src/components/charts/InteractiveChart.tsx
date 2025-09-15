@@ -396,7 +396,7 @@ export const InteractiveChart = ({
       <CardContent>
         <div className="space-y-4">
           {/* Chart Type Selector */}
-          <Tabs value={chartView} onValueChange={setChartView}>
+          <Tabs value={chartView} onValueChange={(value) => setChartView(value as any)}>
             <TabsList>
               {Object.entries(chartTypeIcons).map(([type, Icon]) => (
                 <TabsTrigger key={type} value={type} className="flex items-center gap-1">
