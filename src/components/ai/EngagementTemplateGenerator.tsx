@@ -186,16 +186,10 @@ export const EngagementTemplateGenerator = ({
     try {
       setLoading(true);
       
-      // Load client data and previous engagements
-      const { data: client, error: clientError } = await supabase
+      // Load client data
+      const { data: client, error: clientError } = await (supabase as any)
         .from('orgs')
-        .select(`
-          *,
-          engagements (
-            id, type, status, budget, 
-            outcomes (current_value, target_value)
-          )
-        `)
+        .select('*')
         .eq('id', clientId)
         .single();
 

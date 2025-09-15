@@ -67,15 +67,9 @@ export const ActivityFeed = ({
 
   const fetchActivities = async () => {
     try {
-      let query = supabase
+      let query = (supabase as any)
         .from('activities')
-        .select(`
-          *,
-          users:user_id (
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(maxItems);
 
@@ -91,14 +85,14 @@ export const ActivityFeed = ({
 
       if (error) throw error;
 
-      const formattedActivities = data?.map(activity => ({
+      const formattedActivities: ActivityItem[] = (data || []).map((activity: any) => ({
         ...activity,
-        user_name: activity.users?.full_name || activity.users?.email || 'Unknown User',
-        user_avatar: activity.users?.avatar_url
-      })) || [];
+        user_name: activity.user_name || 'Unknown User',
+        user_avatar: activity.user_avatar,
+      }));
 
       setActivities(formattedActivities);
-      setUnreadCount(formattedActivities.filter(a => !a.is_read).length);
+      setUnreadCount(formattedActivities.filter((a: any) => !a.is_read).length);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -139,9 +133,9 @@ export const ActivityFeed = ({
 
   const markAsRead = async (activityId: string) => {
     try {
-      await supabase
+      await (supabase as any)
         .from('activities')
-        .update({ is_read: true })
+        .update({ is_read: true } as any)
         .eq('id', activityId);
 
       setActivities(prev => 
@@ -155,9 +149,9 @@ export const ActivityFeed = ({
 
   const markAllAsRead = async () => {
     try {
-      await supabase
+      await (supabase as any)
         .from('activities')
-        .update({ is_read: true })
+        .update({ is_read: true } as any)
         .eq('is_read', false);
 
       setActivities(prev => prev.map(a => ({ ...a, is_read: true })));

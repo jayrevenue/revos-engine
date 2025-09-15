@@ -291,7 +291,7 @@ export const EngagementSuccessPredictor = ({
         const hidden2 = Math.tanh(
           features.teamExperienceScore * 0.9 + features.clientRelationshipScore * 0.7 + features.riskScore * 0.5
         );
-        baseSuccessProbability = Math.sigmoid(hidden1 * 0.6 + hidden2 * 0.4);
+        baseSuccessProbability = sigmoid(hidden1 * 0.6 + hidden2 * 0.4);
       } else {
         // Decision tree approach
         let probability = 0.5;
@@ -451,8 +451,8 @@ export const EngagementSuccessPredictor = ({
     setPredictions(generatePredictions);
   }, [generatePredictions]);
 
-  // Helper function for sigmoid
-  Math.sigmoid = Math.sigmoid || ((x: number) => 1 / (1 + Math.exp(-x)));
+// Helper function for sigmoid
+const sigmoid = (x: number) => 1 / (1 + Math.exp(-x));
 
   const getSuccessColor = (probability: number) => {
     if (probability >= 0.8) return 'text-green-600 bg-green-100';
