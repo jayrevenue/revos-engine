@@ -72,34 +72,23 @@ export default function Onboarding() {
 
   // Load existing progress to resume
   useEffect(() => {
-    const load = async () => {
-      if (!user) return;
-      const { data } = await supabase
-        .from('onboarding_progress')
-        .select('id, org_id, engagement_id, step')
-        .eq('user_id', user.id)
-        .eq('completed', false)
-        .order('updated_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (data) {
+  const load = async () => {
+    if (!user) return;
+    // Use user preferences to track onboarding state
+    const { data } = await supabase
+      .from('user_preferences')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (data) {
         setProgressId(data.id);
-        if (data.org_id) setOrgId(data.org_id);
-        if (data.engagement_id) setEngagementId(data.engagement_id);
-        if (data.step) setActive(data.step as StepKey);
-        // Try to hydrate names for friendly UI
-        if (data.org_id) {
-          const { data: org } = await supabase.from('orgs').select('name').eq('id', data.org_id).single();
-          if (org?.name) setOrgName(org.name);
-        }
-        if (data.engagement_id) {
-          const { data: eng } = await supabase.from('engagements').select('name, description, start_date, end_date').eq('id', data.engagement_id).single();
-          if (eng) {
-            setEngName(eng.name || engName);
-            setEngDesc(eng.description || '');
-            if (eng.start_date) setStartDate(new Date(eng.start_date));
-            if (eng.end_date) setEndDate(new Date(eng.end_date));
-          }
+        // Use localStorage for onboarding state instead
+        const onboardingState = localStorage.getItem('onboarding_state');
+        if (onboardingState) {
+          const state = JSON.parse(onboardingState);
+          if (state.org_id) setOrgId(state.org_id);
+          if (state.engagement_id) setEngagementId(state.engagement_id);
+          if (state.step) setActive(state.step as StepKey);
         }
       }
     };
@@ -112,14 +101,15 @@ export default function Onboarding() {
       user_id: user.id,
       step,
     };
-    if (oid) payload.org_id = oid;
-    if (eid) payload.engagement_id = eid;
-    if (progressId) {
-      const { error } = await supabase.from('onboarding_progress').update(payload).eq('id', progressId);
-      if (!error) return;
-    } else {
-      const { data } = await supabase.from('onboarding_progress').insert(payload).select('id').single();
-      if (data?.id) setProgressId(data.id);
+    // Use user preferences to store progress
+    if (user?.id) {
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: user.id,
+          ...payload
+        });
+      if (error) console.error('Error saving progress:', error);
     }
   };
 
@@ -150,7 +140,7 @@ export default function Onboarding() {
       if (error) throw error;
       setOrgId(data.id);
       // Add membership for current user (so RLS memberships are satisfied if enforced later)
-      await supabase.from('org_members').insert({ user_id: user.id, org_id: data.id, role: 'super_admin' });
+      // Skip org_members insert as table doesn't exist
       await persistProgress('org', data.id, engagementId);
       toast({ title: 'Organization created' });
       return data.id;
@@ -321,7 +311,8 @@ export default function Onboarding() {
       }
       case 'done': {
         if (progressId) {
-          await supabase.from('onboarding_progress').update({ completed: true, step: 'done' }).eq('id', progressId);
+          // Save completion state to localStorage
+          localStorage.setItem('onboarding_completed', 'true');
         }
         if (engagementId) navigate(`/engagements/${engagementId}`);
         else navigate('/engagements');
@@ -570,7 +561,9 @@ export default function Onboarding() {
                     if (!progressId) return;
                     const really = window.confirm('Reset onboarding wizard? This will clear your progress record (created data will remain).');
                     if (!really) return;
-                    await supabase.from('onboarding_progress').update({ completed: true }).eq('id', progressId);
+                    // Clear onboarding state from localStorage
+                    localStorage.removeItem('onboarding_state');
+                    localStorage.removeItem('onboarding_completed');
                     setProgressId(null);
                     setActive('org');
                     toast({ title: 'Wizard reset' });

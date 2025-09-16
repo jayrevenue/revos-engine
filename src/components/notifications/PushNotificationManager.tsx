@@ -17,6 +17,7 @@ import {
   BellOff,
   Smartphone,
   Monitor,
+  TabletSmartphone as Tablet,
   Globe,
   Send,
   Clock,
@@ -267,23 +268,13 @@ export const PushNotificationManager = ({
     }
 
     // Send browser notification for immediate testing
-    const notification = new Notification(testNotificationData.title, {
-      body: testNotificationData.body,
-      icon: '/icon-192x192.png',
-      badge: '/badge-72x72.png',
-      tag: 'test-notification',
-      requireInteraction: testNotificationData.priority === 'critical',
-      actions: [
-        {
-          action: 'view',
-          title: 'View Details'
-        },
-        {
-          action: 'dismiss',
-          title: 'Dismiss'
-        }
-      ]
-    });
+  const notification = new Notification(testNotificationData.title, {
+    body: testNotificationData.body,
+    icon: '/icon-192x192.png',
+    badge: '/badge-72x72.png',
+    tag: 'test-notification',
+    requireInteraction: testNotificationData.priority !== 'normal'
+  });
 
     notification.onclick = () => {
       window.focus();

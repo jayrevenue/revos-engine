@@ -13,7 +13,7 @@ import {
   WifiOff,
   Download,
   Upload,
-  Sync,
+  RotateCcw as Sync,
   CheckCircle,
   XCircle,
   Clock,

@@ -199,12 +199,12 @@ export const GlobalSearch = ({
         );
       }
 
-      // Search users
+      // Search profiles (users)
       if (selectedFilter === 'all' || selectedFilter === 'user') {
         searchPromises.push(
           supabase
-            .from('users')
-            .select('id, full_name, email, role, created_at')
+            .from('profiles')
+            .select('id, full_name, email, created_at, user_id')
             .or(`full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
             .limit(5)
         );
