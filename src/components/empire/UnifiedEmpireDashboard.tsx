@@ -103,11 +103,11 @@ export function UnifiedEmpireDashboard() {
                 </div>
               </div>
               <Badge variant="default" className="text-lg px-4 py-2">
-                Phase 2: Active Revenue
+                Active Portfolio
               </Badge>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
                 <p className="text-sm font-medium text-muted-foreground">Monthly Revenue</p>
                 <p className="text-3xl font-bold text-primary">${(totalRevenue / 1000).toFixed(1)}K</p>
@@ -117,19 +117,14 @@ export function UnifiedEmpireDashboard() {
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm font-medium text-muted-foreground">Active Deals</p>
-                <p className="text-3xl font-bold text-accent">{threePillarData.reduce((sum, p) => sum + p.deals, 0)}</p>
-                <p className="text-sm text-muted-foreground">Across 3 pillars</p>
+                <p className="text-sm font-medium text-muted-foreground">Total IP Assets</p>
+                <p className="text-3xl font-bold text-accent">23</p>
+                <p className="text-sm text-muted-foreground">18 licensed</p>
               </div>
               <div className="text-center">
-                <p className="text-sm font-medium text-muted-foreground">Phase Progress</p>
-                <p className="text-3xl font-bold text-secondary">65%</p>
-                <p className="text-sm text-muted-foreground">Phase 2 complete</p>
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-medium text-muted-foreground">Next Milestone</p>
-                <p className="text-lg font-semibold">First Acquisition</p>
-                <p className="text-sm text-muted-foreground">8 weeks away</p>
+                <p className="text-sm font-medium text-muted-foreground">Portfolio Value</p>
+                <p className="text-3xl font-bold text-secondary">$485K</p>
+                <p className="text-sm text-emerald-600">+34% YTD</p>
               </div>
             </div>
           </CardContent>
