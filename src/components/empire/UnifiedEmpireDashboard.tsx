@@ -70,6 +70,26 @@ export function UnifiedEmpireDashboard() {
   
   return (
     <div className="space-y-6 p-6">
+      {/* Quick Start Section */}
+      <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-primary/20 rounded-lg">
+                <Lightbulb className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Ready to Track Something New?</h3>
+                <p className="text-muted-foreground">Add IP projects, equity deals, or acquisition targets to your portfolio</p>
+              </div>
+            </div>
+            <Button onClick={() => navigate('/start')} className="bg-primary hover:bg-primary/90">
+              Quick Start
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Hero Section - Empire Status */}
       <div className="relative">
         <Card className="bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 border border-primary/20">
