@@ -49,7 +49,7 @@ export function AIAssistant() {
     if (!message.trim()) return;
 
     setIsLoading(true);
-    const newMessage = { role: "user", content: message };
+    const newMessage: { role: 'user' | 'assistant'; content: string } = { role: 'user', content: message };
     setConversation(prev => [...prev, newMessage]);
     setMessage("");
 

@@ -133,7 +133,7 @@ export const ExecutiveSummary = ({
           .gte('created_at', startDate.toISOString())
           .lte('created_at', endDate.toISOString()),
         supabase
-          .from('revenue_data')
+          .from('revenue')
           .select('*')
           .gte('created_at', startDate.toISOString())
           .lte('created_at', endDate.toISOString())

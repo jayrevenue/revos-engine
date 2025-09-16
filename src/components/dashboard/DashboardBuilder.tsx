@@ -30,10 +30,8 @@ import {
   verticalListSortingStrategy,
   rectSortingStrategy
 } from '@dnd-kit/sortable';
-import {
-  useSortable,
-  CSS,
-} from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { 
   BarChart3, 
   PieChart, 
@@ -357,7 +355,7 @@ export const DashboardBuilder = ({
     setActiveId(null);
   }, []);
 
-  const addWidget = (template: typeof WIDGET_TEMPLATES[0]) => {
+  const addWidget = (template: (typeof WIDGET_TEMPLATES)[number]) => {
     const newWidget: Widget = {
       id: `widget-${Date.now()}`,
       type: template.type as Widget['type'],
@@ -415,46 +413,31 @@ export const DashboardBuilder = ({
   const saveDashboard = async () => {
     try {
       if (dashboardId) {
-        // Update existing dashboard
         const { error } = await supabase
           .from('dashboards')
           .update({
-            name: dashboard.name,
-            description: dashboard.description,
-            widgets: dashboard.widgets,
-            layout_config: dashboard.layout_config,
-            updated_at: new Date().toISOString()
+            data: dashboard as any,
+            updated_at: new Date().toISOString(),
           })
           .eq('id', dashboardId);
-
         if (error) throw error;
       } else {
-        // Create new dashboard
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('dashboards')
           .insert({
-            ...dashboard,
-            created_by: user?.id
-          })
-          .select()
-          .single();
-
+            data: dashboard as any,
+            type: 'custom',
+            org_id: user?.id || crypto.randomUUID(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
         if (error) throw error;
-        setDashboard(data);
       }
 
       onSave?.(dashboard);
-      
-      toast({
-        title: "Dashboard Saved",
-        description: "Your dashboard has been saved successfully"
-      });
+      toast({ title: 'Dashboard Saved', description: 'Your dashboard has been saved successfully' });
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Failed to save dashboard",
-        variant: "destructive"
-      });
+      toast({ title: 'Error', description: 'Failed to save dashboard', variant: 'destructive' });
     }
   };
 

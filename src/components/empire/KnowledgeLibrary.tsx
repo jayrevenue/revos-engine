@@ -18,7 +18,8 @@ import {
   ExternalLink,
   Eye,
   BookmarkPlus,
-  Info
+  Info,
+  MessageSquare
 } from "lucide-react";
 
 // Data loaded dynamically from Supabase
@@ -32,7 +33,8 @@ export function KnowledgeLibrary() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [previewItem, setPreviewItem] = useState<any | null>(null);
-
+  const experts: any[] = [];
+  
   useEffect(() => {
     const load = async () => {
       setLoading(true);

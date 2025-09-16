@@ -65,45 +65,40 @@ export const NotificationCenter = ({ className }: NotificationCenterProps) => {
 
   const fetchNotifications = async () => {
     try {
-      let query = supabase
-        .from('notifications')
-        .select(`
-          *,
-          sender:sender_id (
-            full_name,
-            email,
-            avatar_url
-          )
-        `)
+      const { data, error } = await supabase
+        .from('activities')
+        .select('*')
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (filter !== 'all') {
-        if (filter === 'unread') {
-          query = query.eq('is_read', false);
-        } else {
-          query = query.eq('type', filter);
-        }
-      }
-
-      const { data, error } = await query;
-
       if (error) throw error;
 
-      const formattedNotifications = data?.map(notification => ({
-        ...notification,
-        sender_name: notification.sender?.full_name || notification.sender?.email || 'System',
-        sender_avatar: notification.sender?.avatar_url
-      })) || [];
+      const formatted = (data || []).map((a: any) => ({
+        id: a.id,
+        user_id: a.user_id,
+        type: (a.type as Notification['type']) || 'comment',
+        title: a.title,
+        message: a.description,
+        entity_type: (a.entity_type as Notification['entity_type']) || undefined,
+        entity_id: a.entity_id || undefined,
+        sender_id: undefined,
+        sender_name: a.metadata?.sender_name || 'System',
+        sender_avatar: a.metadata?.sender_avatar || undefined,
+        is_read: a.is_read,
+        priority: (a.priority as Notification['priority']) || 'medium',
+        action_url: a.metadata?.action_url || undefined,
+        metadata: a.metadata || {},
+        created_at: a.created_at,
+      })) as Notification[];
 
-      setNotifications(formattedNotifications);
-      setUnreadCount(formattedNotifications.filter(n => !n.is_read).length);
+      setNotifications(formatted);
+      setUnreadCount(formatted.filter(n => !n.is_read).length);
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: "Failed to load notifications",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to load notifications',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -112,26 +107,41 @@ export const NotificationCenter = ({ className }: NotificationCenterProps) => {
 
   const setupRealtimeSubscription = () => {
     const channel = supabase
-      .channel(`notifications-${user?.id}`)
+      .channel(`activities-${user?.id}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'notifications',
+        table: 'activities',
         filter: `user_id=eq.${user?.id}`
       }, (payload) => {
-        const newNotification = payload.new as Notification;
+        const a: any = payload.new;
+        const newNotification: Notification = {
+          id: a.id,
+          user_id: a.user_id,
+          type: (a.type as Notification['type']) || 'comment',
+          title: a.title,
+          message: a.description,
+          entity_type: (a.entity_type as Notification['entity_type']) || undefined,
+          entity_id: a.entity_id || undefined,
+          sender_id: undefined,
+          sender_name: a.metadata?.sender_name || 'System',
+          sender_avatar: a.metadata?.sender_avatar || undefined,
+          is_read: a.is_read,
+          priority: (a.priority as Notification['priority']) || 'medium',
+          action_url: a.metadata?.action_url || undefined,
+          metadata: a.metadata || {},
+          created_at: a.created_at,
+        };
         setNotifications(prev => [newNotification, ...prev]);
         setUnreadCount(prev => prev + 1);
         
-        // Show browser notification for high priority items
-        if (newNotification.priority === 'high' && Notification.permission === 'granted') {
+        if (newNotification.priority === 'high' && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
           new Notification(newNotification.title, {
             body: newNotification.message,
             icon: '/favicon.ico'
           });
         }
 
-        // Show toast for mentions
         if (newNotification.type === 'mention') {
           toast({
             title: newNotification.title,
@@ -149,7 +159,7 @@ export const NotificationCenter = ({ className }: NotificationCenterProps) => {
   const markAsRead = async (notificationId: string) => {
     try {
       await supabase
-        .from('notifications')
+        .from('activities')
         .update({ is_read: true })
         .eq('id', notificationId);
 
@@ -165,7 +175,7 @@ export const NotificationCenter = ({ className }: NotificationCenterProps) => {
   const markAllAsRead = async () => {
     try {
       await supabase
-        .from('notifications')
+        .from('activities')
         .update({ is_read: true })
         .eq('user_id', user?.id)
         .eq('is_read', false);
@@ -180,7 +190,7 @@ export const NotificationCenter = ({ className }: NotificationCenterProps) => {
   const deleteNotification = async (notificationId: string) => {
     try {
       await supabase
-        .from('notifications')
+        .from('activities')
         .delete()
         .eq('id', notificationId);
 
