@@ -30,6 +30,7 @@ import EngagementDetail from "./pages/EngagementDetail";
 import EngagementForm from "./pages/EngagementForm";
 import Onboarding from "./pages/Onboarding";
 import NewOnboarding from "./pages/NewOnboarding";
+import Portfolio from "./pages/Portfolio";
 import IPLibrary from "./pages/IPLibrary";
 import Empire from "./pages/Empire";
 import RevOSModules from "./pages/RevOSModules";
@@ -72,7 +73,8 @@ const App = () => (
               <Route path="/analytics" element={<DashboardLayout><Analytics /></DashboardLayout>} />
               <Route path="/executive" element={<DashboardLayout><ExecutiveDashboard /></DashboardLayout>} />
               <Route path="/onboarding" element={<DashboardLayout><Onboarding /></DashboardLayout>} />
-              <Route path="/start" element={<NewOnboarding />} />
+           <Route path="/start" element={<NewOnboarding />} />
+           <Route path="/portfolio" element={<DashboardLayout><Portfolio /></DashboardLayout>} />
               <Route path="/scheduling" element={<DashboardLayout><Scheduling /></DashboardLayout>} />
               <Route path="/settings" element={<DashboardLayout><Settings /></DashboardLayout>} />
               <Route path="/library" element={<DashboardLayout><IPLibrary /></DashboardLayout>} />
@@ -104,7 +106,7 @@ const App = () => (
               {/* Empire routes */}
               <Route path="/calculator" element={<DashboardLayout><RevenueCalculatorPage /></DashboardLayout>} />
               {/* Roadmap page removed; access roadmap via Empire tabs */}
-              <Route path="/portfolio" element={<DashboardLayout><PortfolioManagerPage /></DashboardLayout>} />
+              <Route path="/portfolio-old" element={<DashboardLayout><PortfolioManagerPage /></DashboardLayout>} />
               <Route path="/assistant" element={<DashboardLayout><AIAssistantPage /></DashboardLayout>} />
               <Route path="/empire-showcase" element={<DashboardLayout><EmpireShowcase /></DashboardLayout>} />
               

@@ -58,10 +58,9 @@ interface NavItem {
 const sidebarItems: NavItem[] = [
   // Empire Building Navigation - Simple & Focused
   { name: "Empire Dashboard", href: "/dashboard", icon: Crown },
-  { name: "Revenue Calculator", href: "/calculator", icon: Calculator },
-  // Roadmap page removed; roadmap is available under Empire tabs
-  // { name: "Empire Roadmap", href: "/roadmap", icon: Map },
+  { name: "Add New Item", href: "/start", icon: Target, badge: "+" },
   { name: "Portfolio Manager", href: "/portfolio", icon: PieChart },
+  { name: "Revenue Calculator", href: "/calculator", icon: Calculator },
   { name: "AI Assistant", href: "/assistant", icon: Brain },
   { name: "Knowledge Library", href: "/library", icon: BookOpen },
   

@@ -20,7 +20,11 @@ import {
   PieChart,
   AlertCircle,
   CheckCircle,
-  Lightbulb
+  Lightbulb,
+  Plus,
+  FileText,
+  Handshake,
+  ShoppingCart
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
@@ -131,7 +135,7 @@ export function UnifiedEmpireDashboard() {
         </Card>
       </div>
 
-      {/* Three Pillar Performance */}
+      {/* Three Pillar Performance with Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {threePillarData.map((pillar, index) => (
           <Card key={pillar.name} className="hover:shadow-lg transition-shadow">
@@ -139,9 +143,9 @@ export function UnifiedEmpireDashboard() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">{pillar.name}</CardTitle>
                 <div className="flex items-center gap-2">
-                  {index === 0 && <Briefcase className="h-5 w-5 text-accent" />}
-                  {index === 1 && <TrendingUp className="h-5 w-5 text-secondary" />}
-                  {index === 2 && <Building2 className="h-5 w-5 text-muted-foreground" />}
+                  {index === 0 && <FileText className="h-5 w-5 text-accent" />}
+                  {index === 1 && <Handshake className="h-5 w-5 text-secondary" />}
+                  {index === 2 && <ShoppingCart className="h-5 w-5 text-muted-foreground" />}
                   <Badge variant="outline">{pillar.deals} active</Badge>
                 </div>
               </div>
@@ -161,15 +165,76 @@ export function UnifiedEmpireDashboard() {
                   </div>
                 </div>
                 <Progress value={(pillar.current / pillar.target) * 100} />
-                <Button variant="outline" className="w-full" size="sm" onClick={() => navigate('/portfolio')}>
-                  <Target className="h-4 w-4 mr-2" />
-                  Manage Pipeline
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1" 
+                    size="sm" 
+                    onClick={() => navigate('/portfolio')}
+                  >
+                    <Target className="h-4 w-4 mr-2" />
+                    Manage
+                  </Button>
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={() => navigate(`/start?type=${index === 0 ? 'ip' : index === 1 ? 'equity' : 'acquisition'}`)}
+                    className="px-3"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {/* Quick Actions Bar */}
+      <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/20 rounded-lg">
+                <Plus className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Quick Actions</h3>
+                <p className="text-sm text-muted-foreground">Add new items to track and grow your empire</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/start?type=ip')}
+                className="flex items-center gap-2"
+              >
+                <FileText className="h-4 w-4" />
+                New IP
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/start?type=equity')}
+                className="flex items-center gap-2"
+              >
+                <Handshake className="h-4 w-4" />
+                Equity Deal
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/start?type=acquisition')}
+                className="flex items-center gap-2"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                Acquisition
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Revenue Trend Chart */}
