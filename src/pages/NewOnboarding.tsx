@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import TrackingTypeSelector from '@/components/onboarding/TrackingTypeSelector';
 import IPCreationForm from '@/components/onboarding/IPCreationForm';
 import EquityDealForm from '@/components/onboarding/EquityDealForm';
@@ -18,11 +18,21 @@ export default function NewOnboarding() {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   
   const [step, setStep] = useState<OnboardingStep>('selector');
   const [trackingType, setTrackingType] = useState<TrackingType | null>(null);
   const [loading, setLoading] = useState(false);
   const [createdRecord, setCreatedRecord] = useState<any>(null);
+
+  // Handle direct navigation with type parameter
+  useEffect(() => {
+    const typeParam = searchParams.get('type') as TrackingType;
+    if (typeParam && ['ip', 'equity', 'acquisition'].includes(typeParam)) {
+      setTrackingType(typeParam);
+      setStep('form');
+    }
+  }, [searchParams]);
 
   const handleTypeSelect = (type: TrackingType) => {
     setTrackingType(type);
