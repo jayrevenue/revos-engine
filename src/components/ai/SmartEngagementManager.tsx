@@ -151,13 +151,13 @@ export const SmartEngagementManager = ({
 
       if (clientError) throw clientError;
 
-      // Process client history with mock data
+      // Process client history from real data
       const processedHistory: ClientHistory = {
         id: client?.id || '',
         name: client?.name || 'Unknown Client',
-        industry: 'Technology', // Mock data
-        company_size: 'Medium', // Mock data
-        previous_engagements: [], // Mock empty array
+        industry: 'Unknown', // Would need additional client data fields
+        company_size: 'Unknown', // Would need additional client data fields
+        previous_engagements: [], // Would fetch from engagements table
         preferences: {
           communication_style: 'Professional',
           meeting_frequency: 'Weekly',

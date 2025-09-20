@@ -113,7 +113,7 @@ export const SharedWorkspace = ({ engagementId, isClientView = false }: SharedWo
 
   const fetchEngagementData = async () => {
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('engagements')
         .select('*')
         .eq('id', engagementId)
@@ -121,35 +121,46 @@ export const SharedWorkspace = ({ engagementId, isClientView = false }: SharedWo
 
       if (error) throw error;
 
-      // Mock data since related tables don't exist in types
-      const mockEngagement: Engagement = {
-        id: data?.id || engagementId,
-        name: data?.name || 'Sample Engagement',
-        description: data?.description || 'Sample engagement description',
-        status: data?.status || 'active',
-        start_date: data?.start_date || new Date().toISOString(),
-        end_date: data?.end_date || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-        budget: data?.budget || 100000,
-        progress: 65,
-        org: { name: 'Sample Organization' },
-        outcomes: [
-          { id: '1', name: 'Revenue Growth', target_value: 25, current_value: 18, unit: '%', progress: 72 },
-          { id: '2', name: 'Cost Reduction', target_value: 15, current_value: 12, unit: '%', progress: 80 }
-        ],
-        deliverables: [
-          { id: '1', name: 'Strategic Assessment', status: 'completed', due_date: new Date().toISOString(), completion_percentage: 100 },
-          { id: '2', name: 'Implementation Plan', status: 'in_progress', due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), completion_percentage: 60 }
-        ],
-        team_members: [
-          { id: '1', name: 'Sarah Johnson', role: 'Revenue Scientist' },
-          { id: '2', name: 'Mike Chen', role: 'Data Analyst' }
-        ]
-      };
+      if (data) {
+        // Fetch related data
+        const [outcomesData, profilesData] = await Promise.all([
+          supabase.from('outcomes').select('*').eq('engagement_id', engagementId),
+          supabase.from('profiles').select('user_id, full_name, email').limit(10)
+        ]);
 
-      setEngagement(mockEngagement);
+        const engagement: Engagement = {
+          id: data.id,
+          name: data.name,
+          description: data.description || '',
+          status: (data.status as any) || 'active',
+          start_date: data.start_date || new Date().toISOString(),
+          end_date: data.end_date || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+          budget: data.budget || 0,
+          progress: 0, // Calculate based on actual outcomes
+          org: { name: 'Your Organization' },
+          outcomes: (outcomesData.data || []).map(outcome => ({
+            id: outcome.id,
+            name: outcome.metric_name,
+            target_value: outcome.target_value || 0,
+            current_value: outcome.current_value || 0,
+            unit: '%',
+            progress: outcome.target_value ? (outcome.current_value / outcome.target_value * 100) : 0
+          })),
+          deliverables: [], // Would need separate table
+          team_members: (profilesData.data || []).map(profile => ({
+            id: profile.user_id,
+            name: profile.full_name || profile.email || 'Team Member',
+            role: 'Team Member'
+          }))
+        };
+
+        setEngagement(engagement);
+      } else {
+        throw new Error('Engagement not found');
+      }
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Error", 
         description: "Failed to load engagement data",
         variant: "destructive"
       });
@@ -160,8 +171,8 @@ export const SharedWorkspace = ({ engagementId, isClientView = false }: SharedWo
 
   const fetchWorkspaceSettings = async () => {
     try {
-      // Mock workspace settings since table doesn't exist
-      const mockSettings: WorkspaceSettings = {
+      // Workspace settings not implemented yet - use defaults
+      const defaultSettings: WorkspaceSettings = {
         id: '1',
         engagement_id: engagementId,
         is_public: false,
@@ -176,7 +187,7 @@ export const SharedWorkspace = ({ engagementId, isClientView = false }: SharedWo
         updated_at: new Date().toISOString()
       };
       
-      setWorkspaceSettings(mockSettings);
+      setWorkspaceSettings(defaultSettings);
     } catch (error: any) {
       console.error('Failed to fetch workspace settings:', error);
     }

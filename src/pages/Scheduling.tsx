@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from "@/integrations/supabase/client";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,43 +21,32 @@ const Scheduling = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data for events
-  const mockEvents = [
-    {
-      id: '1',
-      title: 'Discovery Session - TechCorp',
-      type: 'session',
-      date: new Date(),
-      time: '10:00 AM',
-      duration: '2 hours',
-      engagement: 'TechCorp Digital Transformation',
-      participants: ['John Doe', 'Jane Smith'],
-      status: 'confirmed'
-    },
-    {
-      id: '2',
-      title: 'Sprint Planning - Q1 Goals',
-      type: 'sprint',
-      date: new Date(Date.now() + 86400000),
-      time: '2:00 PM',
-      duration: '1 hour',
-      engagement: 'FinanceFlow RevOS Implementation',
-      participants: ['Alice Johnson'],
-      status: 'pending'
-    },
-    {
-      id: '3',
-      title: 'Final Deliverable Review',
-      type: 'deliverable',
-      date: new Date(Date.now() + 172800000),
-      time: '9:00 AM',
-      duration: '3 hours',
-      engagement: 'RetailMax Optimization',
-      participants: ['Bob Wilson', 'Carol Davis'],
-      status: 'confirmed'
+  useEffect(() => {
+    if (user) {
+      fetchEvents();
     }
-  ];
+  }, [user]);
+
+  const fetchEvents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('created_by', user?.id)
+        .order('start_time', { ascending: true });
+
+      if (error) throw error;
+      setEvents(data || []);
+    } catch (error) {
+      console.error('Failed to fetch events:', error);
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getEventTypeColor = (type: string) => {
     switch (type) {
@@ -226,7 +216,17 @@ const Scheduling = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {mockEvents.map((event) => (
+                      {loading ? (
+                        <div className="text-center py-8">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                        </div>
+                      ) : events.length === 0 ? (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <CalendarDays className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                          <p>No events scheduled</p>
+                          <p className="text-sm">Create your first event to get started</p>
+                        </div>
+                      ) : events.map((event) => (
                         <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg">
                           <div className="flex items-start gap-3">
                             <div className="mt-1">
@@ -274,7 +274,17 @@ const Scheduling = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockEvents.map((event) => (
+                  {loading ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                    </div>
+                  ) : events.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <CalendarDays className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No upcoming events</p>
+                      <p className="text-sm">Schedule your first event to see it here</p>
+                    </div>
+                  ) : events.map((event) => (
                     <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-start gap-3">
                         <div className="mt-1">
@@ -320,7 +330,48 @@ const Scheduling = () => {
           {/* By Engagement */}
           <TabsContent value="engagements" className="space-y-6">
             <div className="grid gap-6">
-              {['TechCorp Digital Transformation', 'FinanceFlow RevOS Implementation', 'RetailMax Optimization'].map((engagement) => (
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                </div>
+              ) : events.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <CalendarDays className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No events by engagement</p>
+                  <p className="text-sm">Events will be grouped by engagement once created</p>
+                </div>
+              ) : (
+                // Group events by engagement
+                Array.from(new Set(events.map(e => e.engagement_id).filter(Boolean))).map((engagementId) => (
+                <Card key={engagementId}>
+                  <CardHeader>
+                    <CardTitle>Engagement Events</CardTitle>
+                    <CardDescription>Events for this engagement</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {events
+                        .filter(event => event.engagement_id === engagementId)
+                        .map((event) => (
+                          <div key={event.id} className="flex items-center justify-between p-3 border rounded-md">
+                            <div className="flex items-center gap-3">
+                              <Badge className={getEventTypeColor(event.event_type)}>
+                                {event.event_type}
+                              </Badge>
+                              <div>
+                                <h5 className="font-medium">{event.title}</h5>
+                                <p className="text-sm text-muted-foreground">
+                                  {format(new Date(event.start_time), 'MMM dd, h:mm a')}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+              )}
                 <Card key={engagement}>
                   <CardHeader>
                     <CardTitle>{engagement}</CardTitle>
@@ -328,8 +379,8 @@ const Scheduling = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {mockEvents
-                        .filter(event => event.engagement === engagement)
+                      {events
+                        .filter(event => event.engagement_id === engagement)
                         .map((event) => (
                           <div key={event.id} className="flex items-center justify-between p-3 border rounded-md">
                             <div className="flex items-center gap-3">
@@ -353,8 +404,8 @@ const Scheduling = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+              ))
+            }
           </TabsContent>
         </Tabs>
     </Page>

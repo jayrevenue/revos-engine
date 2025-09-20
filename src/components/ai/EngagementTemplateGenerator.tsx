@@ -490,10 +490,10 @@ export const EngagementTemplateGenerator = ({
     if (!generatedTemplate) return;
 
     try {
-      // Mock save for now since engagement_templates table doesn't exist
+      // Template saving functionality will be implemented in future update
       toast({
-        title: "Template Saved",
-        description: "Template has been saved to your library",
+        title: "Feature Coming Soon",
+        description: "Template saving will be available in a future update",
       });
       
       onTemplateSaved?.(generatedTemplate);

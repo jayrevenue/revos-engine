@@ -79,9 +79,8 @@ export const CommentSystem = ({
 
   const fetchComments = async () => {
     try {
-      // Mock empty comments since comments table doesn't exist
-      const formattedComments: Comment[] = [];
-      setComments(formattedComments);
+      // Comments functionality not implemented yet - return empty array
+      setComments([]);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -95,14 +94,24 @@ export const CommentSystem = ({
 
   const fetchTeamMembers = async () => {
     try {
-      // Mock team members since users table doesn't exist in types
-      const mockTeamMembers = [
-        { id: '1', name: 'John Doe', email: 'john@example.com' },
-        { id: '2', name: 'Jane Smith', email: 'jane@example.com' }
-      ];
-      setTeamMembers(mockTeamMembers);
+      // Fetch real team members from profiles
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, email')
+        .limit(10);
+
+      if (error) throw error;
+
+      const members = (data || []).map(profile => ({
+        id: profile.user_id,
+        name: profile.full_name || profile.email || 'Unknown User',
+        email: profile.email || 'No email'
+      }));
+
+      setTeamMembers(members);
     } catch (error) {
       console.error('Failed to fetch team members:', error);
+      setTeamMembers([]);
     }
   };
 
@@ -129,10 +138,11 @@ export const CommentSystem = ({
 
     setSubmitting(true);
     try {
-      // Mock comment submission since tables don't exist
+      // Comment system not fully implemented yet
       toast({
-        title: "Success",
-        description: parentId ? "Reply added successfully" : "Comment added successfully"
+        title: "Feature Coming Soon",
+        description: "Comment system will be available in a future update",
+        variant: "default"
       });
 
       if (parentId) {
