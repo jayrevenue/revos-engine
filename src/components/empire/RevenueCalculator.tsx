@@ -235,41 +235,41 @@ export function RevenueCalculator() {
         </Card>
       )}
 
-      {/* Example Scenarios */}
+      {/* Getting Started Guide */}
       {totalMonthly === 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Example Scenarios</CardTitle>
+            <CardTitle>Revenue Planning Guide</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 border rounded-lg">
-                <h4 className="font-medium text-emerald-600 mb-2">Conservative</h4>
+                <h4 className="font-medium text-emerald-600 mb-2">Start Small</h4>
                 <div className="space-y-1 text-sm">
-                  <p>• 3 IP licenses @ $2K each</p>
-                  <p>• 1 equity position @ $3K</p>
-                  <p>• 1 business @ $5K cash flow</p>
-                  <p className="font-medium pt-2">Total: $14K/month</p>
+                  <p>• Begin with one pillar</p>
+                  <p>• Focus on execution</p>
+                  <p>• Build proven systems</p>
+                  <p className="font-medium pt-2">Build your foundation</p>
                 </div>
               </div>
 
               <div className="p-4 border rounded-lg">
-                <h4 className="font-medium text-primary mb-2">Target</h4>
+                <h4 className="font-medium text-primary mb-2">Scale Up</h4>
                 <div className="space-y-1 text-sm">
-                  <p>• 8 IP licenses @ $3K each</p>
-                  <p>• 3 equity positions @ $5K each</p>
-                  <p>• 2 businesses @ $8K cash flow</p>
-                  <p className="font-medium pt-2">Total: $55K/month</p>
+                  <p>• Add second pillar</p>
+                  <p>• Optimize processes</p>
+                  <p>• Increase deal flow</p>
+                  <p className="font-medium pt-2">Expand your reach</p>
                 </div>
               </div>
 
               <div className="p-4 border rounded-lg">
-                <h4 className="font-medium text-blue-600 mb-2">Optimistic</h4>
+                <h4 className="font-medium text-blue-600 mb-2">Diversify</h4>
                 <div className="space-y-1 text-sm">
-                  <p>• 15 IP licenses @ $4K each</p>
-                  <p>• 5 equity positions @ $8K each</p>
-                  <p>• 4 businesses @ $12K cash flow</p>
-                  <p className="font-medium pt-2">Total: $148K/month</p>
+                  <p>• All three pillars active</p>
+                  <p>• Multiple revenue streams</p>
+                  <p>• Compound growth</p>
+                  <p className="font-medium pt-2">Empire status achieved</p>
                 </div>
               </div>
             </div>

@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EmptyState } from "@/components/ui/empty-state";
+import { useActivities } from "@/hooks/useActivities";
 import {
   DollarSign,
   TrendingUp,
@@ -28,50 +30,118 @@ import {
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-// Three Pillar Performance Data
-const threePillarData = [
-  { name: "IP Licensing", current: 12500, target: 15000, deals: 5, color: "hsl(var(--accent))" },
-  { name: "Equity Deals", current: 8750, target: 12000, deals: 2, color: "hsl(var(--secondary))" },
-  { name: "Acquisitions", current: 5250, target: 8000, deals: 1, color: "hsl(var(--muted-foreground))" }
-];
-
-const monthlyTrend = [
-  { month: "Jan", pillar1: 8000, pillar2: 5000, pillar3: 3000 },
-  { month: "Feb", pillar1: 9500, pillar2: 6500, pillar3: 3500 },
-  { month: "Mar", pillar1: 11000, pillar2: 7200, pillar3: 4200 },
-  { month: "Apr", pillar1: 12500, pillar2: 8750, pillar3: 5250 },
-];
-
-const quickInsights = [
-  {
-    type: "opportunity",
-    title: "Ready for Phase 3",
-    description: "You've hit the Phase 2 revenue targets. Time to start acquisition planning.",
-    action: "View Roadmap",
-    urgency: "high"
-  },
-  {
-    type: "success",
-    title: "IP License Milestone",
-    description: "Just closed your 5th licensing deal - exceeding Q1 targets!",
-    action: "Celebrate",
-    urgency: "low"
-  },
-  {
-    type: "warning",
-    title: "Equity Deal Pipeline",
-    description: "Only 1 equity deal in pipeline. Consider prospecting more opportunities.",
-    action: "Open Calculator",
-    urgency: "medium"
-  }
-];
-
 export function UnifiedEmpireDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState("monthly");
   const navigate = useNavigate();
+  const { activities, metrics, loading } = useActivities();
   
-  const totalRevenue = threePillarData.reduce((sum, pillar) => sum + pillar.current, 0);
+  // Generate insights based on real data
+  const generateInsights = () => {
+    const insights = [];
+    
+    if (metrics.totalItems === 0) {
+      insights.push({
+        type: "opportunity",
+        title: "Start Your Empire Journey",
+        description: "Add your first IP project, equity deal, or acquisition target to begin tracking your empire growth.",
+        action: "Quick Start",
+        urgency: "high"
+      });
+    } else {
+      // Check progress towards targets
+      const ipProgress = (metrics.ipLicensing.value / metrics.ipLicensing.target) * 100;
+      const equityProgress = (metrics.equityDeals.value / metrics.equityDeals.target) * 100;
+      const acquisitionProgress = (metrics.acquisitions.value / metrics.acquisitions.target) * 100;
+      
+      if (ipProgress > 80) {
+        insights.push({
+          type: "success",
+          title: "IP Licensing Milestone",
+          description: `You're ${ipProgress.toFixed(0)}% towards your IP licensing target!`,
+          action: "View Details",
+          urgency: "low"
+        });
+      }
+      
+      if (metrics.highPriorityItems > 0) {
+        insights.push({
+          type: "warning",
+          title: "High Priority Items",
+          description: `You have ${metrics.highPriorityItems} high priority item${metrics.highPriorityItems > 1 ? 's' : ''} requiring attention.`,
+          action: "Review Items",
+          urgency: "medium"
+        });
+      }
+      
+      if (metrics.totalItems > 5 && metrics.acquisitions.count === 0) {
+        insights.push({
+          type: "opportunity",
+          title: "Consider Acquisitions",
+          description: "With your growing portfolio, it might be time to explore acquisition opportunities.",
+          action: "Explore Options",
+          urgency: "medium"
+        });
+      }
+    }
+    
+    return insights;
+  };
+
+  const quickInsights = generateInsights();
   
+  // Generate chart data from real activities
+  const generateMonthlyTrend = () => {
+    if (activities.length === 0) {
+      return [];
+    }
+    
+    // For now, show current month data - could be enhanced to show historical trends
+    return [{
+      month: new Date().toLocaleDateString('en-US', { month: 'short' }),
+      pillar1: metrics.ipLicensing.value,
+      pillar2: metrics.equityDeals.value,
+      pillar3: metrics.acquisitions.value
+    }];
+  };
+
+  const monthlyTrend = generateMonthlyTrend();
+
+  const threePillarData = [
+    { 
+      name: "IP Licensing", 
+      current: metrics.ipLicensing.value, 
+      target: metrics.ipLicensing.target, 
+      deals: metrics.ipLicensing.count, 
+      color: "hsl(var(--accent))" 
+    },
+    { 
+      name: "Equity Deals", 
+      current: metrics.equityDeals.value, 
+      target: metrics.equityDeals.target, 
+      deals: metrics.equityDeals.count, 
+      color: "hsl(var(--secondary))" 
+    },
+    { 
+      name: "Acquisitions", 
+      current: metrics.acquisitions.value, 
+      target: metrics.acquisitions.target, 
+      deals: metrics.acquisitions.count, 
+      color: "hsl(var(--muted-foreground))" 
+    }
+  ];
+  
+  const totalRevenue = metrics.totalValue;
+  
+  if (loading) {
+    return (
+      <div className="space-y-6 p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 p-6">
       {/* Quick Start Section */}
@@ -121,14 +191,14 @@ export function UnifiedEmpireDashboard() {
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm font-medium text-muted-foreground">Total IP Assets</p>
-                <p className="text-3xl font-bold text-accent">23</p>
-                <p className="text-sm text-muted-foreground">18 licensed</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Items</p>
+                <p className="text-3xl font-bold text-accent">{metrics.totalItems}</p>
+                <p className="text-sm text-muted-foreground">{metrics.highPriorityItems} high priority</p>
               </div>
               <div className="text-center">
                 <p className="text-sm font-medium text-muted-foreground">Portfolio Value</p>
-                <p className="text-3xl font-bold text-secondary">$485K</p>
-                <p className="text-sm text-emerald-600">+34% YTD</p>
+                <p className="text-3xl font-bold text-secondary">${(metrics.totalValue / 1000).toFixed(0)}K</p>
+                <p className="text-sm text-muted-foreground">Total tracked value</p>
               </div>
             </div>
           </CardContent>
@@ -136,59 +206,71 @@ export function UnifiedEmpireDashboard() {
       </div>
 
       {/* Three Pillar Performance with Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {threePillarData.map((pillar, index) => (
-          <Card key={pillar.name} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{pillar.name}</CardTitle>
-                <div className="flex items-center gap-2">
-                  {index === 0 && <FileText className="h-5 w-5 text-accent" />}
-                  {index === 1 && <Handshake className="h-5 w-5 text-secondary" />}
-                  {index === 2 && <ShoppingCart className="h-5 w-5 text-muted-foreground" />}
-                  <Badge variant="outline">{pillar.deals} active</Badge>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-end justify-between">
-                  <div>
-                    <p className="text-2xl font-bold">${(pillar.current / 1000).toFixed(1)}K</p>
-                    <p className="text-sm text-muted-foreground">of ${(pillar.target / 1000).toFixed(0)}K target</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-semibold text-emerald-600">
-                      {Math.round((pillar.current / pillar.target) * 100)}%
-                    </p>
-                    <p className="text-xs text-muted-foreground">to target</p>
+      {metrics.totalItems === 0 ? (
+        <EmptyState 
+          icon={<Crown className="h-16 w-16" />}
+          title="Start Building Your Empire"
+          description="Add your first IP project, equity deal, or acquisition target to begin tracking your revenue empire growth."
+          action={{
+            label: "Add Your First Item",
+            onClick: () => navigate('/start')
+          }}
+        />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {threePillarData.map((pillar, index) => (
+            <Card key={pillar.name} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">{pillar.name}</CardTitle>
+                  <div className="flex items-center gap-2">
+                    {index === 0 && <FileText className="h-5 w-5 text-accent" />}
+                    {index === 1 && <Handshake className="h-5 w-5 text-secondary" />}
+                    {index === 2 && <ShoppingCart className="h-5 w-5 text-muted-foreground" />}
+                    <Badge variant="outline">{pillar.deals} active</Badge>
                   </div>
                 </div>
-                <Progress value={(pillar.current / pillar.target) * 100} />
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1" 
-                    size="sm" 
-                    onClick={() => navigate('/portfolio')}
-                  >
-                    <Target className="h-4 w-4 mr-2" />
-                    Manage
-                  </Button>
-                  <Button 
-                    variant="default" 
-                    size="sm" 
-                    onClick={() => navigate(`/start?type=${index === 0 ? 'ip' : index === 1 ? 'equity' : 'acquisition'}`)}
-                    className="px-3"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <p className="text-2xl font-bold">${(pillar.current / 1000).toFixed(1)}K</p>
+                      <p className="text-sm text-muted-foreground">of ${(pillar.target / 1000).toFixed(0)}K target</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-semibold text-emerald-600">
+                        {pillar.target > 0 ? Math.round((pillar.current / pillar.target) * 100) : 0}%
+                      </p>
+                      <p className="text-xs text-muted-foreground">to target</p>
+                    </div>
+                  </div>
+                  <Progress value={pillar.target > 0 ? (pillar.current / pillar.target) * 100 : 0} />
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1" 
+                      size="sm" 
+                      onClick={() => navigate('/portfolio')}
+                    >
+                      <Target className="h-4 w-4 mr-2" />
+                      Manage
+                    </Button>
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      onClick={() => navigate(`/start?type=${index === 0 ? 'ip' : index === 1 ? 'equity' : 'acquisition'}`)}
+                      className="px-3"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Quick Actions Bar */}
       <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
@@ -264,23 +346,32 @@ export function UnifiedEmpireDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={monthlyTrend}>
-                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip 
-                  formatter={(value, name) => [
-                    `$${Number(value).toLocaleString()}`,
-                    name === 'pillar1' ? 'IP Licensing' : 
-                    name === 'pillar2' ? 'Equity Deals' : 'Acquisitions'
-                  ]}
-                />
-                <Bar dataKey="pillar1" fill="hsl(var(--accent))" name="pillar1" />
-                <Bar dataKey="pillar2" fill="hsl(var(--secondary))" name="pillar2" />
-                <Bar dataKey="pillar3" fill="hsl(var(--muted-foreground))" name="pillar3" />
-              </BarChart>
-            </ResponsiveContainer>
+            {monthlyTrend.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={monthlyTrend}>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value, name) => [
+                      `$${Number(value).toLocaleString()}`,
+                      name === 'pillar1' ? 'IP Licensing' : 
+                      name === 'pillar2' ? 'Equity Deals' : 'Acquisitions'
+                    ]}
+                  />
+                  <Bar dataKey="pillar1" fill="hsl(var(--accent))" name="pillar1" />
+                  <Bar dataKey="pillar2" fill="hsl(var(--secondary))" name="pillar2" />
+                  <Bar dataKey="pillar3" fill="hsl(var(--muted-foreground))" name="pillar3" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-center">
+                <div className="space-y-2">
+                  <p className="text-muted-foreground">No revenue data to display</p>
+                  <p className="text-sm text-muted-foreground">Add some activities to see your revenue trends</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -330,11 +421,11 @@ export function UnifiedEmpireDashboard() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">This Month</span>
-                <span className="text-2xl font-bold text-primary">$26.5K</span>
+                <span className="text-2xl font-bold text-primary">${(totalRevenue / 1000).toFixed(1)}K</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Growth Rate</span>
-                <span className="text-sm font-semibold text-emerald-600">+22.5%</span>
+                <span className="text-sm text-muted-foreground">Total Items</span>
+                <span className="text-sm font-semibold text-emerald-600">{metrics.totalItems}</span>
               </div>
             </div>
           </CardContent>
@@ -350,12 +441,12 @@ export function UnifiedEmpireDashboard() {
           <CardContent>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Current Margin</span>
-                <span className="text-2xl font-bold text-accent">68%</span>
+                <span className="text-sm text-muted-foreground">High Priority</span>
+                <span className="text-2xl font-bold text-accent">{metrics.highPriorityItems}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Improvement</span>
-                <span className="text-sm font-semibold text-emerald-600">+12%</span>
+                <span className="text-sm text-muted-foreground">Active Items</span>
+                <span className="text-sm font-semibold text-emerald-600">{metrics.totalItems}</span>
               </div>
             </div>
           </CardContent>
@@ -372,11 +463,11 @@ export function UnifiedEmpireDashboard() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Total Value</span>
-                <span className="text-2xl font-bold text-secondary">$485K</span>
+                <span className="text-2xl font-bold text-secondary">${(metrics.totalValue / 1000).toFixed(0)}K</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">YTD Growth</span>
-                <span className="text-sm font-semibold text-emerald-600">+34%</span>
+                <span className="text-sm text-muted-foreground">IP Items</span>
+                <span className="text-sm font-semibold text-emerald-600">{metrics.ipLicensing.count}</span>
               </div>
             </div>
           </CardContent>
@@ -394,12 +485,12 @@ export function UnifiedEmpireDashboard() {
           <CardContent>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Recurring</span>
-                <span className="text-xl font-bold text-primary">$18.2K</span>
+                <span className="text-sm text-muted-foreground">IP Value</span>
+                <span className="text-xl font-bold text-primary">${(metrics.ipLicensing.value / 1000).toFixed(1)}K</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">One-time</span>
-                <span className="text-xl font-bold text-muted-foreground">$8.3K</span>
+                <span className="text-sm text-muted-foreground">Equity Value</span>
+                <span className="text-xl font-bold text-muted-foreground">${(metrics.equityDeals.value / 1000).toFixed(1)}K</span>
               </div>
             </div>
           </CardContent>
@@ -415,12 +506,12 @@ export function UnifiedEmpireDashboard() {
           <CardContent>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Per Deal</span>
-                <span className="text-2xl font-bold text-accent">+15%</span>
+                <span className="text-sm text-muted-foreground">Equity Deals</span>
+                <span className="text-2xl font-bold text-accent">{metrics.equityDeals.count}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Best This Month</span>
-                <span className="text-sm font-semibold text-emerald-600">+28%</span>
+                <span className="text-sm text-muted-foreground">Acquisitions</span>
+                <span className="text-sm font-semibold text-emerald-600">{metrics.acquisitions.count}</span>
               </div>
             </div>
           </CardContent>

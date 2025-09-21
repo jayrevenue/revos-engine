@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EmptyState } from "@/components/ui/empty-state";
+import { useActivities } from "@/hooks/useActivities";
 import { 
   DollarSign, 
   TrendingUp, 
@@ -36,35 +38,7 @@ interface ThreePillarData {
   pillar3: PillarMetrics; // Acquisitions
 }
 
-const mockData: ThreePillarData = {
-  pillar1: {
-    current: 12500,
-    target: 15000,
-    growth: 18.5,
-    deals: 5,
-    avgDealSize: 2500,
-    conversionRate: 35,
-    timeToClose: 45
-  },
-  pillar2: {
-    current: 8750,
-    target: 12000,
-    growth: 22.3,
-    deals: 2,
-    avgDealSize: 4375,
-    conversionRate: 15,
-    timeToClose: 90
-  },
-  pillar3: {
-    current: 5250,
-    target: 8000,
-    growth: -5.2,
-    deals: 1,
-    avgDealSize: 5250,
-    conversionRate: 25,
-    timeToClose: 120
-  }
-};
+// Remove mockData - using real data from useActivities hook
 
 const pillarConfig = [
   {
@@ -96,36 +70,95 @@ const pillarConfig = [
   }
 ];
 
-const trendsData = [
-  { month: 'Jan', pillar1: 8000, pillar2: 5000, pillar3: 4500 },
-  { month: 'Feb', pillar1: 9500, pillar2: 6200, pillar3: 4800 },
-  { month: 'Mar', pillar1: 11000, pillar2: 7500, pillar3: 5100 },
-  { month: 'Apr', pillar1: 12500, pillar2: 8750, pillar3: 5250 }
-];
+// Trends data will be generated from real activities
 
 interface ThreePillarMetricsProps {
-  data?: ThreePillarData;
   showDetails?: boolean;
   compact?: boolean;
 }
 
 export function ThreePillarMetrics({ 
-  data = mockData, 
   showDetails = true, 
   compact = false 
 }: ThreePillarMetricsProps) {
   const [selectedView, setSelectedView] = useState<'overview' | 'trends' | 'performance'>('overview');
+  const { metrics, loading, activities } = useActivities();
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-center h-32">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (metrics.totalItems === 0) {
+    return (
+      <EmptyState 
+        icon={<BarChart3 className="h-12 w-12" />}
+        title="No Portfolio Data"
+        description="Add IP projects, equity deals, or acquisitions to see your three-pillar metrics."
+        action={{
+          label: "Get Started",
+          onClick: () => window.location.href = '/start'
+        }}
+      />
+    );
+  }
+
+  // Convert metrics to data format
+  const data: ThreePillarData = {
+    pillar1: {
+      current: metrics.ipLicensing.value,
+      target: metrics.ipLicensing.target,
+      growth: 0, // Would need historical data to calculate
+      deals: metrics.ipLicensing.count,
+      avgDealSize: metrics.ipLicensing.count > 0 ? metrics.ipLicensing.value / metrics.ipLicensing.count : 0,
+      conversionRate: 0, // Would need pipeline data
+      timeToClose: 0 // Would need historical data
+    },
+    pillar2: {
+      current: metrics.equityDeals.value,
+      target: metrics.equityDeals.target,
+      growth: 0,
+      deals: metrics.equityDeals.count,
+      avgDealSize: metrics.equityDeals.count > 0 ? metrics.equityDeals.value / metrics.equityDeals.count : 0,
+      conversionRate: 0,
+      timeToClose: 0
+    },
+    pillar3: {
+      current: metrics.acquisitions.value,
+      target: metrics.acquisitions.target,
+      growth: 0,
+      deals: metrics.acquisitions.count,
+      avgDealSize: metrics.acquisitions.count > 0 ? metrics.acquisitions.value / metrics.acquisitions.count : 0,
+      conversionRate: 0,
+      timeToClose: 0
+    }
+  };
 
   const totalCurrent = data.pillar1.current + data.pillar2.current + data.pillar3.current;
   const totalTarget = data.pillar1.target + data.pillar2.target + data.pillar3.target;
-  const overallProgress = (totalCurrent / totalTarget) * 100;
+  const overallProgress = totalTarget > 0 ? (totalCurrent / totalTarget) * 100 : 0;
   
   const distributionData = pillarConfig.map(config => ({
     name: config.name,
     value: data[config.key as keyof ThreePillarData].current,
-    percentage: Math.round((data[config.key as keyof ThreePillarData].current / totalCurrent) * 100),
+    percentage: totalCurrent > 0 ? Math.round((data[config.key as keyof ThreePillarData].current / totalCurrent) * 100) : 0,
     color: config.color
   }));
+
+  // Generate trends data from current month
+  const trendsData = [{
+    month: new Date().toLocaleDateString('en-US', { month: 'short' }),
+    pillar1: data.pillar1.current,
+    pillar2: data.pillar2.current,
+    pillar3: data.pillar3.current
+  }];
 
   if (compact) {
     return (
