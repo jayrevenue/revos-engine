@@ -343,69 +343,36 @@ const Scheduling = () => {
               ) : (
                 // Group events by engagement
                 Array.from(new Set(events.map(e => e.engagement_id).filter(Boolean))).map((engagementId) => (
-                <Card key={engagementId}>
-                  <CardHeader>
-                    <CardTitle>Engagement Events</CardTitle>
-                    <CardDescription>Events for this engagement</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {events
-                        .filter(event => event.engagement_id === engagementId)
-                        .map((event) => (
-                          <div key={event.id} className="flex items-center justify-between p-3 border rounded-md">
-                            <div className="flex items-center gap-3">
-                              <Badge className={getEventTypeColor(event.event_type)}>
-                                {event.event_type}
-                              </Badge>
-                              <div>
-                                <h5 className="font-medium">{event.title}</h5>
-                                <p className="text-sm text-muted-foreground">
-                                  {format(new Date(event.start_time), 'MMM dd, h:mm a')}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-              )}
-                <Card key={engagement}>
-                  <CardHeader>
-                    <CardTitle>{engagement}</CardTitle>
-                    <CardDescription>All scheduled events for this engagement</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {events
-                        .filter(event => event.engagement_id === engagement)
-                        .map((event) => (
-                          <div key={event.id} className="flex items-center justify-between p-3 border rounded-md">
-                            <div className="flex items-center gap-3">
-                              <Badge className={getEventTypeColor(event.type)}>
-                                {event.type}
-                              </Badge>
-                              <div>
-                                <h5 className="font-medium">{event.title}</h5>
-                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                                  <span>{format(event.date, 'MMM dd')}</span>
-                                  <span>{event.time}</span>
-                                  <span>{event.duration}</span>
+                  <Card key={engagementId}>
+                    <CardHeader>
+                      <CardTitle>Engagement Events</CardTitle>
+                      <CardDescription>Events for this engagement</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {events
+                          .filter(event => event.engagement_id === engagementId)
+                          .map((event) => (
+                            <div key={event.id} className="flex items-center justify-between p-3 border rounded-md">
+                              <div className="flex items-center gap-3">
+                                <Badge className={getEventTypeColor(event.event_type)}>
+                                  {event.event_type}
+                                </Badge>
+                                <div>
+                                  <h5 className="font-medium">{event.title}</h5>
+                                  <p className="text-sm text-muted-foreground">
+                                    {format(new Date(event.start_time), 'MMM dd, h:mm a')}
+                                  </p>
                                 </div>
                               </div>
                             </div>
-                            <Badge className={getStatusColor(event.status)}>
-                              {event.status}
-                            </Badge>
-                          </div>
-                        ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            }
+                          ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
           </TabsContent>
         </Tabs>
     </Page>
